@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
+using CodeBase.Infrastructure.Services.SceneLoader;
+using CodeBase.Infrastructure.States;
 
-namespace CodeBase.Infrastructure.States
+namespace CodeBase.Infrastructure.Bootstrapper
 {
     public class GameStateMachine
     {
-        private Dictionary<Type, IExitableState> _states;
+        private readonly Dictionary<Type, IExitableState> _states;
         private IExitableState _activeState;
 
-        public GameStateMachine()
+        public GameStateMachine(ISceneLoader sceneLoader)
         {
             _states = new Dictionary<Type, IExitableState>
             {

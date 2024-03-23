@@ -1,34 +1,33 @@
-﻿using CodeBase.Infrastructure.States;
+﻿using CodeBase.Infrastructure.Services.SceneLoader;
+using CodeBase.Infrastructure.States;
 using Unity.VisualScripting;
 using UnityEngine;
+using Zenject;
 
 namespace CodeBase.Infrastructure.Bootstrapper
 {
     public class Bootstrapper : MonoBehaviour
     {
         private GameStateMachine _gameStateMachine;
+        private ISceneLoader _sceneLoader;
 
+        [Inject]
+        private void Construct(ISceneLoader sceneLoader)
+        {
+            _sceneLoader = sceneLoader;
+        }
+        
         private void Awake()
         {
-            _gameStateMachine = new GameStateMachine();
+            DontDestroyOnLoad(gameObject);
+
+            _gameStateMachine = new GameStateMachine(_sceneLoader);
         }
     }
 }
 
-namespace CodeBase.Infrastructure.States
-{
-    public interface IState : IExitableState
-    {
-        void Enter();
-    }
 
     public interface IPayloadedState<TPayload> : IExitableState
     {
         void Enter(TPayload payload);
     }
-
-    public interface IExitableState
-    {
-        void Exit();
-    }
-}

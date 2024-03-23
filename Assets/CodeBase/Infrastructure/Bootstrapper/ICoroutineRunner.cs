@@ -5,6 +5,7 @@ namespace CodeBase.Infrastructure.Services.SceneLoader
 {
     public interface ICoroutineRunner
     {
-        Coroutine StartCoroutine(IEnumerable coroutine);
+        Coroutine StartCoroutine(IEnumerator coroutine);
+        void StopCoroutine(Coroutine coroutine);
     }
 }
