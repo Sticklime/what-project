@@ -10,10 +10,11 @@ namespace CodeBase.Infrastructure.Bootstrapper
         private readonly Dictionary<Type, IExitableState> _states;
         private IExitableState _activeState;
 
-        public GameStateMachine(ISceneLoader sceneLoader)
+        public GameStateMachine()
         {
             _states = new Dictionary<Type, IExitableState>
             {
+                
             };
         }
 

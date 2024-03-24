@@ -1,37 +1,20 @@
 ﻿using System;
-using System.Collections;
-using UnityEngine.SceneManagement;
-using AsyncOperation = UnityEngine.AsyncOperation;
+using System.Threading.Tasks;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.ResourceManagement.ResourceProviders;
 
 namespace CodeBase.Infrastructure.Services.SceneLoader
 {
     public class SceneLoader : ISceneLoader
     {
-        private readonly ICoroutineRunner _coroutineRunner;
-
-        public SceneLoader(ICoroutineRunner coroutineRunner) =>
-            _coroutineRunner = coroutineRunner;
-
-        public void Load(string name, Action onLoaded = null) =>
-            _coroutineRunner.StartCoroutine(LoadScene(name, onLoaded));
-
-        private IEnumerator LoadScene(string nextScene, Action onLoaded = null)
+        public async Task Load(string levelName, Action onLoaded = null)
         {
-            if (SceneManager.GetActiveScene().name == nextScene)
-            {
-                onLoaded?.Invoke();
-                yield break;
-            }
+            AsyncOperationHandle<SceneInstance> waitNextScene = Addressables.LoadSceneAsync(levelName);
 
-            AsyncOperation waitNextScene = SceneManager.LoadSceneAsync(nextScene);
-
-            while (!waitNextScene.isDone)
-                yield return null;
+            await waitNextScene.Task;
 
             onLoaded?.Invoke();
         }
-        
-
-       
     }
 }

@@ -1,23 +1,27 @@
-﻿using CodeBase.Infrastructure.Services.SceneLoader;
+﻿using CodeBase.Infrastructure.Bootstrapper;
+using CodeBase.Infrastructure.Services.SceneLoader;
 using Zenject;
 
-namespace CodeBase.Zenject
+namespace CodeBase.Installer
 {
-    public class ServicesBind : MonoInstaller, ICoroutineRunner
+    public class ServicesBind : MonoInstaller
     {
         public override void InstallBindings()
         {
             SceneLoaderBind();
+            EntityFactoryBind();
         }
 
-        private void SceneLoaderBind()
-        {
-            var sceneLoader = new SceneLoader(this);
-
+        private void SceneLoaderBind() =>
             Container
                 .Bind<ISceneLoader>()
-                .FromInstance(sceneLoader)
+                .To<SceneLoader>()
                 .AsSingle();
-        }
+
+        private void EntityFactoryBind() =>
+            Container
+                .Bind<IGameFactory>()
+                .To<GameFactory>()
+                .AsSingle();
     }
 }
