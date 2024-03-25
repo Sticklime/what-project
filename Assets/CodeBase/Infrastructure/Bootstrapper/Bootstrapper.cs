@@ -1,5 +1,6 @@
 ﻿using System;
 using CodeBase.Infrastructure.Services.SceneLoader;
+using CodeBase.Systems;
 using UnityEngine;
 using Zenject;
 
@@ -11,6 +12,11 @@ namespace CodeBase.Infrastructure.Bootstrapper
         private Contexts _contexts;
         private ISceneLoader _sceneLoader;
         private IGameFactory _entityFactory;
+
+        private PlayerInputSystem _playerInputSystem;
+        private MovableSystem _movableSystem;
+
+        private bool _isInitialize;
 
         [Inject]
         private void Construct(ISceneLoader sceneLoader, IGameFactory entityFactory)
@@ -28,14 +34,21 @@ namespace CodeBase.Infrastructure.Bootstrapper
 
             await _sceneLoader.Load("MapScene");
 
-            Camera cameraMain = Camera.main;
+            _playerInputSystem = new PlayerInputSystem(_contexts);
+            _movableSystem = new MovableSystem(_contexts);
 
-            _entityFactory.CreateEntityCamera(cameraMain);
+            _isInitialize = true;
+
+            _entityFactory.CreateEntityCamera(Camera.main);
         }
 
         private void Update()
         {
-            _contexts.
+            if (!_isInitialize)
+                return;
+            
+            _playerInputSystem.Execute();
+            _movableSystem.Execute();
         }
     }
 }
