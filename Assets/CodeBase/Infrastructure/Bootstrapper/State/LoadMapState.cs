@@ -4,10 +4,10 @@ namespace CodeBase.Infrastructure.Bootstrapper.State
 {
     public class LoadMapState : IState
     {
-        private readonly StateMachine _stateMachine;
+        private readonly IGameStateMachine _stateMachine;
         private readonly ISceneLoader _sceneLoader;
 
-        public LoadMapState(StateMachine stateMachine ,ISceneLoader sceneLoader)
+        public LoadMapState(IGameStateMachine stateMachine ,ISceneLoader sceneLoader)
         {
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
