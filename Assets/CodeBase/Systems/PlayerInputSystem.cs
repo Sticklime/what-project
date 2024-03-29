@@ -8,29 +8,29 @@ namespace CodeBase.Systems
         private readonly IGroup<GameEntity> _inputFilter;
 
         private float _directionX;
-        private float _directionY;
+        private float _directionZ;
 
-        public PlayerInputSystem(Contexts contexts)
+        public PlayerInputSystem()
         {
-            _inputFilter = contexts.game.GetGroup(GameMatcher.ComponentsDirection);
+            _inputFilter =
+                Contexts.sharedInstance.game.GetGroup(GameMatcher.AllOf(GameMatcher.ComponentsModel,
+                    GameMatcher.ComponentsDirection));
         }
 
         public void Execute()
         {
-            SetDirection();
-
-            foreach (var i in _inputFilter)
+            foreach (var e in _inputFilter)
             {
-                i.componentsDirection.Direction = new Vector3(_directionX, _directionY);
-                
-                Debug.Log("Work");
+                SetDirection();
+
+                e.componentsDirection.direction = new Vector3(_directionX, 0, _directionZ);
             }
         }
 
         private void SetDirection()
         {
             _directionX = Input.GetAxis("Horizontal");
-            _directionY = Input.GetAxis("Vertical");
+            _directionZ = Input.GetAxis("Vertical");
         }
     }
 }

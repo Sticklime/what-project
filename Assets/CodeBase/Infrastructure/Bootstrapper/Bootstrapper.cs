@@ -1,6 +1,4 @@
-﻿using System;
-using CodeBase.Infrastructure.Services.SceneLoader;
-using CodeBase.Systems;
+﻿using CodeBase.Infrastructure.Bootstrapper.State;
 using UnityEngine;
 using Zenject;
 
@@ -8,47 +6,23 @@ namespace CodeBase.Infrastructure.Bootstrapper
 {
     public class Bootstrapper : MonoBehaviour
     {
-        private GameStateMachine _gameStateMachine;
-        private Contexts _contexts;
-        private ISceneLoader _sceneLoader;
-        private IGameFactory _entityFactory;
-
-        private PlayerInputSystem _playerInputSystem;
-        private MovableSystem _movableSystem;
-
-        private bool _isInitialize;
+        private IGameStateMachine _stateMachine;
+        private IStateFactory _stateFactory;
 
         [Inject]
-        private void Construct(ISceneLoader sceneLoader, IGameFactory entityFactory)
+        private void Construct(IGameStateMachine stateMachine, IStateFactory stateFactory)
         {
-            _sceneLoader = sceneLoader;
-            _entityFactory = entityFactory;
+            _stateMachine = stateMachine;
+            _stateFactory = stateFactory;
         }
 
-        private async void Awake()
+        private void Awake()
         {
             DontDestroyOnLoad(gameObject);
 
-            _gameStateMachine = new GameStateMachine();
-            _contexts = new Contexts();
+            _stateMachine.RegisterState<LoadMapState>(_stateFactory.CreateState<LoadMapState>());
 
-            await _sceneLoader.Load("MapScene");
-
-            _playerInputSystem = new PlayerInputSystem(_contexts);
-            _movableSystem = new MovableSystem(_contexts);
-
-            _isInitialize = true;
-
-            _entityFactory.CreateEntityCamera(Camera.main);
-        }
-
-        private void Update()
-        {
-            if (!_isInitialize)
-                return;
-            
-            _playerInputSystem.Execute();
-            _movableSystem.Execute();
+            _stateMachine.Enter<LoadMapState>();
         }
     }
 }

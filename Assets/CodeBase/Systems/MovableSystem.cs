@@ -8,9 +8,9 @@ namespace CodeBase.Systems
     {
         private readonly IGroup<GameEntity> _filter;
 
-        public MovableSystem(Contexts contexts)
+        public MovableSystem()
         {
-            _filter = contexts.game.GetGroup(GameMatcher.AllOf(GameMatcher.ComponentsModel,
+            _filter = Contexts.sharedInstance.game.GetGroup(GameMatcher.AllOf(GameMatcher.ComponentsModel,
                 GameMatcher.ComponentsDirection));
         }
 
@@ -21,10 +21,7 @@ namespace CodeBase.Systems
                 DirectionComponent direction = e.componentsDirection;
                 Transform transform = e.componentsModel.Transform;
 
-                transform.position = Vector3.MoveTowards(transform.position, direction.Direction,
-                    direction.Speed * Time.deltaTime);
-                
-                Debug.Log("1Work");
+                transform.position += direction.direction * direction.Speed * Time.deltaTime;
             }
         }
     }

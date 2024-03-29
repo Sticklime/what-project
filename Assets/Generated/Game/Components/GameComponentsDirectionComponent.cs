@@ -14,7 +14,7 @@ public partial class GameEntity {
     public void AddComponentsDirection(UnityEngine.Vector3 newDirection, float newSpeed) {
         var index = GameComponentsLookup.ComponentsDirection;
         var component = (Components.DirectionComponent)CreateComponent(index, typeof(Components.DirectionComponent));
-        component.Direction = newDirection;
+        component.direction = newDirection;
         component.Speed = newSpeed;
         AddComponent(index, component);
     }
@@ -22,7 +22,7 @@ public partial class GameEntity {
     public void ReplaceComponentsDirection(UnityEngine.Vector3 newDirection, float newSpeed) {
         var index = GameComponentsLookup.ComponentsDirection;
         var component = (Components.DirectionComponent)CreateComponent(index, typeof(Components.DirectionComponent));
-        component.Direction = newDirection;
+        component.direction = newDirection;
         component.Speed = newSpeed;
         ReplaceComponent(index, component);
     }

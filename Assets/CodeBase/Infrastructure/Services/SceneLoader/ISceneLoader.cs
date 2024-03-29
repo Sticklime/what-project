@@ -5,6 +5,6 @@ namespace CodeBase.Infrastructure.Services.SceneLoader
 {
     public interface ISceneLoader
     {
-        Task Load(string name, Action onLoaded = null);
+        Task Load(string name);
     }
 }

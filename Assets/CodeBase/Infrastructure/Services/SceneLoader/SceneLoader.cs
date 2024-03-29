@@ -8,13 +8,11 @@ namespace CodeBase.Infrastructure.Services.SceneLoader
 {
     public class SceneLoader : ISceneLoader
     {
-        public async Task Load(string levelName, Action onLoaded = null)
+        public async Task Load(string levelName)
         {
             AsyncOperationHandle<SceneInstance> waitNextScene = Addressables.LoadSceneAsync(levelName);
 
             await waitNextScene.Task;
-
-            onLoaded?.Invoke();
         }
     }
 }

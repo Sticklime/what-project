@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2731274129481833095}
   - component: {fileID: 1903961879960940538}
   m_Layer: 0
-  m_Name: InstallBindingSevices
+  m_Name: InstallBinding
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
