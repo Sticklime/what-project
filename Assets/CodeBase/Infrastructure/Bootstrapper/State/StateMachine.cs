@@ -6,11 +6,14 @@ namespace CodeBase.Infrastructure.Bootstrapper.State
 {
     public class StateMachine : IGameStateMachine
     {
-        private readonly Dictionary<Type, IExitableState> _states;
+        private readonly Dictionary<Type, IExitableState> _states = new Dictionary<Type, IExitableState>();
         private IExitableState _activeState;
 
-        public void RegisterState<TState>(IExitableState state) where TState : IExitableState =>
-            _states.Add(typeof(TState), state);
+        public void RegisterState<TState>(IExitableState state) where TState : IExitableState
+        {
+            if (!_states.ContainsKey(typeof(TState)))
+                _states.Add(typeof(TState), state);
+        }
 
         public void Enter<TState>() where TState : class, IState
         {
