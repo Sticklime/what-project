@@ -20,15 +20,19 @@ namespace CodeBase.Infrastructure.Bootstrapper.State
         {
             await _sceneLoader.Load("MapScene");
 
-            InitCamera();
+            InitScene();
         }
 
         public void Exit()
         {
-            
         }
 
-        private void InitCamera() => 
+        private void InitScene()
+        {
+            InitCamera();
+        }
+
+        private void InitCamera() =>
             _gameFactory.CreateEntityCamera(Camera.main);
     }
 }
