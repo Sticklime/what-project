@@ -20,10 +20,10 @@ namespace CodeBase.Infrastructure.Bootstrapper
         {
             DontDestroyOnLoad(gameObject);
 
-            _stateMachine.RegisterState<BootstrapState>(_stateFactory.CreateState<BootstrapState>());
+            _stateMachine.RegisterState<BootSystemState>(_stateFactory.CreateState<BootSystemState>());
             _stateMachine.RegisterState<LoadMapState>(_stateFactory.CreateState<LoadMapState>());
 
-            _stateMachine.Enter<BootstrapState>();
+            _stateMachine.Enter<BootSystemState>();
         }
     }
 }

@@ -5,16 +5,14 @@ namespace CodeBase.Systems
 {
     public class PlayerInputSystem : IExecuteSystem
     {
-        private readonly IGroup<GameEntity> _inputFilter;
+        private readonly IGroup<InputEntity> _inputFilter;
 
         private float _directionX;
         private float _directionZ;
 
-        public PlayerInputSystem()
+        public PlayerInputSystem(InputContext context)
         {
-            _inputFilter =
-                Contexts.sharedInstance.game.GetGroup(GameMatcher.AllOf(GameMatcher.ComponentsModel,
-                    GameMatcher.ComponentsDirection));
+            _inputFilter = context.GetGroup(InputMatcher.CameraInputComponents);
         }
 
         public void Execute()
@@ -23,7 +21,8 @@ namespace CodeBase.Systems
             {
                 SetDirection();
 
-                e.componentsDirection.direction = new Vector3(_directionX, 0, _directionZ);
+                e.cameraInputComponents.DirectionX = _directionX;
+                e.cameraInputComponents.DirectionZ = _directionZ;
             }
         }
 

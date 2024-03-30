@@ -1,7 +1,8 @@
-﻿using CodeBase.Infrastructure.Bootstrapper;
-using CodeBase.Infrastructure.Bootstrapper.Factory;
-using CodeBase.Infrastructure.Bootstrapper.State;
+﻿using CodeBase.Infrastructure.Bootstrapper.Factory;
 using CodeBase.Infrastructure.Services.SceneLoader;
+using CodeBase.Infrastructure.Bootstrapper.State;
+using CodeBase.Infrastructure.Bootstrapper;
+using CodeBase.Infrastructure;
 using Zenject;
 
 namespace CodeBase.Installer
@@ -14,7 +15,27 @@ namespace CodeBase.Installer
             BindSceneLoader();
             BindEntityFactory();
             BindStateFactory();
+            BindInputContext();
+            BindGameContext();
+            BindSystemEngine();
         }
+
+        private void BindGameContext() =>
+            Container
+                .Bind<GameContext>()
+                .FromInstance(Contexts.sharedInstance.game)
+                .AsSingle();
+
+        private void BindInputContext() =>
+            Container
+                .Bind<InputContext>()
+                .FromInstance(Contexts.sharedInstance.input)
+                .AsSingle();
+
+        private void BindSystemEngine() =>
+            Container
+                .Bind<SystemEngine>()
+                .AsSingle();
 
         private void BindGameStateMachine() =>
             Container

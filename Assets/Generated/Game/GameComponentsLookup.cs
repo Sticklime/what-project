@@ -8,14 +8,14 @@
 //------------------------------------------------------------------------------
 public static class GameComponentsLookup {
 
-    public const int ComponentsDirection = 0;
-    public const int ComponentsModel = 1;
+    public const int Direction = 0;
+    public const int Model = 1;
 
     public const int TotalComponents = 2;
 
     public static readonly string[] componentNames = {
-        "ComponentsDirection",
-        "ComponentsModel"
+        "Direction",
+        "Model"
     };
 
     public static readonly System.Type[] componentTypes = {
