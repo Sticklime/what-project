@@ -1,8 +1,8 @@
 ﻿using CodeBase.Infrastructure.Bootstrapper.Factory;
 using CodeBase.Infrastructure.Services.SceneLoader;
 using CodeBase.Infrastructure.Bootstrapper.State;
-using CodeBase.Infrastructure.Bootstrapper;
 using CodeBase.Infrastructure;
+using CodeBase.Infrastructure.Services.AssetManager;
 using Zenject;
 
 namespace CodeBase.Installer
@@ -12,6 +12,7 @@ namespace CodeBase.Installer
         public override void InstallBindings()
         {
             BindGameStateMachine();
+            BindAssetProvider();
             BindSceneLoader();
             BindEntityFactory();
             BindStateFactory();
@@ -19,6 +20,12 @@ namespace CodeBase.Installer
             BindGameContext();
             BindSystemEngine();
         }
+
+        private void BindAssetProvider() =>
+            Container
+                .Bind<IAssetProvider>()
+                .To<AssetProvider>()
+                .AsSingle();
 
         private void BindGameContext() =>
             Container

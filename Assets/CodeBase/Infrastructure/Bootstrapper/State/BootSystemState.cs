@@ -1,5 +1,5 @@
-﻿using CodeBase.Infrastructure.Services.SceneLoader;
-using CodeBase.Systems;
+﻿using CodeBase.EntitasSystems;
+using CodeBase.EntitySystems;
 
 namespace CodeBase.Infrastructure.Bootstrapper.State
 {

@@ -1,4 +1,4 @@
-﻿using CodeBase.Infrastructure.States;
+﻿using CodeBase.Infrastructure.Bootstrapper.State;
 using Zenject;
 
 namespace CodeBase.Infrastructure.Bootstrapper.Factory

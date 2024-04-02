@@ -1,6 +1,6 @@
-﻿using CodeBase.Infrastructure.States;
+﻿using CodeBase.Infrastructure.Bootstrapper.State;
 
-namespace CodeBase.Infrastructure.Bootstrapper
+namespace CodeBase.Infrastructure.Bootstrapper.Factory
 {
     public interface IStateFactory
     {

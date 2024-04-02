@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using CodeBase.Infrastructure.States;
 
 namespace CodeBase.Infrastructure.Bootstrapper.State
 {
