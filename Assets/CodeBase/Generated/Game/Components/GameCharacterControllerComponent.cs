@@ -11,14 +11,14 @@ public partial class GameEntity {
     public CodeBase.Components.CharacterControllerComponent characterController { get { return (CodeBase.Components.CharacterControllerComponent)GetComponent(GameComponentsLookup.CharacterController); } }
     public bool hasCharacterController { get { return HasComponent(GameComponentsLookup.CharacterController); } }
 
-    public void AddCharacterController(UnityEngine.CharacterController newCharacterController) {
+    public void AddCharacterController(UnityEngine.AI.NavMeshAgent newCharacterController) {
         var index = GameComponentsLookup.CharacterController;
         var component = (CodeBase.Components.CharacterControllerComponent)CreateComponent(index, typeof(CodeBase.Components.CharacterControllerComponent));
         component.CharacterController = newCharacterController;
         AddComponent(index, component);
     }
 
-    public void ReplaceCharacterController(UnityEngine.CharacterController newCharacterController) {
+    public void ReplaceCharacterController(UnityEngine.AI.NavMeshAgent newCharacterController) {
         var index = GameComponentsLookup.CharacterController;
         var component = (CodeBase.Components.CharacterControllerComponent)CreateComponent(index, typeof(CodeBase.Components.CharacterControllerComponent));
         component.CharacterController = newCharacterController;

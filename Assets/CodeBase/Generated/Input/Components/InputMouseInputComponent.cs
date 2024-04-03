@@ -8,25 +8,25 @@
 //------------------------------------------------------------------------------
 public partial class InputEntity {
 
-    static readonly CodeBase.Components.InputContext.MouseInputComponent mouseInputComponent = new CodeBase.Components.InputContext.MouseInputComponent();
+    public CodeBase.Components.InputContext.MouseInputComponent mouseInput { get { return (CodeBase.Components.InputContext.MouseInputComponent)GetComponent(InputComponentsLookup.MouseInput); } }
+    public bool hasMouseInput { get { return HasComponent(InputComponentsLookup.MouseInput); } }
 
-    public bool isMouseInput {
-        get { return HasComponent(InputComponentsLookup.MouseInput); }
-        set {
-            if (value != isMouseInput) {
-                var index = InputComponentsLookup.MouseInput;
-                if (value) {
-                    var componentPool = GetComponentPool(index);
-                    var component = componentPool.Count > 0
-                            ? componentPool.Pop()
-                            : mouseInputComponent;
+    public void AddMouseInput(UnityEngine.Vector3 new_targetPosition) {
+        var index = InputComponentsLookup.MouseInput;
+        var component = (CodeBase.Components.InputContext.MouseInputComponent)CreateComponent(index, typeof(CodeBase.Components.InputContext.MouseInputComponent));
+        component.TargetPosition = new_targetPosition;
+        AddComponent(index, component);
+    }
 
-                    AddComponent(index, component);
-                } else {
-                    RemoveComponent(index);
-                }
-            }
-        }
+    public void ReplaceMouseInput(UnityEngine.Vector3 new_targetPosition) {
+        var index = InputComponentsLookup.MouseInput;
+        var component = (CodeBase.Components.InputContext.MouseInputComponent)CreateComponent(index, typeof(CodeBase.Components.InputContext.MouseInputComponent));
+        component.TargetPosition = new_targetPosition;
+        ReplaceComponent(index, component);
+    }
+
+    public void RemoveMouseInput() {
+        RemoveComponent(InputComponentsLookup.MouseInput);
     }
 }
 

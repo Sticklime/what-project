@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CodeBase.Infrastructure.Services.AssetManager;
 using UnityEngine;
+using UnityEngine.AI;
 using Zenject;
 
 namespace CodeBase.Infrastructure.Bootstrapper.Factory
@@ -13,8 +14,8 @@ namespace CodeBase.Infrastructure.Bootstrapper.Factory
         private readonly IAssetProvider _assetProvider;
         private readonly Contexts _context;
 
-        private List<GameObject> _units;
-        private List<GameObject> _enemy;
+        private GameObject _units;
+        private GameObject _enemy;
 
         public GameFactory(DiContainer diContainer, IAssetProvider assetProvider)
         {
@@ -25,18 +26,20 @@ namespace CodeBase.Infrastructure.Bootstrapper.Factory
 
         public async Task Load()
         {
-            _units = await _assetProvider.LoadGroup("Units");
-            _enemy = await _assetProvider.LoadGroup("Enemy");
+            _units = await _assetProvider.LoadAsync<GameObject>("Warrior");
+            _enemy = await _assetProvider.LoadAsync<GameObject>("SpiderFugaBaby");
         }
 
         public GameEntity CreateUnit(Vector3 at)
         {
             GameEntity characterEntity = _context.game.CreateEntity();
-            GameObject characterInstance = _diContainer.InstantiatePrefab(_units.First());
+            InputEntity unitInputEntity = _context.input.CreateEntity();
+            GameObject characterInstance = _diContainer.InstantiatePrefab(_units);
 
-            var characterController = characterInstance.GetComponent<CharacterController>();
+            NavMeshAgent characterController = characterInstance.GetComponent<NavMeshAgent>();
 
             characterEntity.AddCharacterController(characterController);
+            unitInputEntity.AddMouseInput(new Vector3());
 
             return characterEntity;
         }
@@ -44,7 +47,7 @@ namespace CodeBase.Infrastructure.Bootstrapper.Factory
         public GameEntity CreateEnemy(Vector3 at)
         {
             GameEntity enemyEntity = _context.game.CreateEntity();
-            GameObject enemyInstance = _diContainer.InstantiatePrefab(_enemy.First());
+            GameObject enemyInstance = _diContainer.InstantiatePrefab(_enemy);
 
             return enemyEntity;
         }

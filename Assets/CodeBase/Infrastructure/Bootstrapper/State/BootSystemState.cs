@@ -21,7 +21,9 @@ namespace CodeBase.Infrastructure.Bootstrapper.State
         public void Enter()
         {
             _systemEngine.RegisterSystem(new PlayerInputSystem(_inputContext));
-            _systemEngine.RegisterSystem(new MovableSystem(_gameContext, _inputContext));
+            _systemEngine.RegisterSystem(new CameraMovableSystem(_gameContext, _inputContext));
+            _systemEngine.RegisterSystem(new MouseInputSystem( _inputContext));
+            _systemEngine.RegisterSystem(new ReachDestinationSystem(_gameContext, _inputContext));
 
             _systemEngine.Start();
 

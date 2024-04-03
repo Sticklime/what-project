@@ -32,6 +32,7 @@ namespace CodeBase.Infrastructure
                 throw new ArgumentNullException(nameof(system));
 
             _systems.Add(system);
+            
             _isAtLeastOneSystemRegistered = true;
         }
 

@@ -12,28 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
   m_Name: Enemy
   m_EditorClassIdentifier: 
-  m_GroupName: Spider
+  m_GroupName: Enemy
   m_Data:
     m_SerializedData: []
   m_GUID: 29072c9475cd0e1409f633a50bb66611
   m_SerializeEntries:
-  - m_GUID: 47798f58def42354f87e7546cc445ba7
-    m_Address: Spider_Fuga_Baby
+  - m_GUID: 3df568fdbce3bc64aa4d07f41fe763de
+    m_Address: SpiderFugaGray
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7a1e02b4e3e3cde4da6a58f6c596f9b7
-    m_Address: Spider_Fuga_Blue_Green
+  - m_GUID: e1cc375afd683b946bfa0cad2c2353d3
+    m_Address: SpiderFugaBlueGreen
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 6b12735268a70114186cb0ea66d06763
-    m_Address: Spider_Fuga_Gray
+  - m_GUID: b7579b58d3ca9e54d8f943fbe1a019f7
+    m_Address: SpiderFugaRed
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 91d4749f098c66442b36767a17342765
-    m_Address: Spider_Fuga_Red
+  - m_GUID: 8dc891a0af23e3a408c67db3094db25c
+    m_Address: SpiderFugaBaby
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

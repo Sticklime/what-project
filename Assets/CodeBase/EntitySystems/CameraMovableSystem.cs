@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace CodeBase.EntitySystems
 {
-    public class MovableSystem : IExecuteSystem
+    public class CameraMovableSystem : IExecuteSystem
     {
         private readonly IGroup<GameEntity> _gameFilter;
         private readonly IGroup<InputEntity> _inputFilter;
 
-        public MovableSystem(GameContext gameContext, InputContext inputContext)
+        public CameraMovableSystem(GameContext gameContext, InputContext inputContext)
         {
             _gameFilter = gameContext.GetGroup(GameMatcher.AllOf(GameMatcher.Model, GameMatcher.Direction));
             _inputFilter = inputContext.GetGroup(InputMatcher.CameraInputComponents);

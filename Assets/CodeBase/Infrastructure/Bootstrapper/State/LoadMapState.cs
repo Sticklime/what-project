@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using CodeBase.Infrastructure.Bootstrapper.Factory;
+﻿using CodeBase.Infrastructure.Bootstrapper.Factory;
 using CodeBase.Infrastructure.Services.SceneLoader;
 using UnityEngine;
 
@@ -37,7 +36,7 @@ namespace CodeBase.Infrastructure.Bootstrapper.State
 
         private void InitCharacters()
         {
-            _gameFactory.CreateUnit(Vector3.zero);
+            _gameFactory.CreateEnemy(Vector3.zero);
             _gameFactory.CreateUnit(Vector3.zero);
         }
 

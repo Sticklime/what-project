@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
   m_Name: Units
   m_EditorClassIdentifier: 
-  m_GroupName: Unit
+  m_GroupName: Units
   m_Data:
     m_SerializedData: []
   m_GUID: 507c05435121d5047a2441fc469c710e
