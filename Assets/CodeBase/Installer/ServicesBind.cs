@@ -2,6 +2,7 @@
 using CodeBase.Infrastructure.Services.SceneLoader;
 using CodeBase.Infrastructure.Bootstrapper.State;
 using CodeBase.Infrastructure;
+using CodeBase.Infrastructure.Factory;
 using CodeBase.Infrastructure.Services.AssetManager;
 using Zenject;
 

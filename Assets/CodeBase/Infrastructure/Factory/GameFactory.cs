@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using CodeBase.Infrastructure.Services.AssetManager;
+using CodeBase.Infrastructure.Bootstrapper.Factory;
 using System.Threading.Tasks;
-using CodeBase.Infrastructure.Services.AssetManager;
-using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine;
 using Zenject;
 
-namespace CodeBase.Infrastructure.Bootstrapper.Factory
+namespace CodeBase.Infrastructure.Factory
 {
     public class GameFactory : IGameFactory
     {
@@ -39,7 +38,8 @@ namespace CodeBase.Infrastructure.Bootstrapper.Factory
             NavMeshAgent characterController = characterInstance.GetComponent<NavMeshAgent>();
 
             characterEntity.AddCharacterController(characterController);
-            unitInputEntity.AddMouseInput(new Vector3());
+
+            unitInputEntity.AddMouseInput(Vector3.zero, Vector3.zero, Vector3.zero);
 
             return characterEntity;
         }
@@ -59,8 +59,10 @@ namespace CodeBase.Infrastructure.Bootstrapper.Factory
 
             var cameraTransform = camera.GetComponent<Transform>();
 
+            cameraEntity.AddCamera(cameraTransform.GetComponent<Camera>());
             cameraEntity.AddModel(cameraTransform);
             cameraEntity.AddDirection(new Vector3(), 5);
+
             cameraInputEntity.AddCameraInputComponents(0, 0);
         }
     }

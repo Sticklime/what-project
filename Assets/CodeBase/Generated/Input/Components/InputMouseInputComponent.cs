@@ -11,17 +11,21 @@ public partial class InputEntity {
     public CodeBase.Components.InputContext.MouseInputComponent mouseInput { get { return (CodeBase.Components.InputContext.MouseInputComponent)GetComponent(InputComponentsLookup.MouseInput); } }
     public bool hasMouseInput { get { return HasComponent(InputComponentsLookup.MouseInput); } }
 
-    public void AddMouseInput(UnityEngine.Vector3 new_targetPosition) {
+    public void AddMouseInput(UnityEngine.Vector3 newTargetPosition, UnityEngine.Vector3 newStartPositionSelection, UnityEngine.Vector3 newEndPositionSelection) {
         var index = InputComponentsLookup.MouseInput;
         var component = (CodeBase.Components.InputContext.MouseInputComponent)CreateComponent(index, typeof(CodeBase.Components.InputContext.MouseInputComponent));
-        component.TargetPosition = new_targetPosition;
+        component.TargetPosition = newTargetPosition;
+        component.StartPositionSelection = newStartPositionSelection;
+        component.EndPositionSelection = newEndPositionSelection;
         AddComponent(index, component);
     }
 
-    public void ReplaceMouseInput(UnityEngine.Vector3 new_targetPosition) {
+    public void ReplaceMouseInput(UnityEngine.Vector3 newTargetPosition, UnityEngine.Vector3 newStartPositionSelection, UnityEngine.Vector3 newEndPositionSelection) {
         var index = InputComponentsLookup.MouseInput;
         var component = (CodeBase.Components.InputContext.MouseInputComponent)CreateComponent(index, typeof(CodeBase.Components.InputContext.MouseInputComponent));
-        component.TargetPosition = new_targetPosition;
+        component.TargetPosition = newTargetPosition;
+        component.StartPositionSelection = newStartPositionSelection;
+        component.EndPositionSelection = newEndPositionSelection;
         ReplaceComponent(index, component);
     }
 

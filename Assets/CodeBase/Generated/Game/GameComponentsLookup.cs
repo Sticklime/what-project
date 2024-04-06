@@ -8,14 +8,18 @@
 //------------------------------------------------------------------------------
 public static class GameComponentsLookup {
 
-    public const int CharacterController = 0;
-    public const int Direction = 1;
-    public const int Model = 2;
-    public const int Select = 3;
+    public const int Camera = 0;
+    public const int CameraTag = 1;
+    public const int CharacterController = 2;
+    public const int Direction = 3;
+    public const int Model = 4;
+    public const int Select = 5;
 
-    public const int TotalComponents = 4;
+    public const int TotalComponents = 6;
 
     public static readonly string[] componentNames = {
+        "Camera",
+        "CameraTag",
         "CharacterController",
         "Direction",
         "Model",
@@ -23,6 +27,8 @@ public static class GameComponentsLookup {
     };
 
     public static readonly System.Type[] componentTypes = {
+        typeof(CodeBase.Components.CameraComponent),
+        typeof(CodeBase.Components.CameraTag),
         typeof(CodeBase.Components.CharacterControllerComponent),
         typeof(CodeBase.Components.DirectionComponent),
         typeof(CodeBase.Components.ModelComponent),

@@ -1,7 +1,7 @@
 ﻿using Entitas;
 using UnityEngine;
 
-namespace CodeBase.EntitasSystems
+namespace CodeBase.EntitySystems
 {
     public class PlayerInputSystem : IExecuteSystem
     {

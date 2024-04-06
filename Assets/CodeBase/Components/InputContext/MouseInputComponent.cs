@@ -7,5 +7,7 @@ namespace CodeBase.Components.InputContext
     public class MouseInputComponent : IComponent
     {
         public Vector3 TargetPosition;
+        public Vector3 StartPositionSelection;
+        public Vector3 EndPositionSelection;
     }
 }
