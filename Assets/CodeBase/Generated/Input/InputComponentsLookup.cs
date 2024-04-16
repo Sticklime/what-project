@@ -10,19 +10,19 @@ public static class InputComponentsLookup {
 
     public const int CameraTag = 0;
     public const int CameraInputComponents = 1;
-    public const int MouseInput = 2;
+    public const int RaycastInput = 2;
 
     public const int TotalComponents = 3;
 
     public static readonly string[] componentNames = {
         "CameraTag",
         "CameraInputComponents",
-        "MouseInput"
+        "RaycastInput"
     };
 
     public static readonly System.Type[] componentTypes = {
         typeof(CodeBase.Components.CameraTag),
         typeof(CodeBase.Components.InputContext.CameraInputComponents),
-        typeof(CodeBase.Components.InputContext.MouseInputComponent)
+        typeof(CodeBase.Components.InputContext.RaycastInputComponent)
     };
 }

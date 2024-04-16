@@ -1,5 +1,4 @@
 ﻿using Entitas;
-using UnityEngine;
 
 namespace CodeBase.EntitySystems
 {
@@ -10,18 +9,20 @@ namespace CodeBase.EntitySystems
 
         public ReachDestinationSystem(GameContext gameContext, InputContext inputContext)
         {
-            _gameFilter = gameContext.GetGroup(GameMatcher.AllOf(GameMatcher.CharacterController));
-            _inputFilter = inputContext.GetGroup(InputMatcher.MouseInput);
+            _gameFilter = gameContext.GetGroup(GameMatcher.AllOf(GameMatcher.CharacterController, GameMatcher.SelectReceiver));
+            _inputFilter = inputContext.GetGroup(InputMatcher.RaycastInput);
         }
 
         public void Execute()
         {
             foreach (GameEntity entity in _gameFilter)
             {
-                var agent = entity.characterController.CharacterController;
-                var targetPosition = _inputFilter.GetSingleEntity().mouseInput.TargetPosition;
+                var agent = entity.characterController;
+                var selectReceiver = entity.selectReceiver;
+                var targetPosition = _inputFilter.GetSingleEntity().raycastInput.TargetPosition;
 
-                agent.destination = targetPosition;
+                if (selectReceiver.IsSelect && agent.CanMove)
+                    agent.CharacterController.destination = targetPosition;
             }
         }
     }

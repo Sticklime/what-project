@@ -38,6 +38,10 @@ namespace CodeBase.Infrastructure.Bootstrapper.State
         {
             _gameFactory.CreateEnemy(Vector3.zero);
             _gameFactory.CreateUnit(Vector3.zero);
+            _gameFactory.CreateUnit(Vector3.zero);
+            _gameFactory.CreateUnit(Vector3.zero);
+            _gameFactory.CreateUnit(Vector3.zero);
+            _gameFactory.CreateUnit(Vector3.zero);
         }
 
         private void InitCamera() =>

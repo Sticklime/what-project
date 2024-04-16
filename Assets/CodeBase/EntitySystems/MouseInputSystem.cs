@@ -1,5 +1,4 @@
-﻿using CodeBase.Components.InputContext;
-using UnityEngine;
+﻿using UnityEngine;
 using Entitas;
 
 namespace CodeBase.EntitySystems
@@ -7,41 +6,46 @@ namespace CodeBase.EntitySystems
     public class MouseInputSystem : IExecuteSystem
     {
         private readonly IGroup<InputEntity> _inputFilter;
-        private readonly IGroup<GameEntity> _cameraFilter;
-
-        private RaycastHit _raycastHit;
-        private Ray _ray;
+        private readonly IGroup<GameEntity> _moveFilter;
 
         public MouseInputSystem(InputContext inputContext, GameContext gameContext)
         {
-            _inputFilter = inputContext.GetGroup(InputMatcher.MouseInput);
-            _cameraFilter = gameContext.GetGroup(GameMatcher.AllOf(GameMatcher.Camera, GameMatcher.Model));
+            _inputFilter = inputContext.GetGroup(InputMatcher.RaycastInput);
+            _moveFilter = gameContext.GetGroup(GameMatcher.CharacterController);
         }
 
         public void Execute()
         {
-            foreach (InputEntity entity in _inputFilter)
+            foreach (GameEntity entity in _moveFilter)
             {
-                MouseInputComponent mouseInput = entity.mouseInput;
-                var cameraEntity = _cameraFilter.GetSingleEntity();
-                var camera = cameraEntity.camera.Camera;
+                var raycastInput = _inputFilter.GetSingleEntity().raycastInput;
+                var characterController = entity.characterController;
 
-                _ray = camera.ScreenPointToRay(Input.mousePosition);
-
-                if (Input.GetMouseButtonUp(1) && IsHitRaycast())
-                    mouseInput.TargetPosition = _raycastHit.point;
+                if (Input.GetMouseButtonDown(1))
+                {
+                    characterController.CanMove = true;
+                }
+                else if (Input.GetMouseButtonUp(1))
+                {
+                    characterController.CanMove = false;
+                }
                 else if (Input.GetMouseButton(0))
                 {
-                    
+                    if (raycastInput.IsSelection == false)
+                    {
+                        raycastInput.StartPositionSelection = raycastInput.TargetPosition;
+                        raycastInput.EndPositionSelection = raycastInput.TargetPosition;
+                    }
+
+                    raycastInput.IsSelection = true;
+
+                    raycastInput.EndPositionSelection = raycastInput.TargetPosition;
                 }
                 else if (Input.GetMouseButtonUp(0))
                 {
-                    
+                    raycastInput.IsSelection = false;
                 }
             }
         }
-
-        private bool IsHitRaycast() =>
-            Physics.Raycast(_ray, out _raycastHit);
     }
 }

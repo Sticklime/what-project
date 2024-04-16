@@ -24,6 +24,8 @@ namespace CodeBase.Infrastructure.Bootstrapper.State
             _systemEngine.RegisterSystem(new CameraMovableSystem(_gameContext, _inputContext));
             _systemEngine.RegisterSystem(new MouseInputSystem(_inputContext, _gameContext));
             _systemEngine.RegisterSystem(new ReachDestinationSystem(_gameContext, _inputContext));
+            _systemEngine.RegisterSystem(new RaycastInputSystem(_inputContext, _gameContext));
+            _systemEngine.RegisterSystem(new SelectedSystem(_inputContext, _gameContext));
 
             _systemEngine.Start();
 

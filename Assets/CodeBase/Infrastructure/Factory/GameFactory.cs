@@ -1,6 +1,7 @@
 ﻿using CodeBase.Infrastructure.Services.AssetManager;
 using CodeBase.Infrastructure.Bootstrapper.Factory;
 using System.Threading.Tasks;
+using CodeBase.Components.InputContext;
 using UnityEngine.AI;
 using UnityEngine;
 using Zenject;
@@ -36,10 +37,10 @@ namespace CodeBase.Infrastructure.Factory
             GameObject characterInstance = _diContainer.InstantiatePrefab(_units);
 
             NavMeshAgent characterController = characterInstance.GetComponent<NavMeshAgent>();
+            BoxCollider selectReceiver = characterInstance.GetComponentInChildren<BoxCollider>();
 
             characterEntity.AddCharacterController(characterController);
-
-            unitInputEntity.AddMouseInput(Vector3.zero, Vector3.zero, Vector3.zero);
+            characterEntity.AddSelectReceiver(selectReceiver, false);
 
             return characterEntity;
         }
@@ -63,6 +64,7 @@ namespace CodeBase.Infrastructure.Factory
             cameraEntity.AddModel(cameraTransform);
             cameraEntity.AddDirection(new Vector3(), 5);
 
+            cameraInputEntity.AddRaycastInput(Vector3.zero, Vector3.zero, Vector3.zero, false);
             cameraInputEntity.AddCameraInputComponents(0, 0);
         }
     }

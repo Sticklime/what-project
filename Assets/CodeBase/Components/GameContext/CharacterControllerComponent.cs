@@ -8,5 +8,6 @@ namespace CodeBase.Components
     public class CharacterControllerComponent : IComponent
     {
         public NavMeshAgent CharacterController;
+        public bool CanMove;
     }
 }
