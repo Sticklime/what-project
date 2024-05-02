@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: UIToolkit
+  m_EditorClassIdentifier: 
+  m_GroupName: UIToolkit
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 59f08064c8580764ebae39974f1ed823
+  m_SerializeEntries:
+  - m_GUID: ba468f4fe19448e4f8551d6de8f64327
+    m_Address: BuildButton
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 15d049bd9269f7d47a311a205cd2ea56
+    m_Address: UIDocument
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7bdc00f0413fd034eb1c2771ebdf2e1f
+    m_Address: Hud
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 72d08425d7f4a3e479096cdeed8396f5, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: c286d8bbe12818a4aadb1f4608a47384, type: 2}
+    - {fileID: 11400000, guid: 651d0ac2fd621e446acf47b21565986d, type: 2}

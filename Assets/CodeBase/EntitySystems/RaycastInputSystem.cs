@@ -26,7 +26,7 @@ namespace CodeBase.EntitySystems
                 var cameraEntity = _cameraFilter.GetSingleEntity();
                 var camera = cameraEntity.camera.Camera;
 
-                _ray = camera.ScreenPointToRay(Input.mousePosition);
+                _ray = camera.ScreenPointToRay(inputEntity.raycastInput.MousePosition);
 
                 if (IsHitRaycast())
                 {
@@ -39,7 +39,7 @@ namespace CodeBase.EntitySystems
         private void DrawGizmo()
         {
             Debug.DrawLine(_ray.origin, _raycastHit.point, Color.yellow);
-            Gizmos.Sphere(_raycastHit.point, 0.1f, Color.red,true);
+            Gizmos.Sphere(_raycastHit.point, 0.1f, Color.red, true);
         }
 
         private bool IsHitRaycast() =>

@@ -4,6 +4,8 @@ using CodeBase.Infrastructure.Bootstrapper.State;
 using CodeBase.Infrastructure;
 using CodeBase.Infrastructure.Factory;
 using CodeBase.Infrastructure.Services.AssetManager;
+using CodeBase.Infrastructure.Services.AssetProvider;
+using CodeBase.Infrastructure.Services.InputSystem;
 using Zenject;
 
 namespace CodeBase.Installer
@@ -12,15 +14,29 @@ namespace CodeBase.Installer
     {
         public override void InstallBindings()
         {
+            BindInputSystem();
             BindGameStateMachine();
             BindAssetProvider();
             BindSceneLoader();
-            BindEntityFactory();
+            BindGameFactory();
+            BindUIFactory();
             BindStateFactory();
             BindInputContext();
             BindGameContext();
             BindSystemEngine();
         }
+
+        private void BindUIFactory() =>
+            Container
+                .Bind<IUIFactory>()
+                .To<UIFactory>()
+                .AsSingle();
+
+        private void BindInputSystem() =>
+            Container
+                .Bind<IInputSystem>()
+                .To<InputSystem>()
+                .AsSingle();
 
         private void BindAssetProvider() =>
             Container
@@ -63,7 +79,7 @@ namespace CodeBase.Installer
                 .To<SceneLoader>()
                 .AsSingle();
 
-        private void BindEntityFactory() =>
+        private void BindGameFactory() =>
             Container
                 .Bind<IGameFactory>()
                 .To<GameFactory>()

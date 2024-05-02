@@ -10,7 +10,7 @@ namespace CodeBase.Infrastructure
 
         private bool _isAtLeastOneSystemRegistered;
 
-        public void Start()
+        public void StartSystem()
         {
             if (!_isAtLeastOneSystemRegistered)
                 throw new InvalidOperationException("No system register");

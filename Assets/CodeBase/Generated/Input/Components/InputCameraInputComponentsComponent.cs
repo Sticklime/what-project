@@ -11,19 +11,17 @@ public partial class InputEntity {
     public CodeBase.Components.InputContext.CameraInputComponents cameraInputComponents { get { return (CodeBase.Components.InputContext.CameraInputComponents)GetComponent(InputComponentsLookup.CameraInputComponents); } }
     public bool hasCameraInputComponents { get { return HasComponent(InputComponentsLookup.CameraInputComponents); } }
 
-    public void AddCameraInputComponents(float newDirectionX, float newDirectionZ) {
+    public void AddCameraInputComponents(UnityEngine.Vector3 newMoveDirection) {
         var index = InputComponentsLookup.CameraInputComponents;
         var component = (CodeBase.Components.InputContext.CameraInputComponents)CreateComponent(index, typeof(CodeBase.Components.InputContext.CameraInputComponents));
-        component.DirectionX = newDirectionX;
-        component.DirectionZ = newDirectionZ;
+        component.MoveDirection = newMoveDirection;
         AddComponent(index, component);
     }
 
-    public void ReplaceCameraInputComponents(float newDirectionX, float newDirectionZ) {
+    public void ReplaceCameraInputComponents(UnityEngine.Vector3 newMoveDirection) {
         var index = InputComponentsLookup.CameraInputComponents;
         var component = (CodeBase.Components.InputContext.CameraInputComponents)CreateComponent(index, typeof(CodeBase.Components.InputContext.CameraInputComponents));
-        component.DirectionX = newDirectionX;
-        component.DirectionZ = newDirectionZ;
+        component.MoveDirection = newMoveDirection;
         ReplaceComponent(index, component);
     }
 

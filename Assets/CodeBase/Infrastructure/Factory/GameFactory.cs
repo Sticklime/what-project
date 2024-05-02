@@ -1,7 +1,5 @@
 ﻿using CodeBase.Infrastructure.Services.AssetManager;
-using CodeBase.Infrastructure.Bootstrapper.Factory;
 using System.Threading.Tasks;
-using CodeBase.Components.InputContext;
 using UnityEngine.AI;
 using UnityEngine;
 using Zenject;
@@ -30,7 +28,7 @@ namespace CodeBase.Infrastructure.Factory
             _enemy = await _assetProvider.LoadAsync<GameObject>("SpiderFugaBaby");
         }
 
-        public GameEntity CreateUnit(Vector3 at)
+        public void CreateUnit(Vector3 at)
         {
             GameEntity characterEntity = _context.game.CreateEntity();
             InputEntity unitInputEntity = _context.input.CreateEntity();
@@ -39,18 +37,14 @@ namespace CodeBase.Infrastructure.Factory
             NavMeshAgent characterController = characterInstance.GetComponent<NavMeshAgent>();
             BoxCollider selectReceiver = characterInstance.GetComponentInChildren<BoxCollider>();
 
-            characterEntity.AddCharacterController(characterController);
+            characterEntity.AddCharacterController(characterController, false);
             characterEntity.AddSelectReceiver(selectReceiver, false);
-
-            return characterEntity;
         }
 
-        public GameEntity CreateEnemy(Vector3 at)
+        public void CreateEnemy(Vector3 at)
         {
             GameEntity enemyEntity = _context.game.CreateEntity();
             GameObject enemyInstance = _diContainer.InstantiatePrefab(_enemy);
-
-            return enemyEntity;
         }
 
         public void CreateEntityCamera(Camera camera)
@@ -62,10 +56,10 @@ namespace CodeBase.Infrastructure.Factory
 
             cameraEntity.AddCamera(cameraTransform.GetComponent<Camera>());
             cameraEntity.AddModel(cameraTransform);
-            cameraEntity.AddDirection(new Vector3(), 5);
+            cameraEntity.AddDirection(Vector3.zero, 5);
 
-            cameraInputEntity.AddRaycastInput(Vector3.zero, Vector3.zero, Vector3.zero, false);
-            cameraInputEntity.AddCameraInputComponents(0, 0);
+            cameraInputEntity.AddRaycastInput(Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, false);
+            cameraInputEntity.AddCameraInputComponents(Vector3.zero);
         }
     }
 }
