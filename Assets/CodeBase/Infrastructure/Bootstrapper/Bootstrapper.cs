@@ -1,5 +1,6 @@
 ﻿using CodeBase.Infrastructure.Bootstrapper.Factory;
 using CodeBase.Infrastructure.Bootstrapper.State;
+using CodeBase.Infrastructure.State;
 using UnityEngine;
 using Zenject;
 
@@ -19,13 +20,17 @@ namespace CodeBase.Infrastructure.Bootstrapper
 
         private void Awake()
         {
-            DontDestroyOnLoad(this);
+            DontDestroyOnLoad(gameObject);
 
+            RegisterState();
+            _stateMachine.Enter<BootstrapState>();
+        }
+
+        private void RegisterState()
+        {
             _stateMachine.RegisterState<BootstrapState>(_stateFactory.CreateState<BootstrapState>());
             _stateMachine.RegisterState<BootSystemState>(_stateFactory.CreateState<BootSystemState>());
             _stateMachine.RegisterState<LoadMapState>(_stateFactory.CreateState<LoadMapState>());
-
-            _stateMachine.Enter<BootstrapState>();
         }
     }
 }

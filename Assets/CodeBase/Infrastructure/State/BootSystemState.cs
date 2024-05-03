@@ -1,5 +1,5 @@
 ﻿using CodeBase.EntitySystems;
-using CodeBase.Infrastructure.Services.InputSystem;
+using CodeBase.Infrastructure.State;
 
 namespace CodeBase.Infrastructure.Bootstrapper.State
 {
@@ -11,8 +11,7 @@ namespace CodeBase.Infrastructure.Bootstrapper.State
         private readonly InputContext _inputContext;
         private readonly IInputSystem _inputSystem;
 
-        public BootSystemState(IGameStateMachine stateMachine, SystemEngine systemEngine, GameContext gameContext,
-            InputContext inputContext, IInputSystem inputSystem)
+        public BootSystemState(IGameStateMachine stateMachine, SystemEngine systemEngine, GameContext gameContext, InputContext inputContext, IInputSystem inputSystem)
         {
             _stateMachine = stateMachine;
             _systemEngine = systemEngine;
@@ -23,7 +22,7 @@ namespace CodeBase.Infrastructure.Bootstrapper.State
 
         public void Enter()
         {
-            _systemEngine.RegisterSystem(new CameraInputSystem(_inputContext,_gameContext ,_inputSystem));
+            _systemEngine.RegisterSystem(new CameraInputSystem(_inputContext, _gameContext, _inputSystem));
             _systemEngine.RegisterSystem(new CameraMovableSystem(_gameContext, _inputContext));
             _systemEngine.RegisterSystem(new MoveAgentSystem(_gameContext, _inputContext));
             _systemEngine.RegisterSystem(new RaycastInputSystem(_inputContext, _gameContext));

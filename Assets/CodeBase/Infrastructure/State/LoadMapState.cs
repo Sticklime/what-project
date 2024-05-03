@@ -1,30 +1,33 @@
-﻿using CodeBase.Infrastructure.Bootstrapper.Factory;
+﻿using System.Collections.Generic;
+using CodeBase.Infrastructure.Bootstrapper.State;
 using CodeBase.Infrastructure.Factory;
+using CodeBase.Infrastructure.Services.PresenterLocator;
 using CodeBase.Infrastructure.Services.SceneLoader;
+using CodeBase.Presenters;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace CodeBase.Infrastructure.Bootstrapper.State
+namespace CodeBase.Infrastructure.State
 {
     public class LoadMapState : IState
     {
         private readonly IGameStateMachine _stateMachine;
+        private readonly IPresenterLocator _presenterLocator;
         private readonly ISceneLoader _sceneLoader;
         private readonly IGameFactory _gameFactory;
         private readonly IUIFactory _uiFactory;
-        private readonly Contexts _context;
 
-        private VisualElement _buildButton;
         private VisualElement _rootHud;
+        private VisualElement _buttonBuild;
 
         public LoadMapState(IGameStateMachine stateMachine, ISceneLoader sceneLoader, IGameFactory gameFactory,
-            IUIFactory uiFactory)
+            IUIFactory uiFactory, IPresenterLocator presenterLocator)
         {
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
             _gameFactory = gameFactory;
             _uiFactory = uiFactory;
-            _context = Contexts.sharedInstance;
+            _presenterLocator = presenterLocator;
         }
 
         public async void Enter()
@@ -43,14 +46,20 @@ namespace CodeBase.Infrastructure.Bootstrapper.State
             InitCamera();
             InitCharacters();
             InitUI();
+            RegisterPresenter();
         }
 
         private void InitUI()
         {
             _rootHud = _uiFactory.CreateRootHud();
-            _buildButton = _uiFactory.CreateBuildButton();
+            _buttonBuild = _uiFactory.CreateBuildButton();
 
-            _rootHud.Add(_buildButton);
+            _rootHud.Add(_buttonBuild);
+        }
+
+        private void RegisterPresenter()
+        {
+            _presenterLocator.RegisterPresenter(new ButtonBuildPresenter(_buttonBuild));
         }
 
         private void InitCharacters()

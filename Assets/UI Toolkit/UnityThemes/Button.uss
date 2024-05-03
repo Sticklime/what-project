@@ -24,5 +24,8 @@
     border-bottom-color: rgb(255, 0, 0);
 }
 
+.build_button:focus {
+}
+
 .groupBox {
 }

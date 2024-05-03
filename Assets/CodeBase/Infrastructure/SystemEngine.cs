@@ -16,7 +16,6 @@ namespace CodeBase.Infrastructure
                 throw new InvalidOperationException("No system register");
 
             _systems.Initialize();
-
             Observable.EveryUpdate().Subscribe(x => UpdateSystem());
         }
 

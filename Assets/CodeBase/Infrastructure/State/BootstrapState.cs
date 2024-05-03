@@ -1,6 +1,7 @@
 ﻿using CodeBase.Infrastructure.Factory;
 using CodeBase.Infrastructure.Services.AssetManager;
 using CodeBase.Infrastructure.Services.InputSystem;
+using CodeBase.Infrastructure.State;
 
 namespace CodeBase.Infrastructure.Bootstrapper.State
 {

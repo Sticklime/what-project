@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using CodeBase.Infrastructure.Bootstrapper.State;
 
-namespace CodeBase.Infrastructure.Bootstrapper.State
+namespace CodeBase.Infrastructure.State
 {
     public class StateMachine : IGameStateMachine
     {
