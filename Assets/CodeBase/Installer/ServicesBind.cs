@@ -1,11 +1,9 @@
-﻿using CodeBase.Infrastructure.Bootstrapper.Factory;
+﻿using CodeBase.Data;
 using CodeBase.Infrastructure.Services.SceneLoader;
 using CodeBase.Infrastructure;
 using CodeBase.Infrastructure.Factory;
-using CodeBase.Infrastructure.Services.AssetManager;
 using CodeBase.Infrastructure.Services.AssetProvider;
 using CodeBase.Infrastructure.Services.InputSystem;
-using CodeBase.Infrastructure.Services.PresenterLocator;
 using CodeBase.Infrastructure.State;
 using Zenject;
 
@@ -22,19 +20,17 @@ namespace CodeBase.Installer
             BindStateFactory();
             BindGameFactory();
             BindUIFactory();
-            BindIPresenter();
             BindInputContext();
             BindGameContext();
             BindSystemEngine();
+            BindPersistentProgress();
         }
 
-        private void BindIPresenter()
-        {
+        private void BindPersistentProgress() =>
             Container
-                .Bind<IPresenterLocator>()
-                .To<PresenterLocator>()
+                .Bind<IPersistentProgress>()
+                .To<PersistentProgress>()
                 .AsSingle();
-        }
 
         private void BindUIFactory() =>
             Container

@@ -1,9 +1,9 @@
 ﻿using CodeBase.Infrastructure.Factory;
-using CodeBase.Infrastructure.Services.AssetManager;
+using CodeBase.Infrastructure.Services.AssetProvider;
 using CodeBase.Infrastructure.Services.InputSystem;
-using CodeBase.Infrastructure.State;
+using Cysharp.Threading.Tasks;
 
-namespace CodeBase.Infrastructure.Bootstrapper.State
+namespace CodeBase.Infrastructure.State
 {
     public class BootstrapState : IState
     {
@@ -25,8 +25,7 @@ namespace CodeBase.Infrastructure.Bootstrapper.State
 
         public async void Enter()
         {
-            _assetProvider.LoadAssets();
-            
+            await _assetProvider.InitializeAsset();
             await _gameFactory.Load();
             await _uiFactory.Load();
 
@@ -38,6 +37,7 @@ namespace CodeBase.Infrastructure.Bootstrapper.State
 
         public void Exit()
         {
+            
         }
     }
 }

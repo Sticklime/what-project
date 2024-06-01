@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
-using CodeBase.Infrastructure.Services.AssetManager;
+using CodeBase.Infrastructure.Services.AssetProvider;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Zenject;
@@ -13,6 +14,8 @@ namespace CodeBase.Infrastructure.Factory
 
         private GameObject _uiDocument;
         private VisualTreeAsset _buildButton;
+        private VisualTreeAsset _resourceContainer;
+        private VisualTreeAsset _resourceLabel;
 
         public UIFactory(DiContainer container, IAssetProvider assetProvider)
         {
@@ -20,13 +23,15 @@ namespace CodeBase.Infrastructure.Factory
             _assetProvider = assetProvider;
         }
 
-        public async Task Load()
+        public async UniTask Load()
         {
             _uiDocument = await _assetProvider.LoadAsync<GameObject>("UIDocument");
             _buildButton = await _assetProvider.LoadAsync<VisualTreeAsset>("BuildButton");
+            _resourceContainer = await _assetProvider.LoadAsync<VisualTreeAsset>("GroupBoxResources");
+            _resourceLabel = await _assetProvider.LoadAsync<VisualTreeAsset>("ResourceLabel");
         }
 
-        public VisualElement CreateRootHud()
+        public VisualElement CreateHud()
         {
             VisualElement rootVisualElement = CreateUiDocument();
             rootVisualElement.Q<VisualElement>("Hud-Container");
@@ -34,21 +39,30 @@ namespace CodeBase.Infrastructure.Factory
             return rootVisualElement;
         }
 
-        public VisualElement CreateBuildButton() => 
+        public VisualElement CreateResourceContainer() =>
+            _resourceContainer.CloneTree();
+
+        public VisualElement CreateResourceLabel() =>
+            _resourceLabel.CloneTree();
+
+        public VisualElement CreateBuildButton() =>
             _buildButton.CloneTree();
 
         private VisualElement CreateUiDocument()
         {
             GameObject uiDocumentInstance = Object.Instantiate(_uiDocument);
             var rootVisualElement = uiDocumentInstance.GetComponent<UIDocument>().rootVisualElement;
+
             return rootVisualElement;
         }
     }
 
     public interface IUIFactory
     {
-        Task Load();
+        UniTask Load();
+        VisualElement CreateResourceContainer();
+        VisualElement CreateResourceLabel();
         VisualElement CreateBuildButton();
-        VisualElement CreateRootHud();
+        VisualElement CreateHud();
     }
 }

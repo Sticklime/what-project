@@ -1,7 +1,7 @@
-﻿using CodeBase.Infrastructure.Bootstrapper.State;
+﻿using CodeBase.Infrastructure.State;
 using Zenject;
 
-namespace CodeBase.Infrastructure.Bootstrapper.Factory
+namespace CodeBase.Infrastructure.Factory
 {
     public class StateFactory : IStateFactory
     {

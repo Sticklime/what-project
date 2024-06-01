@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/UnityThemes/ResourcesLable.uss?fileID=7433441132597879392&amp;guid=fe2919827f3719a44850cd3729a5a148&amp;type=3#ResourcesLable" />
+    <ui:VisualElement name="ResourceLabel" class="Lable_Size" style="flex-direction: row-reverse;">
+        <ui:VisualElement name="ImageResource" style="flex-grow: 1; height: 70px; align-self: flex-start; justify-content: flex-start; flex-direction: row; max-width: 70px; max-height: 70px;" />
+        <ui:Label text="Label" name="Value" style="flex-direction: row-reverse; width: 354px; height: 70px; -unity-text-align: middle-right; font-size: 39px;" />
+    </ui:VisualElement>
+</ui:UXML>

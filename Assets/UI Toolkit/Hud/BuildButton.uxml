@@ -2,7 +2,7 @@
     <Style src="project://database/Assets/UI%20Toolkit/UnityThemes/Button.uss?fileID=7433441132597879392&amp;guid=7716e9933fd0671448b4c61946376695&amp;type=3#Button" />
     <ui:GroupBox name="GroupBox" style="justify-content: flex-start; align-self: flex-start; flex-direction: row; left: 1667px; top: 834px;">
         <ui:GroupBox style="max-width: 130px; flex-direction: column;">
-            <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button" focusable="false" class="build_button" />
+            <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Barracks" focusable="false" class="build_button" />
             <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button" focusable="false" class="build_button" />
         </ui:GroupBox>
         <ui:GroupBox name="GroupBox" focusable="false" picking-mode="Ignore" style="max-width: 130px;">
@@ -10,5 +10,6 @@
             <ui:Button text="Button" parse-escape-sequences="false" display-tooltip-when-elided="true" name="Button" focusable="false" class="build_button" />
         </ui:GroupBox>
     </ui:GroupBox>
-    <ui:SliderInt label="SliderInt" high-value="100" />
+    <ui:TabView />
+    <ui:GroupBox />
 </ui:UXML>

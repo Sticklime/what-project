@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using CodeBase.Infrastructure.Bootstrapper.State;
 
 namespace CodeBase.Infrastructure.State
 {
@@ -9,7 +8,7 @@ namespace CodeBase.Infrastructure.State
         private readonly Dictionary<Type, IExitableState> _states = new Dictionary<Type, IExitableState>();
         private IExitableState _activeState;
 
-        public void RegisterState<TState>(IExitableState state) where TState : IExitableState => 
+        public void RegisterState<TState>(IExitableState state) where TState : IExitableState =>
             _states.Add(typeof(TState), state);
 
         public void Enter<TState>() where TState : class, IState

@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 
-public interface IInputSystem
+namespace CodeBase.Infrastructure.Services.InputSystem
 {
-    public Vector3 DirectionAxis { get; }
-    public Vector2 MousePosition { get; }
-    public bool IsSelection { get; }
-    public bool IsSetTarget { get; }
-}
+    public interface IInputSystem
+    {
+        public Vector3 DirectionAxis { get; }
+        public Vector2 MousePosition { get; }
+        public bool LeftMouseButton { get; }
+        public bool RightMouseButton { get; }
+    }
 
-public interface IInitializationInput : IInputSystem
-{
-    public void EnableSystem();
+    public interface IInitializationInput : IInputSystem
+    {
+        public void EnableSystem();
+    }
 }

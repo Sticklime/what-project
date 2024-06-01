@@ -6,14 +6,17 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
+
+using CodeBase.Components.Unit;
+
 public partial class GameEntity {
 
-    public CodeBase.Components.CharacterControllerComponent characterController { get { return (CodeBase.Components.CharacterControllerComponent)GetComponent(GameComponentsLookup.CharacterController); } }
+    public CharacterControllerComponent characterController { get { return (CharacterControllerComponent)GetComponent(GameComponentsLookup.CharacterController); } }
     public bool hasCharacterController { get { return HasComponent(GameComponentsLookup.CharacterController); } }
 
     public void AddCharacterController(UnityEngine.AI.NavMeshAgent newCharacterController, bool newCanMove) {
         var index = GameComponentsLookup.CharacterController;
-        var component = (CodeBase.Components.CharacterControllerComponent)CreateComponent(index, typeof(CodeBase.Components.CharacterControllerComponent));
+        var component = (CharacterControllerComponent)CreateComponent(index, typeof(CharacterControllerComponent));
         component.CharacterController = newCharacterController;
         component.CanMove = newCanMove;
         AddComponent(index, component);
@@ -21,7 +24,7 @@ public partial class GameEntity {
 
     public void ReplaceCharacterController(UnityEngine.AI.NavMeshAgent newCharacterController, bool newCanMove) {
         var index = GameComponentsLookup.CharacterController;
-        var component = (CodeBase.Components.CharacterControllerComponent)CreateComponent(index, typeof(CodeBase.Components.CharacterControllerComponent));
+        var component = (CharacterControllerComponent)CreateComponent(index, typeof(CharacterControllerComponent));
         component.CharacterController = newCharacterController;
         component.CanMove = newCanMove;
         ReplaceComponent(index, component);

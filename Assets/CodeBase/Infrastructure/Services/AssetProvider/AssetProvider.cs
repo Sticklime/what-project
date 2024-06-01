@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CodeBase.Infrastructure.Services.AssetManager;
+using Cysharp.Threading.Tasks;
 using UnityEngine.AddressableAssets;
+using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace CodeBase.Infrastructure.Services.AssetProvider
@@ -12,30 +13,32 @@ namespace CodeBase.Infrastructure.Services.AssetProvider
         private readonly Dictionary<string, AsyncOperationHandle> _cache = new();
         private readonly Dictionary<string, List<AsyncOperationHandle>> _usedResources = new();
 
-        public void LoadAssets()
+        public async UniTask InitializeAsset()
         {
-            Addressables.InitializeAsync();
+            AsyncOperationHandle<IResourceLocator> asyncOperation = Addressables.InitializeAsync();
+            
+            await asyncOperation.Task;
         }
-        
-        public async Task<T> LoadAsync<T>(string address) where T : class
+
+        public async UniTask<T> LoadAsync<T>(string address) where T : class
         {
             if (_cache.TryGetValue(address, out var completedHandle))
-                return (T) completedHandle.Result;
-            
-            var handle = Addressables.LoadAssetAsync<T>(address);
+                return (T)completedHandle.Result;
+
+            AsyncOperationHandle<T> handle = Addressables.LoadAssetAsync<T>(address);
             RegisterCacheAndCleanup(address, handle);
-            
+
             return await handle.Task;
         }
-        
-        public async Task<T> LoadAsync<T>(AssetReference assetReference) where T : class
+
+        public async UniTask<T> LoadAsync<T>(AssetReference assetReference) where T : class
         {
             if (_cache.TryGetValue(assetReference.AssetGUID, out var completedHandle))
-                return (T) completedHandle.Result;
-            
-            var handle = Addressables.LoadAssetAsync<T>(assetReference);
+                return (T)completedHandle.Result;
+
+            AsyncOperationHandle<T> handle = Addressables.LoadAssetAsync<T>(assetReference);
             RegisterCacheAndCleanup(assetReference.AssetGUID, handle);
-            
+
             return await handle.Task;
         }
 
@@ -43,7 +46,7 @@ namespace CodeBase.Infrastructure.Services.AssetProvider
         {
             foreach (var handle in _usedResources.Values.SelectMany(resourceHandles => resourceHandles))
                 Addressables.Release(handle);
-            
+
             _cache.Clear();
             _usedResources.Clear();
         }
@@ -51,7 +54,7 @@ namespace CodeBase.Infrastructure.Services.AssetProvider
         private void RegisterCacheAndCleanup<T>(string key, AsyncOperationHandle<T> handle)
         {
             handle.Completed += completeHandle => _cache[key] = completeHandle;
-            
+
             RegisterForCleanup(key, handle);
         }
 
@@ -62,7 +65,7 @@ namespace CodeBase.Infrastructure.Services.AssetProvider
                 resourceHandles = new List<AsyncOperationHandle>();
                 _usedResources[guid] = resourceHandles;
             }
-            
+
             resourceHandles.Add(handle);
         }
     }

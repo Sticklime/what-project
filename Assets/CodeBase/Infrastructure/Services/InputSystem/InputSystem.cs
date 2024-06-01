@@ -8,13 +8,10 @@ namespace CodeBase.Infrastructure.Services.InputSystem
 
         public Vector3 DirectionAxis => _playerInput.Camera.Move.ReadValue<Vector3>();
         public Vector2 MousePosition => _playerInput.Camera.MousePosition.ReadValue<Vector2>();
-        public bool IsSelection => _playerInput.Camera.Selection.ReadValue<float>() != 0;
-        public bool IsSetTarget => _playerInput.Camera.SetTargetPosition.ReadValue<float>() != 0;
-        
-        public void EnableSystem() => 
-            _playerInput.Enable();
+        public bool LeftMouseButton => _playerInput.Camera.Selection.ReadValue<float>() != 0;
+        public bool RightMouseButton => _playerInput.Camera.SetTargetPosition.ReadValue<float>() != 0;
 
-        ~InputSystem() => 
-            _playerInput.Disable();
+        public void EnableSystem() =>
+            _playerInput.Enable();
     }
 }

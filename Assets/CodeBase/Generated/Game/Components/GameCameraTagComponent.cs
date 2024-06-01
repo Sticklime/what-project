@@ -6,9 +6,12 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
+
+using CodeBase.Components.Camera;
+
 public partial class GameEntity {
 
-    static readonly CodeBase.Components.CameraTag cameraTagComponent = new CodeBase.Components.CameraTag();
+    static readonly CameraTag cameraTagComponent = new CameraTag();
 
     public bool isCameraTag {
         get { return HasComponent(GameComponentsLookup.CameraTag); }

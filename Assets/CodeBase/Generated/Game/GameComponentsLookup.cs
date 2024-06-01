@@ -6,35 +6,46 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
+
+using CodeBase.Components.Building;
+using CodeBase.Components.Camera;
+using CodeBase.Components.Unit;
+
 public static class GameComponentsLookup {
 
-    public const int Camera = 0;
-    public const int CameraTag = 1;
-    public const int CharacterController = 2;
-    public const int Direction = 3;
-    public const int Model = 4;
-    public const int Select = 5;
-    public const int SelectReceiver = 6;
+    public const int Material = 0;
+    public const int Building = 1;
+    public const int BuildingPlan = 2;
+    public const int Camera = 3;
+    public const int CameraTag = 4;
+    public const int CharacterController = 5;
+    public const int Direction = 6;
+    public const int Model = 7;
+    public const int SelectReceiver = 8;
 
-    public const int TotalComponents = 7;
+    public const int TotalComponents = 9;
 
     public static readonly string[] componentNames = {
+        "Material",
+        "Building",
+        "BuildingPlan",
         "Camera",
         "CameraTag",
         "CharacterController",
         "Direction",
         "Model",
-        "Select",
         "SelectReceiver"
     };
 
     public static readonly System.Type[] componentTypes = {
-        typeof(CodeBase.Components.CameraComponent),
-        typeof(CodeBase.Components.CameraTag),
-        typeof(CodeBase.Components.CharacterControllerComponent),
+        typeof(MaterialComponent),
+        typeof(CodeBase.Components.Building.BuildingComponent),
+        typeof(CodeBase.Components.Building.BuildingPlanComponent),
+        typeof(CameraComponent),
+        typeof(CameraTag),
+        typeof(CharacterControllerComponent),
         typeof(CodeBase.Components.DirectionComponent),
         typeof(CodeBase.Components.ModelComponent),
-        typeof(CodeBase.Components.SelectComponent),
         typeof(CodeBase.Components.SelectReceiver)
     };
 }
