@@ -1,10 +1,12 @@
-﻿using CodeBase.Data;
+﻿using System.Collections.Generic;
+using CodeBase.Data;
 using CodeBase.Infrastructure.Services.SceneLoader;
 using CodeBase.Infrastructure.Factory;
+using CodeBase.Infrastructure.Services.ConfigProvider;
 using CodeBase.UserInterface.ViewModel;
 using Unity.Properties;
-using UnityEngine.UIElements;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace CodeBase.Infrastructure.State
 {
@@ -13,23 +15,26 @@ namespace CodeBase.Infrastructure.State
         private const string NameScene = "MapScene";
 
         private readonly IPersistentProgress _persistentProgress;
+        private readonly IConfigProvider _configProvider;
         private readonly IGameStateMachine _stateMachine;
         private readonly ISceneLoader _sceneLoader;
         private readonly IGameFactory _gameFactory;
         private readonly IUIFactory _uiFactory;
 
+        private readonly List<VisualElement> _resourceLabels = new List<VisualElement>();
         private VisualElement _rootHud;
         private VisualElement _buttonBuild;
         private VisualElement _resourceContainer;
 
         public LoadMapState(IGameStateMachine stateMachine, ISceneLoader sceneLoader, IGameFactory gameFactory,
-            IUIFactory uiFactory, IPersistentProgress persistentProgress)
+            IUIFactory uiFactory, IPersistentProgress persistentProgress, IConfigProvider configProvider)
         {
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
             _gameFactory = gameFactory;
             _uiFactory = uiFactory;
             _persistentProgress = persistentProgress;
+            _configProvider = configProvider;
         }
 
         public async void Enter()
@@ -47,11 +52,10 @@ namespace CodeBase.Infrastructure.State
         {
             InitCamera();
             InitCharacters();
-            InitUI();
-            BindingUI();
+            InitHud();
         }
 
-        private void InitUI()
+        private void InitHud()
         {
             _rootHud = _uiFactory.CreateHud();
             _buttonBuild = _uiFactory.CreateBuildButton();
@@ -59,28 +63,13 @@ namespace CodeBase.Infrastructure.State
 
             _rootHud.Add(_buttonBuild);
 
-            foreach (var resourceData in _persistentProgress.Data.ResourceData)
-                _resourceContainer.Q<VisualElement>("GroupBoxResources").Add(_uiFactory.CreateResourceLabel());
+            foreach (ResourceData resourceData in _persistentProgress.Data.ResourceData.Values)
+                _resourceLabels.Add(_uiFactory.CreateResourceLabel(resourceData));
+
+            foreach (VisualElement resourcesLabel in _resourceLabels)
+                _resourceContainer.Q<VisualElement>("GroupBoxResources").Add(resourcesLabel);
 
             _rootHud.Add(_resourceContainer);
-        }
-
-        private void BindingUI()
-        {
-            BuildPlanViewModel buildPlan = new BuildPlanViewModel(_gameFactory, "Barracks");
-            Button barracksButton = _buttonBuild.Q<Button>("Barracks");
-            
-            barracksButton.clicked += buildPlan.CreateBuildPlan;
-            
-            barracksButton.SetBinding(nameof(Label.text), new DataBinding
-            {
-                dataSource = buildPlan,
-                dataSourcePath = new PropertyPath(nameof(BuildPlanViewModel.NameButton)),
-                updateTrigger = BindingUpdateTrigger.WhenDirty,
-                bindingMode = BindingMode.TwoWay,
-            });
-            
-            //ResourceViewModel resource = new ResourceViewModel()
         }
 
         private void InitCharacters()

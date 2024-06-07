@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using NUnit.Framework.Constraints;
 
 namespace CodeBase.Data
 {
@@ -17,13 +21,32 @@ namespace CodeBase.Data
         }
     }
 
-    public class ResourceData
+    public class ResourceData : INotifyPropertyChanged
     {
-        public int ValueResources;
+        public event PropertyChangedEventHandler PropertyChanged;
+        private int _valueResources;
+
+        public int ValueResources
+        {
+            get => _valueResources;
+            set
+            {
+                if (_valueResources != value)
+                {
+                    _valueResources = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public ResourceData(int valueResources)
         {
-            ValueResources = valueResources;
+            _valueResources = valueResources;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 

@@ -6,24 +6,21 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-
-using CodeBase.Components.InputContext.Camera;
-
 public partial class InputEntity {
 
-    public CameraInputComponents cameraInputComponents { get { return (CameraInputComponents)GetComponent(InputComponentsLookup.CameraInputComponents); } }
+    public CodeBase.Components.InputContext.Camera.CameraInputComponents cameraInputComponents { get { return (CodeBase.Components.InputContext.Camera.CameraInputComponents)GetComponent(InputComponentsLookup.CameraInputComponents); } }
     public bool hasCameraInputComponents { get { return HasComponent(InputComponentsLookup.CameraInputComponents); } }
 
     public void AddCameraInputComponents(UnityEngine.Vector3 newMoveDirection) {
         var index = InputComponentsLookup.CameraInputComponents;
-        var component = (CameraInputComponents)CreateComponent(index, typeof(CameraInputComponents));
+        var component = (CodeBase.Components.InputContext.Camera.CameraInputComponents)CreateComponent(index, typeof(CodeBase.Components.InputContext.Camera.CameraInputComponents));
         component.MoveDirection = newMoveDirection;
         AddComponent(index, component);
     }
 
     public void ReplaceCameraInputComponents(UnityEngine.Vector3 newMoveDirection) {
         var index = InputComponentsLookup.CameraInputComponents;
-        var component = (CameraInputComponents)CreateComponent(index, typeof(CameraInputComponents));
+        var component = (CodeBase.Components.InputContext.Camera.CameraInputComponents)CreateComponent(index, typeof(CodeBase.Components.InputContext.Camera.CameraInputComponents));
         component.MoveDirection = newMoveDirection;
         ReplaceComponent(index, component);
     }

@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Builds
+  m_Name: BuldingPlan
   m_EditorClassIdentifier: 
-  m_GroupName: Builds
+  m_GroupName: BuldingPlan
   m_Data:
     m_SerializedData: []
-  m_GUID: fc07d9a7da58a884f8b2d9de58d65f0d
+  m_GUID: ab83b437c48473b498840fa43d63615f
   m_SerializeEntries:
-  - m_GUID: c213e8d033e498848b28fe41165cccf8
-    m_Address: Barrack
+  - m_GUID: c20660988298e45439692c22768480b0
+    m_Address: BarrackPlan
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -26,5 +26,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 72d08425d7f4a3e479096cdeed8396f5, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: f43dfbeb957cc4f479b537c1b81b97bc, type: 2}
-    - {fileID: 11400000, guid: 0e48c9d2e9a29bc47a615fd54047a883, type: 2}
+    - {fileID: 11400000, guid: af8fc9bf11b312148a9d06b2491716c9, type: 2}
+    - {fileID: 11400000, guid: 208e9411aa91f0d4585fd36fd01b88b6, type: 2}

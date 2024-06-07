@@ -6,17 +6,14 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-
-using CodeBase.Components.InputContext.Camera;
-
 public partial class InputEntity {
 
-    public RaycastInputComponent raycastInput { get { return (RaycastInputComponent)GetComponent(InputComponentsLookup.RaycastInput); } }
+    public CodeBase.Components.InputContext.Camera.RaycastInputComponent raycastInput { get { return (CodeBase.Components.InputContext.Camera.RaycastInputComponent)GetComponent(InputComponentsLookup.RaycastInput); } }
     public bool hasRaycastInput { get { return HasComponent(InputComponentsLookup.RaycastInput); } }
 
     public void AddRaycastInput(UnityEngine.Vector2 newMousePosition, UnityEngine.Vector3 newTargetPosition, UnityEngine.Vector3 newStartPositionSelection, UnityEngine.Vector3 newEndPositionSelection, bool newIsSelection) {
         var index = InputComponentsLookup.RaycastInput;
-        var component = (RaycastInputComponent)CreateComponent(index, typeof(RaycastInputComponent));
+        var component = (CodeBase.Components.InputContext.Camera.RaycastInputComponent)CreateComponent(index, typeof(CodeBase.Components.InputContext.Camera.RaycastInputComponent));
         component.MousePosition = newMousePosition;
         component.TargetPosition = newTargetPosition;
         component.StartPositionSelection = newStartPositionSelection;
@@ -27,7 +24,7 @@ public partial class InputEntity {
 
     public void ReplaceRaycastInput(UnityEngine.Vector2 newMousePosition, UnityEngine.Vector3 newTargetPosition, UnityEngine.Vector3 newStartPositionSelection, UnityEngine.Vector3 newEndPositionSelection, bool newIsSelection) {
         var index = InputComponentsLookup.RaycastInput;
-        var component = (RaycastInputComponent)CreateComponent(index, typeof(RaycastInputComponent));
+        var component = (CodeBase.Components.InputContext.Camera.RaycastInputComponent)CreateComponent(index, typeof(CodeBase.Components.InputContext.Camera.RaycastInputComponent));
         component.MousePosition = newMousePosition;
         component.TargetPosition = newTargetPosition;
         component.StartPositionSelection = newStartPositionSelection;

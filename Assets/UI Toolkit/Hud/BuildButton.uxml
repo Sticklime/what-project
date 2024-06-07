@@ -10,6 +10,4 @@
             <ui:Button text="Button" parse-escape-sequences="false" display-tooltip-when-elided="true" name="Button" focusable="false" class="build_button" />
         </ui:GroupBox>
     </ui:GroupBox>
-    <ui:TabView />
-    <ui:GroupBox />
 </ui:UXML>

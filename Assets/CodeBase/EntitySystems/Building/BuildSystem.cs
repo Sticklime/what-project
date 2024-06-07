@@ -1,4 +1,5 @@
 ﻿using CodeBase.Components;
+using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Factory;
 using Entitas;
 using UnityEngine;
@@ -24,10 +25,11 @@ namespace CodeBase.EntitySystems.Build
             {
                 var raycast = _inputFilter.GetSingleEntity().raycastInput;
                 var buildingModel = entity.model;
+                var buildingPlanType = entity.buildingPlan.BuildingType;
 
                 if (raycast.IsSelection)
                 {
-                    _gameFactory.CreateBuilding(buildingModel.Transform.position);
+                    _gameFactory.CreateBuilding(buildingModel.Transform.position, buildingPlanType);
 
                     DestroyBuildingPlan(buildingModel, entity);
                     return;

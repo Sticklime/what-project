@@ -1,5 +1,7 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using CodeBase.Data.StaticData;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace CodeBase.Infrastructure.Factory
 {
@@ -8,8 +10,8 @@ namespace CodeBase.Infrastructure.Factory
         UniTask Load();
         void CreateUnit(Vector3 at);
         void CreateEnemy(Vector3 at);
-        void CreateBuildingPlan(Vector3 at);
+        UniTask CreateBuildingPlan(Vector3 at, BuildingType buildingType);
         void CreateEntityCamera(Camera camera);
-        void CreateBuilding(Vector3 at);
+        UniTask CreateBuilding(Vector3 at, BuildingType buildingType);
     }
 }

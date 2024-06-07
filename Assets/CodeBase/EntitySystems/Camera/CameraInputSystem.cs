@@ -1,8 +1,8 @@
-﻿using CodeBase.Components.InputContext.Camera;
+﻿using System.Numerics;
+using CodeBase.Components.InputContext.Camera;
 using CodeBase.Components.Unit;
 using CodeBase.Infrastructure.Services.InputSystem;
 using Entitas;
-using UnityEngine;
 
 namespace CodeBase.EntitySystems.Camera
 {

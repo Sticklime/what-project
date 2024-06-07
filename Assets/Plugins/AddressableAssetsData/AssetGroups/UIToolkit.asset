@@ -37,6 +37,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b392f828b1c4a6d4f89c560b5156c971
+    m_Address: ResourceLabel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 34c6d5e12e6293647af96dbb50b0fe33
+    m_Address: GroupBoxResources
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 72d08425d7f4a3e479096cdeed8396f5, type: 2}
   m_SchemaSet:

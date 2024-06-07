@@ -8,25 +8,25 @@
 //------------------------------------------------------------------------------
 public partial class GameEntity {
 
-    static readonly CodeBase.Components.Building.BuildingPlanComponent buildingPlanComponent = new CodeBase.Components.Building.BuildingPlanComponent();
+    public CodeBase.Components.Building.BuildingPlanComponent buildingPlan { get { return (CodeBase.Components.Building.BuildingPlanComponent)GetComponent(GameComponentsLookup.BuildingPlan); } }
+    public bool hasBuildingPlan { get { return HasComponent(GameComponentsLookup.BuildingPlan); } }
 
-    public bool isBuildingPlan {
-        get { return HasComponent(GameComponentsLookup.BuildingPlan); }
-        set {
-            if (value != isBuildingPlan) {
-                var index = GameComponentsLookup.BuildingPlan;
-                if (value) {
-                    var componentPool = GetComponentPool(index);
-                    var component = componentPool.Count > 0
-                            ? componentPool.Pop()
-                            : buildingPlanComponent;
+    public void AddBuildingPlan(CodeBase.Data.StaticData.BuildingType newBuildingType) {
+        var index = GameComponentsLookup.BuildingPlan;
+        var component = (CodeBase.Components.Building.BuildingPlanComponent)CreateComponent(index, typeof(CodeBase.Components.Building.BuildingPlanComponent));
+        component.BuildingType = newBuildingType;
+        AddComponent(index, component);
+    }
 
-                    AddComponent(index, component);
-                } else {
-                    RemoveComponent(index);
-                }
-            }
-        }
+    public void ReplaceBuildingPlan(CodeBase.Data.StaticData.BuildingType newBuildingType) {
+        var index = GameComponentsLookup.BuildingPlan;
+        var component = (CodeBase.Components.Building.BuildingPlanComponent)CreateComponent(index, typeof(CodeBase.Components.Building.BuildingPlanComponent));
+        component.BuildingType = newBuildingType;
+        ReplaceComponent(index, component);
+    }
+
+    public void RemoveBuildingPlan() {
+        RemoveComponent(GameComponentsLookup.BuildingPlan);
     }
 }
 

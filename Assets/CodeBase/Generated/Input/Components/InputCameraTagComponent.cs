@@ -6,12 +6,9 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-
-using CodeBase.Components.Camera;
-
 public partial class InputEntity {
 
-    static readonly CameraTag cameraTagComponent = new CameraTag();
+    static readonly CodeBase.Components.Camera.CameraTag cameraTagComponent = new CodeBase.Components.Camera.CameraTag();
 
     public bool isCameraTag {
         get { return HasComponent(InputComponentsLookup.CameraTag); }

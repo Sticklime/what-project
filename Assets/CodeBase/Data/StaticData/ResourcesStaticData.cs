@@ -7,6 +7,6 @@ namespace CodeBase.Data.StaticData
     public class ResourcesStaticData
     {
         [field: SerializeField] public ResourcesType ResourcesType { get; private set; }
-        [field: SerializeField] public int StartCountResources { get; private set; }
+        [field: SerializeField] public int ValueResources { get; private set; }
     }
 }

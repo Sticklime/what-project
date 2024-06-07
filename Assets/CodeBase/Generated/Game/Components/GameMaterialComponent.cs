@@ -6,24 +6,21 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-
-using CodeBase.Components.Building;
-
 public partial class GameEntity {
 
-    public MaterialComponent material { get { return (MaterialComponent)GetComponent(GameComponentsLookup.Material); } }
+    public CodeBase.Components.Building.MaterialComponent material { get { return (CodeBase.Components.Building.MaterialComponent)GetComponent(GameComponentsLookup.Material); } }
     public bool hasMaterial { get { return HasComponent(GameComponentsLookup.Material); } }
 
     public void AddMaterial(UnityEngine.Material newMaterial) {
         var index = GameComponentsLookup.Material;
-        var component = (MaterialComponent)CreateComponent(index, typeof(MaterialComponent));
+        var component = (CodeBase.Components.Building.MaterialComponent)CreateComponent(index, typeof(CodeBase.Components.Building.MaterialComponent));
         component.Material = newMaterial;
         AddComponent(index, component);
     }
 
     public void ReplaceMaterial(UnityEngine.Material newMaterial) {
         var index = GameComponentsLookup.Material;
-        var component = (MaterialComponent)CreateComponent(index, typeof(MaterialComponent));
+        var component = (CodeBase.Components.Building.MaterialComponent)CreateComponent(index, typeof(CodeBase.Components.Building.MaterialComponent));
         component.Material = newMaterial;
         ReplaceComponent(index, component);
     }

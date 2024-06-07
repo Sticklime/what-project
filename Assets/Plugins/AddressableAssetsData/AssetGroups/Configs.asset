@@ -10,21 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: BuildsPlan
+  m_Name: Configs
   m_EditorClassIdentifier: 
-  m_GroupName: BuildsPlan
+  m_GroupName: Configs
   m_Data:
     m_SerializedData: []
-  m_GUID: ab83b437c48473b498840fa43d63615f
+  m_GUID: f82f80a560f673b4796f7442184dd11b
   m_SerializeEntries:
-  - m_GUID: c20660988298e45439692c22768480b0
-    m_Address: BarrackPlan
+  - m_GUID: 06ef9272534979645b76b599b6f165a1
+    m_Address: DefaultGameModeData
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - Configs
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ab95ce5aac1690e45955ba0f1cda6881
+    m_Address: Assets/Prefabs/StaticData/Barrack.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Configs
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 72d08425d7f4a3e479096cdeed8396f5, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: af8fc9bf11b312148a9d06b2491716c9, type: 2}
-    - {fileID: 11400000, guid: 208e9411aa91f0d4585fd36fd01b88b6, type: 2}
+    - {fileID: 11400000, guid: 60ba0d2506c546b4c8a24145f7d037d5, type: 2}
+    - {fileID: 11400000, guid: df7e6ff08e1d9a94fa8892a6d9505a12, type: 2}

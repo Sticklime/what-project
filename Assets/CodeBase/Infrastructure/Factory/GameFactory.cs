@@ -1,10 +1,13 @@
 ﻿using System.Threading.Tasks;
 using CodeBase.Components.Building;
+using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.AssetProvider;
+using CodeBase.Infrastructure.Services.ConfigProvider;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
-using UnityEngine.AI;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.AddressableAssets;
 using Zenject;
 
 namespace CodeBase.Infrastructure.Factory
@@ -13,17 +16,18 @@ namespace CodeBase.Infrastructure.Factory
     {
         private readonly DiContainer _diContainer;
         private readonly IAssetProvider _assetProvider;
+        private readonly IConfigProvider _configProvider;
         private readonly Contexts _context;
 
         private GameObject _units;
         private GameObject _enemy;
-        private GameObject _barracks;
         private GameObject _barracksPlan;
 
-        public GameFactory(DiContainer diContainer, IAssetProvider assetProvider)
+        public GameFactory(DiContainer diContainer, IAssetProvider assetProvider, IConfigProvider configProvider)
         {
             _diContainer = diContainer;
             _assetProvider = assetProvider;
+            _configProvider = configProvider;
             _context = Contexts.sharedInstance;
         }
 
@@ -31,7 +35,6 @@ namespace CodeBase.Infrastructure.Factory
         {
             _units = await _assetProvider.LoadAsync<GameObject>("Warrior");
             _enemy = await _assetProvider.LoadAsync<GameObject>("SpiderFugaBaby");
-            _barracks = await _assetProvider.LoadAsync<GameObject>("Barrack");
             _barracksPlan = await _assetProvider.LoadAsync<GameObject>("BarrackPlan");
         }
 
@@ -48,22 +51,28 @@ namespace CodeBase.Infrastructure.Factory
             characterEntity.AddSelectReceiver(selectReceiver, false);
         }
 
-        public void CreateBuildingPlan(Vector3 at)
+        public async UniTask CreateBuildingPlan(Vector3 at, BuildingType buildingType)
         {
+            BuildingData buildingData = _configProvider.GetBuildingData(buildingType);
+            var buildingPrefab = await _assetProvider.LoadAsync<GameObject>(buildingData.BuildingReference);
+
             GameEntity buildingPlanEntity = _context.game.CreateEntity();
             GameObject buildingPlanInstance = _diContainer.InstantiatePrefab(_barracksPlan);
 
-            buildingPlanEntity.AddComponent(GameComponentsLookup.BuildingPlan, new BuildingPlanComponent());
+            buildingPlanEntity.AddBuildingPlan(buildingType);
             buildingPlanEntity.AddModel(buildingPlanInstance.transform);
             buildingPlanEntity.AddMaterial(buildingPlanInstance.GetComponent<Material>());
         }
 
-        public void CreateBuilding(Vector3 at)
+        public async UniTask CreateBuilding(Vector3 at, BuildingType buildingType)
         {
-            GameEntity buildEntity = _context.game.CreateEntity();
-            GameObject buildInstance = Object.Instantiate(_barracks, at, Quaternion.identity);
+            BuildingData buildingData = _configProvider.GetBuildingData(buildingType);
+            var buildingPrefab = await _assetProvider.LoadAsync<GameObject>(buildingData.BuildingReference);
 
-            buildEntity.AddComponent(GameComponentsLookup.Building, new BuildingComponent());
+            GameEntity buildEntity = _context.game.CreateEntity();
+            GameObject buildInstance = Object.Instantiate(buildingPrefab, at, Quaternion.identity);
+
+            buildEntity.AddBuilding(buildingType);
             buildEntity.AddModel(buildInstance.transform);
         }
 

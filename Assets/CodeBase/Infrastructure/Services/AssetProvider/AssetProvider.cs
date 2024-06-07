@@ -16,7 +16,7 @@ namespace CodeBase.Infrastructure.Services.AssetProvider
         public async UniTask InitializeAsset()
         {
             AsyncOperationHandle<IResourceLocator> asyncOperation = Addressables.InitializeAsync();
-            
+
             await asyncOperation.Task;
         }
 
@@ -40,6 +40,20 @@ namespace CodeBase.Infrastructure.Services.AssetProvider
             RegisterCacheAndCleanup(assetReference.AssetGUID, handle);
 
             return await handle.Task;
+        }
+
+        public async UniTask<List<T>> LoadAssetsByLabelAsync<T>(string label) where T : class
+        {
+            AsyncOperationHandle<IList<T>> handle = Addressables.LoadAssetsAsync<T>(label, null);
+            await handle.Task;
+
+            foreach (var asset in handle.Result)
+            {
+                var key = asset.GetType().Name;
+                RegisterCacheAndCleanup(key, handle);
+            }
+
+            return handle.Result.ToList();
         }
 
         public void Cleanup()

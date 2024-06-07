@@ -1,10 +1,14 @@
 ﻿using CodeBase.Data;
+using CodeBase.Domain.BuildingSystem;
+using CodeBase.Domain.BuySystem;
 using CodeBase.Infrastructure.Services.SceneLoader;
 using CodeBase.Infrastructure;
 using CodeBase.Infrastructure.Factory;
 using CodeBase.Infrastructure.Services.AssetProvider;
+using CodeBase.Infrastructure.Services.ConfigProvider;
 using CodeBase.Infrastructure.Services.InputSystem;
 using CodeBase.Infrastructure.State;
+using UnityEditor;
 using Zenject;
 
 namespace CodeBase.Installer
@@ -24,7 +28,24 @@ namespace CodeBase.Installer
             BindGameContext();
             BindSystemEngine();
             BindPersistentProgress();
+            BindConfigProvider();
+            BindResourcesOperation();
+            BindBuildingOperation();
         }
+
+        private void BindBuildingOperation() =>
+            Container
+                .Bind<BuildingOperation>()
+                .AsSingle();
+
+        private void BindResourcesOperation() =>
+            Container.Bind<ResourcesOperation>().AsSingle();
+
+        private void BindConfigProvider() =>
+            Container
+                .Bind<IConfigProvider>()
+                .To<ConfigProvider>()
+                .AsSingle();
 
         private void BindPersistentProgress() =>
             Container

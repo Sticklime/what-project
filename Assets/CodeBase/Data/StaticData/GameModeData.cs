@@ -3,9 +3,16 @@ using UnityEngine;
 
 namespace CodeBase.Data.StaticData
 {
-    [CreateAssetMenu(menuName = "GameModeData", fileName = "NewGameModeData", order = 66)]
+    [CreateAssetMenu(menuName = "StaticData/GameModeData", fileName = "NewGameModeData")]
     public class GameModeData : ScriptableObject
     {
-        [field: SerializeField] List<ResourcesStaticData> Resources = new List<ResourcesStaticData>();
+        [field: SerializeField] public List<ResourcesStaticData> Resources { get; private set; }
+        [field: SerializeField] public GameModeType GameModeType { get; private set; }
+    }
+
+    public enum GameModeType
+    {
+        Default = 0,
+        
     }
 }

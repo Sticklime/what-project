@@ -6,46 +6,41 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-
-using CodeBase.Components.Building;
-using CodeBase.Components.Camera;
-using CodeBase.Components.Unit;
-
 public static class GameComponentsLookup {
 
-    public const int Material = 0;
-    public const int Building = 1;
-    public const int BuildingPlan = 2;
+    public const int Building = 0;
+    public const int BuildingPlan = 1;
+    public const int Material = 2;
     public const int Camera = 3;
     public const int CameraTag = 4;
-    public const int CharacterController = 5;
-    public const int Direction = 6;
-    public const int Model = 7;
-    public const int SelectReceiver = 8;
+    public const int Direction = 5;
+    public const int Model = 6;
+    public const int SelectReceiver = 7;
+    public const int CharacterController = 8;
 
     public const int TotalComponents = 9;
 
     public static readonly string[] componentNames = {
-        "Material",
         "Building",
         "BuildingPlan",
+        "Material",
         "Camera",
         "CameraTag",
-        "CharacterController",
         "Direction",
         "Model",
-        "SelectReceiver"
+        "SelectReceiver",
+        "CharacterController"
     };
 
     public static readonly System.Type[] componentTypes = {
-        typeof(MaterialComponent),
         typeof(CodeBase.Components.Building.BuildingComponent),
         typeof(CodeBase.Components.Building.BuildingPlanComponent),
-        typeof(CameraComponent),
-        typeof(CameraTag),
-        typeof(CharacterControllerComponent),
+        typeof(CodeBase.Components.Building.MaterialComponent),
+        typeof(CodeBase.Components.Camera.CameraComponent),
+        typeof(CodeBase.Components.Camera.CameraTag),
         typeof(CodeBase.Components.DirectionComponent),
         typeof(CodeBase.Components.ModelComponent),
-        typeof(CodeBase.Components.SelectReceiver)
+        typeof(CodeBase.Components.SelectReceiver),
+        typeof(CodeBase.Components.Unit.CharacterControllerComponent)
     };
 }

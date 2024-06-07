@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa8f5097078747369673c189193285db, type: 3}
-  m_Name: DefaultGameModeData
+  m_Script: {fileID: 11500000, guid: 5834b5087d578d24c926ce20cd31e6d6, type: 3}
+  m_Name: BuldingPlan_ContentUpdateGroupSchema
   m_EditorClassIdentifier: 
-  <Resources>k__BackingField:
-  - <ResourcesType>k__BackingField: 1
-    <ValueResources>k__BackingField: 10
-  <GameModeType>k__BackingField: 0
+  m_Group: {fileID: 11400000, guid: 4c10b3761a285ca4bbcd516f95cf2802, type: 2}
+  m_StaticContent: 0

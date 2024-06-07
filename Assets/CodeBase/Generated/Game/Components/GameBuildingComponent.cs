@@ -8,25 +8,25 @@
 //------------------------------------------------------------------------------
 public partial class GameEntity {
 
-    static readonly CodeBase.Components.Building.BuildingComponent buildingComponent = new CodeBase.Components.Building.BuildingComponent();
+    public CodeBase.Components.Building.BuildingComponent building { get { return (CodeBase.Components.Building.BuildingComponent)GetComponent(GameComponentsLookup.Building); } }
+    public bool hasBuilding { get { return HasComponent(GameComponentsLookup.Building); } }
 
-    public bool isBuilding {
-        get { return HasComponent(GameComponentsLookup.Building); }
-        set {
-            if (value != isBuilding) {
-                var index = GameComponentsLookup.Building;
-                if (value) {
-                    var componentPool = GetComponentPool(index);
-                    var component = componentPool.Count > 0
-                            ? componentPool.Pop()
-                            : buildingComponent;
+    public void AddBuilding(CodeBase.Data.StaticData.BuildingType newBuildingType) {
+        var index = GameComponentsLookup.Building;
+        var component = (CodeBase.Components.Building.BuildingComponent)CreateComponent(index, typeof(CodeBase.Components.Building.BuildingComponent));
+        component.BuildingType = newBuildingType;
+        AddComponent(index, component);
+    }
 
-                    AddComponent(index, component);
-                } else {
-                    RemoveComponent(index);
-                }
-            }
-        }
+    public void ReplaceBuilding(CodeBase.Data.StaticData.BuildingType newBuildingType) {
+        var index = GameComponentsLookup.Building;
+        var component = (CodeBase.Components.Building.BuildingComponent)CreateComponent(index, typeof(CodeBase.Components.Building.BuildingComponent));
+        component.BuildingType = newBuildingType;
+        ReplaceComponent(index, component);
+    }
+
+    public void RemoveBuilding() {
+        RemoveComponent(GameComponentsLookup.Building);
     }
 }
 

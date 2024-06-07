@@ -6,24 +6,21 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-
-using CodeBase.Components.Camera;
-
 public partial class GameEntity {
 
-    public CameraComponent camera { get { return (CameraComponent)GetComponent(GameComponentsLookup.Camera); } }
+    public CodeBase.Components.Camera.CameraComponent camera { get { return (CodeBase.Components.Camera.CameraComponent)GetComponent(GameComponentsLookup.Camera); } }
     public bool hasCamera { get { return HasComponent(GameComponentsLookup.Camera); } }
 
     public void AddCamera(UnityEngine.Camera newCamera) {
         var index = GameComponentsLookup.Camera;
-        var component = (CameraComponent)CreateComponent(index, typeof(CameraComponent));
+        var component = (CodeBase.Components.Camera.CameraComponent)CreateComponent(index, typeof(CodeBase.Components.Camera.CameraComponent));
         component.Camera = newCamera;
         AddComponent(index, component);
     }
 
     public void ReplaceCamera(UnityEngine.Camera newCamera) {
         var index = GameComponentsLookup.Camera;
-        var component = (CameraComponent)CreateComponent(index, typeof(CameraComponent));
+        var component = (CodeBase.Components.Camera.CameraComponent)CreateComponent(index, typeof(CodeBase.Components.Camera.CameraComponent));
         component.Camera = newCamera;
         ReplaceComponent(index, component);
     }

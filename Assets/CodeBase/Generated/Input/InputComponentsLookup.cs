@@ -6,10 +6,6 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-
-using CodeBase.Components.Camera;
-using CodeBase.Components.InputContext.Camera;
-
 public static class InputComponentsLookup {
 
     public const int CameraTag = 0;
@@ -25,8 +21,8 @@ public static class InputComponentsLookup {
     };
 
     public static readonly System.Type[] componentTypes = {
-        typeof(CameraTag),
-        typeof(CameraInputComponents),
-        typeof(RaycastInputComponent)
+        typeof(CodeBase.Components.Camera.CameraTag),
+        typeof(CodeBase.Components.InputContext.Camera.CameraInputComponents),
+        typeof(CodeBase.Components.InputContext.Camera.RaycastInputComponent)
     };
 }
