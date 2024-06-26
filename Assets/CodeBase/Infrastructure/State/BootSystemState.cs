@@ -1,6 +1,7 @@
 ﻿using CodeBase.Domain.BuildingSystem;
 using CodeBase.EntitySystems;
 using CodeBase.EntitySystems.Build;
+using CodeBase.EntitySystems.Building;
 using CodeBase.EntitySystems.Camera;
 using CodeBase.EntitySystems.Unit;
 using CodeBase.Infrastructure.Factory;
@@ -40,6 +41,8 @@ namespace CodeBase.Infrastructure.State
             _systemEngine.RegisterSystem(new SelectionSystem(_inputContext, _gameContext));
             _systemEngine.RegisterSystem(new FollowRaycastSystem(_gameContext, _inputContext));
             _systemEngine.RegisterSystem(new BuildSystem(_inputContext, _gameContext, _gameFactory));
+            _systemEngine.RegisterSystem(new GridSystem(_gameContext, _inputContext));
+            _systemEngine.RegisterSystem(new RotateBuildingSystem(_gameContext, _inputContext));
 
             _systemEngine.StartSystem();
 

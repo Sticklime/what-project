@@ -62,6 +62,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""RotateBuilding"",
+                    ""type"": ""Button"",
+                    ""id"": ""12127c06-5064-4fde-b3af-705964de38a7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -174,6 +183,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""SetTargetPosition"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3e506553-88aa-4004-9f19-cb125fb65704"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotateBuilding"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -186,6 +206,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Camera_Selection = m_Camera.FindAction("Selection", throwIfNotFound: true);
         m_Camera_SetTargetPosition = m_Camera.FindAction("SetTargetPosition", throwIfNotFound: true);
         m_Camera_MousePosition = m_Camera.FindAction("MousePosition", throwIfNotFound: true);
+        m_Camera_RotateBuilding = m_Camera.FindAction("RotateBuilding", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -251,6 +272,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Camera_Selection;
     private readonly InputAction m_Camera_SetTargetPosition;
     private readonly InputAction m_Camera_MousePosition;
+    private readonly InputAction m_Camera_RotateBuilding;
     public struct CameraActions
     {
         private @PlayerInput m_Wrapper;
@@ -259,6 +281,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Selection => m_Wrapper.m_Camera_Selection;
         public InputAction @SetTargetPosition => m_Wrapper.m_Camera_SetTargetPosition;
         public InputAction @MousePosition => m_Wrapper.m_Camera_MousePosition;
+        public InputAction @RotateBuilding => m_Wrapper.m_Camera_RotateBuilding;
         public InputActionMap Get() { return m_Wrapper.m_Camera; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -280,6 +303,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @MousePosition.started += instance.OnMousePosition;
             @MousePosition.performed += instance.OnMousePosition;
             @MousePosition.canceled += instance.OnMousePosition;
+            @RotateBuilding.started += instance.OnRotateBuilding;
+            @RotateBuilding.performed += instance.OnRotateBuilding;
+            @RotateBuilding.canceled += instance.OnRotateBuilding;
         }
 
         private void UnregisterCallbacks(ICameraActions instance)
@@ -296,6 +322,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @MousePosition.started -= instance.OnMousePosition;
             @MousePosition.performed -= instance.OnMousePosition;
             @MousePosition.canceled -= instance.OnMousePosition;
+            @RotateBuilding.started -= instance.OnRotateBuilding;
+            @RotateBuilding.performed -= instance.OnRotateBuilding;
+            @RotateBuilding.canceled -= instance.OnRotateBuilding;
         }
 
         public void RemoveCallbacks(ICameraActions instance)
@@ -319,5 +348,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnSelection(InputAction.CallbackContext context);
         void OnSetTargetPosition(InputAction.CallbackContext context);
         void OnMousePosition(InputAction.CallbackContext context);
+        void OnRotateBuilding(InputAction.CallbackContext context);
     }
 }

@@ -10,6 +10,7 @@ namespace CodeBase.Infrastructure.Services.InputSystem
         public Vector2 MousePosition => _playerInput.Camera.MousePosition.ReadValue<Vector2>();
         public bool LeftMouseButton => _playerInput.Camera.Selection.ReadValue<float>() != 0;
         public bool RightMouseButton => _playerInput.Camera.SetTargetPosition.ReadValue<float>() != 0;
+        public bool RotationBuilding => _playerInput.Camera.RotateBuilding.ReadValue<float>() != 0;
 
         public void EnableSystem() =>
             _playerInput.Enable();

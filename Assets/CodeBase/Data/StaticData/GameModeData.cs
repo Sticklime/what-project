@@ -13,6 +13,5 @@ namespace CodeBase.Data.StaticData
     public enum GameModeType
     {
         Default = 0,
-        
     }
 }

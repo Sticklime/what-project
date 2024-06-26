@@ -1,4 +1,5 @@
 ﻿using CodeBase.Components;
+using CodeBase.Components.InputContext.Camera;
 using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Factory;
 using Entitas;
@@ -23,9 +24,9 @@ namespace CodeBase.EntitySystems.Build
         {
             foreach (var entity in _buildPlanFilter)
             {
-                var raycast = _inputFilter.GetSingleEntity().raycastInput;
-                var buildingModel = entity.model;
-                var buildingPlanType = entity.buildingPlan.BuildingType;
+                RaycastInputComponent raycast = _inputFilter.GetSingleEntity().raycastInput;
+                ModelComponent buildingModel = entity.model;
+                BuildingType buildingPlanType = entity.buildingPlan.BuildingType;
 
                 if (raycast.IsSelection)
                 {

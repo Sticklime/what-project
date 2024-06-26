@@ -58,11 +58,4 @@ namespace CodeBase.Infrastructure.Services.ConfigProvider
             return listData;
         }
     }
-
-    public interface IConfigProvider
-    {
-        UniTask Load();
-        GameModeData GetGameModeData(GameModeType gameModeType);
-        BuildingData GetBuildingData(BuildingType buildingType);
-    }
 }
