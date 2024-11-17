@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CodeBase.Components.Building;
 using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.AssetProvider;
@@ -33,6 +34,7 @@ namespace CodeBase.Infrastructure.Factory
 
         public async UniTask Load()
         {
+
             _units = await _assetProvider.LoadAsync<GameObject>("Warrior");
             _enemy = await _assetProvider.LoadAsync<GameObject>("SpiderFugaBaby");
             _barracksPlan = await _assetProvider.LoadAsync<GameObject>("BarrackPlan");
@@ -54,7 +56,7 @@ namespace CodeBase.Infrastructure.Factory
         public async UniTask CreateBuildingPlan(Vector3 at, BuildingType buildingType)
         {
             BuildingData buildingData = _configProvider.GetBuildingData(buildingType);
-            var buildingPrefab = await _assetProvider.LoadAsync<GameObject>(buildingData.BuildingReference);
+            GameObject buildingPrefab = await _assetProvider.LoadAsync<GameObject>(buildingData.BuildingReference);
 
             GameEntity buildingPlanEntity = _context.game.CreateEntity();
             GameObject buildingPlanInstance = _diContainer.InstantiatePrefab(_barracksPlan);
