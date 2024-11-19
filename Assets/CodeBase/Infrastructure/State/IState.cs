@@ -6,6 +6,11 @@ namespace CodeBase.Infrastructure.State
     {
         void Enter();
     }
+
+    public interface IPayLoadState : IExitableState
+    {
+        void Enter(object data);
+    } 
     
     public interface IExitableState
     {

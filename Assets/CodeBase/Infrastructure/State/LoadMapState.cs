@@ -3,14 +3,13 @@ using CodeBase.Data;
 using CodeBase.Infrastructure.Services.SceneLoader;
 using CodeBase.Infrastructure.Factory;
 using CodeBase.Infrastructure.Services.ConfigProvider;
-using CodeBase.UserInterface.ViewModel;
-using Unity.Properties;
+using Fusion;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace CodeBase.Infrastructure.State
 {
-    public class LoadMapState : IState
+    public class LoadMapState : IPayLoadState
     {
         private const string NameScene = "MapScene";
 
@@ -26,6 +25,8 @@ namespace CodeBase.Infrastructure.State
         private VisualElement _buttonBuild;
         private VisualElement _resourceContainer;
 
+        private PlayerRef _playerRef;
+        
         public LoadMapState(IGameStateMachine stateMachine, ISceneLoader sceneLoader, IGameFactory gameFactory,
             IUIFactory uiFactory, IPersistentProgress persistentProgress, IConfigProvider configProvider)
         {
@@ -37,9 +38,10 @@ namespace CodeBase.Infrastructure.State
             _configProvider = configProvider;
         }
 
-        public async void Enter()
+        public async void Enter(object data)
         {
             await _sceneLoader.Load(NameScene);
+            _playerRef = (PlayerRef)data;
 
             InitScene();
         }
@@ -74,11 +76,11 @@ namespace CodeBase.Infrastructure.State
 
         private void InitCharacters()
         {
-            _gameFactory.CreateUnit(Vector3.zero);
-            _gameFactory.CreateUnit(Vector3.zero);
-            _gameFactory.CreateUnit(Vector3.zero);
-            _gameFactory.CreateUnit(Vector3.zero);
-            _gameFactory.CreateUnit(Vector3.zero);
+            _gameFactory.CreateUnit(Vector3.zero, _playerRef);
+            _gameFactory.CreateUnit(Vector3.zero, _playerRef);
+            _gameFactory.CreateUnit(Vector3.zero, _playerRef);
+            _gameFactory.CreateUnit(Vector3.zero, _playerRef);
+            _gameFactory.CreateUnit(Vector3.zero, _playerRef);
         }
 
         private void InitCamera() =>
