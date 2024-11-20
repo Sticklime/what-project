@@ -5,7 +5,7 @@ using CodeBase.Infrastructure.Factory;
 using Entitas;
 using UnityEngine;
 
-namespace CodeBase.EntitySystems.Building
+namespace CodeBase.EntitySystems.Build
 {
     public class BuildSystem : IExecuteSystem
     {

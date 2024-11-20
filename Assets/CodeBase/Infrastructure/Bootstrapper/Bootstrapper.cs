@@ -11,8 +11,7 @@ namespace CodeBase.Infrastructure.Bootstrapper
         private IStateFactory _stateFactory;
 
         [Inject]
-        private void Construct(IGameStateMachine stateMachine,
-            IStateFactory stateFactory)
+        private void Construct(IGameStateMachine stateMachine, IStateFactory stateFactory)
         {
             _stateMachine = stateMachine;
             _stateFactory = stateFactory;
@@ -22,7 +21,7 @@ namespace CodeBase.Infrastructure.Bootstrapper
         {
             DontDestroyOnLoad(gameObject);
             RegisterState();
-
+            
             _stateMachine.Enter<BootstrapState>();
         }
 

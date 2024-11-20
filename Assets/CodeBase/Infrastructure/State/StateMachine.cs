@@ -16,12 +16,6 @@ namespace CodeBase.Infrastructure.State
             IState state = ChangeState<TState>();
             state.Enter();
         }
-        
-        public void Enter<TState>(object data) where TState : class, IPayLoadState
-        {
-            IPayLoadState state = ChangeState<TState>();
-            state.Enter(data);
-        }
 
         private TState ChangeState<TState>() where TState : class, IExitableState
         {
@@ -44,7 +38,6 @@ namespace CodeBase.Infrastructure.State
     public interface IStateMachine
     {
         void Enter<TState>() where TState : class, IState;
-        void Enter<TState>(object data) where TState : class, IPayLoadState;
         void RegisterState<TState>(IExitableState state) where TState : IExitableState;
     }
 }

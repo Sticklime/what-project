@@ -5,13 +5,11 @@ using CodeBase.EntitySystems.Building;
 using CodeBase.EntitySystems.Camera;
 using CodeBase.EntitySystems.Unit;
 using CodeBase.Infrastructure.Factory;
-using CodeBase.Infrastructure.NetCode;
 using CodeBase.Infrastructure.Services.InputSystem;
-using Fusion;
 
 namespace CodeBase.Infrastructure.State
 {
-    public class BootSystemState : IPayLoadState
+    public class BootSystemState : IState
     {
         private readonly IGameStateMachine _stateMachine;
         private readonly SystemEngine _systemEngine;
@@ -34,7 +32,7 @@ namespace CodeBase.Infrastructure.State
             _buildingOperation = buildingOperation;
         }
 
-        public void Enter(object data)
+        public void Enter()
         {
             _systemEngine.RegisterSystem(new CameraInputSystem(_inputContext, _gameContext, _inputSystem));
             _systemEngine.RegisterSystem(new CameraMovableSystem(_gameContext, _inputContext));
@@ -48,7 +46,7 @@ namespace CodeBase.Infrastructure.State
 
             _systemEngine.StartSystem();
 
-            _stateMachine.Enter<LoadSaveState>(data);
+            _stateMachine.Enter<LoadSaveState>();
         }
 
         public void Exit()

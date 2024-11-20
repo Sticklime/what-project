@@ -1,14 +1,12 @@
-﻿using System;
-using CodeBase.Infrastructure.Factory;
-using CodeBase.Infrastructure.NetCode;
+﻿using CodeBase.Infrastructure.Factory;
 using CodeBase.Infrastructure.Services.AssetProvider;
 using CodeBase.Infrastructure.Services.ConfigProvider;
 using CodeBase.Infrastructure.Services.InputSystem;
-using Fusion;
+using Cysharp.Threading.Tasks;
 
 namespace CodeBase.Infrastructure.State
 {
-    public class BootstrapState : IState, IDisposable
+    public class BootstrapState : IState
     {
         private readonly IGameStateMachine _gameStateMachine;
         private readonly IGameFactory _gameFactory;
@@ -16,7 +14,7 @@ namespace CodeBase.Infrastructure.State
         private readonly IInputSystem _inputSystem;
         private readonly IUIFactory _uiFactory;
         private readonly IConfigProvider _configProvider;
-        
+
         public BootstrapState(IGameStateMachine gameStateMachine, IGameFactory gameFactory,
             IAssetProvider assetProvider, IInputSystem inputSystem, IUIFactory uiFactory,
             IConfigProvider configProvider)
@@ -38,23 +36,12 @@ namespace CodeBase.Infrastructure.State
 
             if (_inputSystem is IInitializationInput inputSystem)
                 inputSystem.EnableSystem();
-            
-            ConnectManager.Instance.OnPlayerJoin += Bootstrap;
-            
-            await ConnectManager.Instance.Join();
-        }
 
-        private void Bootstrap(PlayerRef playerRef)
-        {
-            ConnectManager.Instance.OnPlayerJoin -= Bootstrap;
-            _gameStateMachine.Enter<BootSystemState>(playerRef);
+            _gameStateMachine.Enter<BootSystemState>();
         }
 
         public void Exit()
         {
         }
-
-        public void Dispose() => 
-            ConnectManager.Instance.OnPlayerJoin -= Bootstrap;
     }
 }

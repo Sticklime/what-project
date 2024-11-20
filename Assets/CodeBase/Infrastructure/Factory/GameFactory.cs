@@ -1,12 +1,14 @@
-﻿using CodeBase.Data.StaticData;
-using CodeBase.Infrastructure.NetCode;
-using CodeBase.Infrastructure.NetCode.EventService;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using CodeBase.Components.Building;
+using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.AssetProvider;
 using CodeBase.Infrastructure.Services.ConfigProvider;
 using Cysharp.Threading.Tasks;
-using Fusion;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.AddressableAssets;
 using Zenject;
 
 namespace CodeBase.Infrastructure.Factory
@@ -32,25 +34,18 @@ namespace CodeBase.Infrastructure.Factory
 
         public async UniTask Load()
         {
+
             _units = await _assetProvider.LoadAsync<GameObject>("Warrior");
             _enemy = await _assetProvider.LoadAsync<GameObject>("SpiderFugaBaby");
             _barracksPlan = await _assetProvider.LoadAsync<GameObject>("BarrackPlan");
-            
         }
 
-        public void CreateUnit(Vector3 at, PlayerRef playerRef)
+        public void CreateUnit(Vector3 at)
         {
-            if (!ConnectManager.Instance.NetworkRunner.IsServer)
-                return;
-            
             GameEntity characterEntity = _context.game.CreateEntity();
             InputEntity unitInputEntity = _context.input.CreateEntity();
-            
-            NetworkObject characterInstance = ConnectManager
-                .Instance
-                .NetworkRunner
-                .Spawn(_units, at, Quaternion.identity, playerRef);
-            
+            GameObject characterInstance = Object.Instantiate(_units, at, Quaternion.identity);
+
             NavMeshAgent characterController = characterInstance.GetComponent<NavMeshAgent>();
             BoxCollider selectReceiver = characterInstance.GetComponentInChildren<BoxCollider>();
 
@@ -78,8 +73,6 @@ namespace CodeBase.Infrastructure.Factory
 
             GameEntity buildEntity = _context.game.CreateEntity();
             GameObject buildInstance = Object.Instantiate(buildingPrefab, at, Quaternion.identity);
-            
-            ConnectManager.Instance.NetworkRunner.Spawn(buildInstance, at, Quaternion.identity);
 
             buildEntity.AddBuilding(buildingType);
             buildEntity.AddModel(buildInstance.transform);

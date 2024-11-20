@@ -2,11 +2,10 @@
 using CodeBase.Data;
 using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.ConfigProvider;
-using Fusion;
 
 namespace CodeBase.Infrastructure.State
 {
-    public class LoadSaveState : IPayLoadState
+    public class LoadSaveState : IState
     {
         private readonly IStateMachine _stateMachine;
         private readonly IPersistentProgress _persistentProgress;
@@ -20,7 +19,7 @@ namespace CodeBase.Infrastructure.State
             _configProvider = configProvider;
         }
 
-        public void Enter(object data)
+        public void Enter()
         {
             var resources = new Dictionary<ResourcesType, ResourceData>();
 
@@ -31,7 +30,7 @@ namespace CodeBase.Infrastructure.State
 
             _persistentProgress.Data = new PlayerData(resources);
 
-            _stateMachine.Enter<LoadMapState>(data);
+            _stateMachine.Enter<LoadMapState>();
         }
 
         public void Exit()
