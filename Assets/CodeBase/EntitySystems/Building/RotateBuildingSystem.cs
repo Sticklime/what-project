@@ -10,12 +10,13 @@ namespace CodeBase.EntitySystems.Building
         public RotateBuildingSystem(GameContext gameContext, InputContext inputContext)
         {
             _gameContext = gameContext.GetGroup(GameMatcher.AllOf(GameMatcher.BuildingPlan, GameMatcher.Model));
-            //TODO _inputContext = inputContext.GetGroup();
+            _inputContext = inputContext.GetGroup();
         }
 
         public void Execute()
         {
             foreach (GameEntity buildingPlan in _gameContext)
+
             {
             }
         }
