@@ -4,6 +4,6 @@ namespace CodeBase.Infrastructure.Factory
 {
     public interface IStateFactory
     {
-        IExitableState CreateState<TState>() where TState : class, IExitableState;
+        IExitableState CreateSystem<TState>() where TState : class, IExitableState;
     }
 }

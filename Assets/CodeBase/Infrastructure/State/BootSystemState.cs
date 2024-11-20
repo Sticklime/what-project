@@ -1,48 +1,26 @@
-﻿using CodeBase.Domain.BuildingSystem;
-using CodeBase.EntitySystems;
-using CodeBase.EntitySystems.Build;
-using CodeBase.EntitySystems.Building;
-using CodeBase.EntitySystems.Camera;
-using CodeBase.EntitySystems.Unit;
-using CodeBase.Infrastructure.Factory;
-using CodeBase.Infrastructure.Services.InputSystem;
+﻿using CodeBase.Infrastructure.Factory;
 
 namespace CodeBase.Infrastructure.State
 {
     public class BootSystemState : IState
     {
-        private readonly IGameStateMachine _stateMachine;
         private readonly SystemEngine _systemEngine;
-        private readonly GameContext _gameContext;
-        private readonly InputContext _inputContext;
-        private readonly IInputSystem _inputSystem;
-        private readonly IGameFactory _gameFactory;
-        private readonly BuildingOperation _buildingOperation;
+        private readonly ISystemFactory _systemFactory;
+        private readonly IGameStateMachine _stateMachine;
 
-        public BootSystemState(IGameStateMachine stateMachine, SystemEngine systemEngine, GameContext gameContext,
-            InputContext inputContext, IInputSystem inputSystem, IGameFactory gameFactory,
-            BuildingOperation buildingOperation)
+        public BootSystemState(ISystemFactory systemFactory, SystemEngine systemEngine, IGameStateMachine stateMachine)
         {
-            _stateMachine = stateMachine;
+            _systemFactory = systemFactory;
             _systemEngine = systemEngine;
-            _gameContext = gameContext;
-            _inputContext = inputContext;
-            _inputSystem = inputSystem;
-            _gameFactory = gameFactory;
-            _buildingOperation = buildingOperation;
+            _stateMachine = stateMachine;
         }
 
         public void Enter()
         {
-            _systemEngine.RegisterSystem(new CameraInputSystem(_inputContext, _gameContext, _inputSystem));
-            _systemEngine.RegisterSystem(new CameraMovableSystem(_gameContext, _inputContext));
-            _systemEngine.RegisterSystem(new MoveAgentSystem(_gameContext, _inputContext));
-            _systemEngine.RegisterSystem(new RaycastInputSystem(_inputContext, _gameContext));
-            _systemEngine.RegisterSystem(new SelectionSystem(_inputContext, _gameContext));
-            _systemEngine.RegisterSystem(new FollowRaycastSystem(_gameContext, _inputContext));
-            _systemEngine.RegisterSystem(new BuildSystem(_inputContext, _gameContext, _gameFactory));
-            _systemEngine.RegisterSystem(new GridSystem(_gameContext, _inputContext));
-            _systemEngine.RegisterSystem(new RotateBuildingSystem(_gameContext, _inputContext));
+            _systemEngine.RegisterSystem(_systemFactory.CreateSystem<BuildFeature>());
+            _systemEngine.RegisterSystem(_systemFactory.CreateSystem<InputFeature>());
+            _systemEngine.RegisterSystem(_systemFactory.CreateSystem<CameraFeature>());
+            _systemEngine.RegisterSystem(_systemFactory.CreateSystem<UnitFeature>());
 
             _systemEngine.StartSystem();
 

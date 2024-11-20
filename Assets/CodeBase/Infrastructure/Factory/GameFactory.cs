@@ -1,20 +1,17 @@
-﻿using System.Threading.Tasks;
-using CodeBase.Components.Building;
-using CodeBase.Data.StaticData;
+﻿using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.AssetProvider;
 using CodeBase.Infrastructure.Services.ConfigProvider;
 using Cysharp.Threading.Tasks;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.AddressableAssets;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace CodeBase.Infrastructure.Factory
 {
     public class GameFactory : IGameFactory
     {
-        private readonly DiContainer _diContainer;
+        private readonly IObjectResolver _diContainer;
         private readonly IAssetProvider _assetProvider;
         private readonly IConfigProvider _configProvider;
         private readonly Contexts _context;
@@ -23,7 +20,7 @@ namespace CodeBase.Infrastructure.Factory
         private GameObject _enemy;
         private GameObject _barracksPlan;
 
-        public GameFactory(DiContainer diContainer, IAssetProvider assetProvider, IConfigProvider configProvider)
+        public GameFactory(IObjectResolver diContainer, IAssetProvider assetProvider, IConfigProvider configProvider)
         {
             _diContainer = diContainer;
             _assetProvider = assetProvider;
@@ -54,10 +51,10 @@ namespace CodeBase.Infrastructure.Factory
         public async UniTask CreateBuildingPlan(Vector3 at, BuildingType buildingType)
         {
             BuildingData buildingData = _configProvider.GetBuildingData(buildingType);
-            var buildingPrefab = await _assetProvider.LoadAsync<GameObject>(buildingData.BuildingReference);
+            GameObject buildingPrefab = await _assetProvider.LoadAsync<GameObject>(buildingData.BuildingReference);
 
             GameEntity buildingPlanEntity = _context.game.CreateEntity();
-            GameObject buildingPlanInstance = _diContainer.InstantiatePrefab(_barracksPlan);
+            GameObject buildingPlanInstance = _diContainer.Instantiate(_barracksPlan);
 
             buildingPlanEntity.AddBuildingPlan(buildingType);
             buildingPlanEntity.AddModel(buildingPlanInstance.transform);

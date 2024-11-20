@@ -2,7 +2,6 @@
 using CodeBase.Infrastructure.Services.AssetProvider;
 using CodeBase.Infrastructure.Services.ConfigProvider;
 using CodeBase.Infrastructure.Services.InputSystem;
-using Cysharp.Threading.Tasks;
 
 namespace CodeBase.Infrastructure.State
 {

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using CodeBase.Data;
+﻿using CodeBase.Data;
 using CodeBase.Data.StaticData;
 using CodeBase.Domain.BuildingSystem;
 using CodeBase.Infrastructure.Services.AssetProvider;
@@ -9,14 +8,13 @@ using Cysharp.Threading.Tasks;
 using Unity.Properties;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Zenject;
+using VContainer;
 using BindingId = UnityEngine.UIElements.BindingId;
 
 namespace CodeBase.Infrastructure.Factory
 {
     public class UIFactory : IUIFactory
     {
-        private readonly DiContainer _container;
         private readonly IAssetProvider _assetProvider;
         private readonly BuildingOperation _buildingOperation;
         private readonly IConfigProvider _configProvider;
@@ -26,10 +24,9 @@ namespace CodeBase.Infrastructure.Factory
         private VisualTreeAsset _resourceContainer;
         private VisualTreeAsset _resourceLabel;
 
-        public UIFactory(DiContainer container, IAssetProvider assetProvider, BuildingOperation buildingOperation,
+        public UIFactory(IAssetProvider assetProvider, BuildingOperation buildingOperation,
             IConfigProvider configProvider)
         {
-            _container = container;
             _assetProvider = assetProvider;
             _buildingOperation = buildingOperation;
             _configProvider = configProvider;
@@ -69,7 +66,8 @@ namespace CodeBase.Infrastructure.Factory
         {
             var buildButton = _buildButtonPrefab.Instantiate();
 
-            BuildPlanViewModel buildPlan = new BuildPlanViewModel(_buildingOperation, _configProvider, BuildingType.Barrack);
+            BuildPlanViewModel buildPlan =
+                new BuildPlanViewModel(_buildingOperation, _configProvider, BuildingType.Barrack);
             Button barracksButton = buildButton.Q<Button>("Barracks");
 
             barracksButton.clicked += buildPlan.CreateBuildPlan;
@@ -86,7 +84,8 @@ namespace CodeBase.Infrastructure.Factory
             return rootVisualElement;
         }
 
-        private void BindingModelView<TModel, TValue>(VisualElement visualElement, BindingId bindingPath, TModel modelView, TValue bindProperty) where TModel : class 
+        private void BindingModelView<TModel, TValue>(VisualElement visualElement, BindingId bindingPath,
+            TModel modelView, TValue bindProperty) where TModel : class
         {
             visualElement.SetBinding(bindingPath, new DataBinding()
             {

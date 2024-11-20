@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Resources>k__BackingField:
   - <ResourcesType>k__BackingField: 1
-    <ValueResources>k__BackingField: 10
+    <ValueResources>k__BackingField: 1000
   <GameModeType>k__BackingField: 0

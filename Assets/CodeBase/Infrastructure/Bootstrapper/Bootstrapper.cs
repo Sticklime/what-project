@@ -1,11 +1,11 @@
 ﻿using CodeBase.Infrastructure.Factory;
 using CodeBase.Infrastructure.State;
-using UnityEngine;
-using Zenject;
+using VContainer;
+using VContainer.Unity;
 
 namespace CodeBase.Infrastructure.Bootstrapper
 {
-    public class Bootstrapper : MonoBehaviour
+    public class Bootstrapper : IInitializable
     {
         private IGameStateMachine _stateMachine;
         private IStateFactory _stateFactory;
@@ -17,20 +17,19 @@ namespace CodeBase.Infrastructure.Bootstrapper
             _stateFactory = stateFactory;
         }
 
-        private void Awake()
+        public void Initialize()
         {
-            DontDestroyOnLoad(gameObject);
             RegisterState();
-            
+
             _stateMachine.Enter<BootstrapState>();
         }
 
         private void RegisterState()
         {
-            _stateMachine.RegisterState<BootstrapState>(_stateFactory.CreateState<BootstrapState>());
-            _stateMachine.RegisterState<BootSystemState>(_stateFactory.CreateState<BootSystemState>());
-            _stateMachine.RegisterState<LoadSaveState>(_stateFactory.CreateState<LoadSaveState>());
-            _stateMachine.RegisterState<LoadMapState>(_stateFactory.CreateState<LoadMapState>());
+            _stateMachine.RegisterState<BootstrapState>(_stateFactory.CreateSystem<BootstrapState>());
+            _stateMachine.RegisterState<BootSystemState>(_stateFactory.CreateSystem<BootSystemState>());
+            _stateMachine.RegisterState<LoadSaveState>(_stateFactory.CreateSystem<LoadSaveState>());
+            _stateMachine.RegisterState<LoadMapState>(_stateFactory.CreateSystem<LoadMapState>());
         }
     }
 }
