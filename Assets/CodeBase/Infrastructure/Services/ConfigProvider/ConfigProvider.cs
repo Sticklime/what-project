@@ -3,7 +3,6 @@ using System.Linq;
 using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.AssetProvider;
 using Cysharp.Threading.Tasks;
-using NUnit.Framework;
 using UnityEngine;
 
 namespace CodeBase.Infrastructure.Services.ConfigProvider

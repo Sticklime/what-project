@@ -1,4 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI%20Toolkit/Style/Button.uss?fileID=7433441132597879392&amp;guid=7716e9933fd0671448b4c61946376695&amp;type=3#Button" />
-    <ui:VisualElement name="Hud-Container" style="flex-grow: 1;" />
-</ui:UXML>
