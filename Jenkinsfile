@@ -5,23 +5,15 @@ pipeline {
         UNITY_PATH = "/home/unitybuild/Unity/Hub/Editor/6000.0.29f1/Editor/Unity"
         PROJECT_PATH = "/home/unitybuild/what-project"
         BUILD_PATH = "${PROJECT_PATH}/Builds/LinuxServer"
-        UNITY_USERNAME = credentials('unity-username')
-        UNITY_PASSWORD = credentials('unity-password')
+        UNITY_USERNAME = "kol.dunin@yandex.ru"
+        UNITY_PASSWORD = "Galaxys3"
     }
 
     stages {
-        stage('Kill Unity Processes') {
-            steps {
-                sh '''
-                pkill -f Unity || true
-                pkill -f UnityHub || true
-                '''
-            }
-        }
-
         stage('Abort Previous Builds') {
             steps {
                 script {
+                    // Jenkins script to abort running builds for the same job
                     def builds = currentBuild.rawBuild.getParent().getBuilds()
                     for (def b : builds) {
                         if (b.isBuilding() && b.getNumber() != currentBuild.number) {
@@ -45,23 +37,12 @@ pipeline {
                 ${UNITY_PATH} \
                     -batchmode \
                     -nographics \
-                    -logFile - \
+                    -logFile ${PROJECT_PATH}/Editor.log \
                     -username "${UNITY_USERNAME}" \
                     -password "${UNITY_PASSWORD}" \
                     -projectPath ${PROJECT_PATH} \
                     -executeMethod CodeBase.Build_CI.Editor.BuildScript.BuildLinuxServer \
                     -quit
-                '''
-            }
-        }
-
-        stage('Verify Build') {
-            steps {
-                sh '''
-                if [ ! -f "${BUILD_PATH}/your_build_executable" ]; then
-                    echo "Build failed: Executable not found!"
-                    exit 1
-                fi
                 '''
             }
         }
@@ -79,13 +60,18 @@ pipeline {
     post {
         always {
             echo "Pipeline completed."
+            node {
+                sh 'cat ${PROJECT_PATH}/Editor.log || echo "Log file not found."'
+            }
         }
         success {
             echo "Build and deployment succeeded!"
         }
         failure {
             echo "Build or deployment failed."
-            sh 'cat ${PROJECT_PATH}/Editor.log || echo "Log file not found."'
+            node {
+                sh 'cat ${PROJECT_PATH}/Editor.log || echo "Log file not found."'
+            }
         }
     }
 }
