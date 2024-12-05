@@ -32,20 +32,28 @@ pipeline {
         }
 
         stage('Build Linux Server') {
-            steps {
-                sh '''
+    steps {
+        script {
+            def status = sh(script: '''
                 ${UNITY_PATH} \
-                    -batchmode \
-                    -nographics \
-                    -logFile ${PROJECT_PATH}/Editor.log \
-                    -username "${UNITY_USERNAME}" \
-                    -password "${UNITY_PASSWORD}" \
-                    -projectPath ${PROJECT_PATH} \
-                    -executeMethod CodeBase.Build_CI.Editor.BuildScript.BuildLinuxServer \
-                    -quit
-                '''
+                -batchmode \
+                -nographics \
+                -logFile ${PROJECT_PATH}/Editor.log \
+                -username "${UNITY_USERNAME}" \
+                -password "${UNITY_PASSWORD}" \
+                -projectPath ${PROJECT_PATH} \
+                -executeMethod CodeBase.Build_CI.Editor.BuildScript.BuildLinuxServer \
+                -quit
+                ''', returnStatus: true)
+            if (status != 0) {
+                echo "Unity build failed. Check Editor.log for details."
+                sh 'cat ${PROJECT_PATH}/Editor.log'
+                error("Unity build failed with exit code ${status}")
             }
         }
+    }
+}
+
 
         stage('Run Linux Server Build') {
             steps {
