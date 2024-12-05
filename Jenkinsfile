@@ -60,18 +60,14 @@ pipeline {
     post {
         always {
             echo "Pipeline completed."
-            node {
-                sh 'cat ${PROJECT_PATH}/Editor.log || echo "Log file not found."'
-            }
+            sh 'cat ${PROJECT_PATH}/Editor.log || echo "Log file not found."'
         }
         success {
             echo "Build and deployment succeeded!"
         }
         failure {
             echo "Build or deployment failed."
-            node {
-                sh 'cat ${PROJECT_PATH}/Editor.log || echo "Log file not found."'
-            }
+            sh 'cat ${PROJECT_PATH}/Editor.log || echo "Log file not found."'
         }
     }
 }
