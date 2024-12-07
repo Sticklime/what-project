@@ -5,8 +5,6 @@ pipeline {
         UNITY_PATH = "/home/unitybuild/Unity/Hub/Editor/6000.0.29f1/Editor/Unity"
         PROJECT_PATH = "/home/unitybuild/what-project"
         BUILD_PATH = "${PROJECT_PATH}/Builds/LinuxServer"
-        UNITY_USERNAME = "kol.dunin@yandex.ru"
-        UNITY_PASSWORD = "Galaxys3"
     }
 
     stages {
