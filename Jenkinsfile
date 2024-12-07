@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    parameters {
-        password(name: 'SUDO_PASSWORD', defaultValue: 'Galaxys3', description: 'Enter sudo password')
-    }
-
     environment {
         UNITY_PATH = "/home/unitybuild/Unity/Hub/Editor/6000.0.29f1/Editor/Unity"
         PROJECT_PATH = "/home/unitybuild/what-project"
@@ -20,7 +16,7 @@ pipeline {
                     for (def b : builds) {
                         if (b.isBuilding() && b.getNumber() != currentBuild.number) {
                             b.doKill()
-                            echo "Aborted build #${b.getNumber()}."
+                            echo "Aborted build #${b.getNumber()}"
                         }
                     }
                 }
@@ -30,46 +26,35 @@ pipeline {
         stage('Checkout Repository') {
             steps {
                 checkout scm
-                sh '''
-                echo ${SUDO_PASSWORD} | sudo -S chown -R jenkins:jenkins ${PROJECT_PATH}
-                '''
             }
         }
 
         stage('Build Linux Server') {
-            steps {
-                script {
-                    def status = sh(script: '''
-                        ${UNITY_PATH} \
-                        -batchmode \
-                        -nographics \
-                        -projectPath ${PROJECT_PATH} \
-                        -executeMethod CodeBase.Build_CI.Editor.BuildScript.BuildLinuxServer \
-                        -quit
-                        ''', returnStatus: true)
-                    if (status != 0) {
-                        echo "Unity build failed. Check Editor.log for details."
-                        sh 'cat ${PROJECT_PATH}/Editor.log'
-                        error("Unity build failed with exit code ${status}")
-                    }
-                }
+    steps {
+        script {
+            def status = sh(script: '''
+                ${UNITY_PATH} \
+                -batchmode \
+                -nographics \
+                -projectPath ${PROJECT_PATH} \
+                -executeMethod CodeBase.Build_CI.Editor.BuildScript.BuildLinuxServer \
+                -quit
+                ''', returnStatus: true)
+            if (status != 0) {
+                echo "Unity build failed. Check Editor.log for details."
+                sh 'cat ${PROJECT_PATH}/Editor.log'
+                error("Unity build failed with exit code ${status}")
             }
         }
+    }
+}
 
-        stage('Fix Build Permissions') {
-            steps {
-                sh '''
-                echo ${SUDO_PASSWORD} | sudo -S chown -R jenkins:jenkins ${BUILD_PATH}
-                echo ${SUDO_PASSWORD} | sudo -S chmod +x ${BUILD_PATH}
-                '''
-            }
-        }
 
         stage('Run Linux Server Build') {
             steps {
                 sh '''
-                # Run the build without graphics (headless mode)
-                ${BUILD_PATH} -batchmode -nographics -logFile ${PROJECT_PATH}/server_log.txt
+                chmod +x ${BUILD_PATH}
+                ${BUILD_PATH}
                 '''
             }
         }
