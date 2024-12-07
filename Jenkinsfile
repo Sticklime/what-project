@@ -26,9 +26,6 @@ pipeline {
         stage('Checkout Repository') {
             steps {
                 checkout scm
-                sh '''
-                sudo chown -R jenkins:jenkins ${PROJECT_PATH}
-                '''
             }
         }
 
