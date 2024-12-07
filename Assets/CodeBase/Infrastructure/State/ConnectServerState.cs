@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using CodeBase.Data.EditorData;
 using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
