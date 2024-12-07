@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    parameters {
+        password(name: 'SUDO_PASSWORD', defaultValue: 'Galaxys3', description: 'Enter sudo password')
+    }
+
     environment {
         UNITY_PATH = "/home/unitybuild/Unity/Hub/Editor/6000.0.29f1/Editor/Unity"
         PROJECT_PATH = "/home/unitybuild/what-project"
@@ -16,7 +20,7 @@ pipeline {
                     for (def b : builds) {
                         if (b.isBuilding() && b.getNumber() != currentBuild.number) {
                             b.doKill()
-                            echo "Aborted build #${b.getNumber()}"
+                            echo "Aborted build #${b.getNumber()}."
                         }
                     }
                 }
@@ -26,6 +30,9 @@ pipeline {
         stage('Checkout Repository') {
             steps {
                 checkout scm
+                sh '''
+                echo ${SUDO_PASSWORD} | sudo -S chown -R jenkins:jenkins ${PROJECT_PATH}
+                '''
             }
         }
 
@@ -52,8 +59,8 @@ pipeline {
         stage('Fix Build Permissions') {
             steps {
                 sh '''
-                sudo chown -R jenkins:jenkins ${BUILD_PATH}
-                sudo chmod +x ${BUILD_PATH}
+                echo ${SUDO_PASSWORD} | sudo -S chown -R jenkins:jenkins ${BUILD_PATH}
+                echo ${SUDO_PASSWORD} | sudo -S chmod +x ${BUILD_PATH}
                 '''
             }
         }
