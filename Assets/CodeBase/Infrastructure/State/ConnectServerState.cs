@@ -16,14 +16,15 @@ namespace CodeBase.Infrastructure.State
         private const string _serverAddress = "45.12.108.146";
         private const ushort _serverPort = 5055;
         private const GameMode _clientMode = GameMode.Client;
-        private const GameMode _serverMode = GameMode.Server; // Для сервера
+        private const GameMode _serverMode = GameMode.Server; 
         private const int _maxPlayers = 2;
 
         private readonly NetworkRunner _runner;
         private readonly IGameStateMachine _gameStateMachine;
         private readonly bool _isServerMode;
 
-        public ConnectServerState(IGameStateMachine stateMachine, NetworkRunner runner)
+        public ConnectServerState(IGameStateMachine stateMachine,
+            NetworkRunner runner)
         {
             _runner = runner;
             _gameStateMachine = stateMachine;

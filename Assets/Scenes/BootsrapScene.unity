@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1013621789}
   - component: {fileID: 1013621790}
+  - component: {fileID: 1013621791}
   m_Layer: 0
   m_Name: Bootsrapper
   m_TagString: Untagged
@@ -169,6 +170,18 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects:
   - {fileID: 0}
+--- !u!114 &1013621791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013621788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1199893898, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2021820434
 GameObject:
   m_ObjectHideFlags: 0
