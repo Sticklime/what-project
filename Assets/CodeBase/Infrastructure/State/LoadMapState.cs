@@ -57,19 +57,6 @@ namespace CodeBase.Infrastructure.State
 
         private void InitHud()
         {
-            _rootHud = _uiFactory.CreateHud();
-            _buttonBuild = _uiFactory.CreateBuildButton();
-            _resourceContainer = _uiFactory.CreateResourceContainer();
-
-            _rootHud.Add(_buttonBuild);
-
-            foreach (ResourceData resourceData in _persistentProgress.Data.ResourceData.Values)
-                _resourceLabels.Add(_uiFactory.CreateResourceLabel(resourceData));
-
-            foreach (VisualElement resourcesLabel in _resourceLabels)
-                _resourceContainer.Q<VisualElement>("GroupBoxResources").Add(resourcesLabel);
-
-            _rootHud.Add(_resourceContainer);
         }
 
         private void InitCharacters()
