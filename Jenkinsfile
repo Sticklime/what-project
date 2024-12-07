@@ -26,17 +26,18 @@ pipeline {
         stage('Git Pull (Manual Approval)') {
             steps {
                 script {
-                    // Если хотите делать git pull вручную через кнопку в Jenkins
-                    // Используем input для того, чтобы ручной разрешения от пользователя
-                    input message: 'Git Pull approval needed. Do you want to continue?', ok: 'Proceed'
-
-                    // Выполнение git pull
-                    echo "Performing git pull..."
-                    sh """
-                    cd ${PROJECT_PATH}
-                    git reset --hard HEAD  # Принудительный сброс изменений (если нужно)
-                    git pull origin main  # Здесь используйте вашу ветку вместо "main", если необходимо
-                    """
+                    withCredentials([string(credentialsId: 'Galaxys3', variable: 'Galaxys3')]) {
+                        echo "Performing git pull..."
+                        sh """
+                        echo "${SUDO_PASSWORD}" | sudo -S -k bash -c '
+                        cd ${PROJECT_PATH}
+                        git reset --hard HEAD  # Принудительный сброс изменений (если нужно)
+                        git pull origin main  # Здесь используйте вашу ветку вместо "main", если необходимо
+                        sudo chown -R jenkins:jenkins ${PROJECT_PATH}
+                        sudo chmod -R 775 ${PROJECT_PATH}
+                        '
+                        """
+                    }
                 }
             }
         }
@@ -73,7 +74,7 @@ pipeline {
                     def executablePath = "${BUILD_PATH}/${EXECUTABLE_NAME}"
                     sh """
                     chmod +x ${executablePath}
-                    ${executablePath} -batchmode -nographics
+                    ${executablePath} -batchmode -nographics -logFile ${PROJECT_PATH}/server_log.txt
                     """
                 }
             }
