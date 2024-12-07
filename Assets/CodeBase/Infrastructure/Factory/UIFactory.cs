@@ -1,15 +1,5 @@
-﻿using CodeBase.Data;
-using CodeBase.Data.StaticData;
-using CodeBase.Domain.BuildingSystem;
-using CodeBase.Infrastructure.Services.AssetProvider;
-using CodeBase.Infrastructure.Services.ConfigProvider;
-using CodeBase.UserInterface.ViewModel;
+﻿using CodeBase.Infrastructure.Services.AssetProvider;
 using Cysharp.Threading.Tasks;
-using Unity.Properties;
-using UnityEngine;
-using UnityEngine.UIElements;
-using VContainer;
-using BindingId = UnityEngine.UIElements.BindingId;
 
 namespace CodeBase.Infrastructure.Factory
 {
@@ -24,7 +14,7 @@ namespace CodeBase.Infrastructure.Factory
 
         public async UniTask Load()
         {
-       
+            
         }
     }
 

@@ -3,8 +3,6 @@ using CodeBase.Data;
 using CodeBase.Infrastructure.Services.SceneLoader;
 using CodeBase.Infrastructure.Factory;
 using CodeBase.Infrastructure.Services.ConfigProvider;
-using CodeBase.UserInterface.ViewModel;
-using Unity.Properties;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -12,7 +10,6 @@ namespace CodeBase.Infrastructure.State
 {
     public class LoadMapState : IState
     {
-        private const string NameScene = "MapScene";
 
         private readonly IPersistentProgress _persistentProgress;
         private readonly IConfigProvider _configProvider;
@@ -25,22 +22,20 @@ namespace CodeBase.Infrastructure.State
         private VisualElement _rootHud;
         private VisualElement _buttonBuild;
         private VisualElement _resourceContainer;
+        private readonly ConnectServerState _connectServerState;
 
-        public LoadMapState(IGameStateMachine stateMachine, ISceneLoader sceneLoader, IGameFactory gameFactory,
+        public LoadMapState(IGameStateMachine stateMachine, IGameFactory gameFactory,
             IUIFactory uiFactory, IPersistentProgress persistentProgress, IConfigProvider configProvider)
         {
             _stateMachine = stateMachine;
-            _sceneLoader = sceneLoader;
             _gameFactory = gameFactory;
             _uiFactory = uiFactory;
             _persistentProgress = persistentProgress;
             _configProvider = configProvider;
         }
 
-        public async void Enter()
+        public void Enter()
         {
-            await _sceneLoader.Load(NameScene);
-
             InitScene();
         }
 

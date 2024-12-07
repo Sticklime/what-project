@@ -30,6 +30,7 @@ namespace CodeBase.Infrastructure.Bootstrapper
             _stateMachine.RegisterState<BootSystemState>(_stateFactory.CreateSystem<BootSystemState>());
             _stateMachine.RegisterState<LoadSaveState>(_stateFactory.CreateSystem<LoadSaveState>());
             _stateMachine.RegisterState<LoadMapState>(_stateFactory.CreateSystem<LoadMapState>());
+            _stateMachine.RegisterState<ConnectServerState>(_stateFactory.CreateSystem<ConnectServerState>());
         }
     }
 }
