@@ -824,6 +824,7 @@ PlayerSettings:
     PS4: 
     PS5: 
     QNX: 
+    Server: FUSION_WEAVER;FUSION2;SERVER
     Stadia: 
     Standalone: FUSION_WEAVER;FUSION2
     VisionOS: 
@@ -857,7 +858,7 @@ PlayerSettings:
   useDeterministicCompilation: 1
   additionalIl2CppArgs: 
   scriptingRuntimeVersion: 1
-  gcIncremental: 0
+  gcIncremental: 1
   gcWBarrierValidation: 0
   apiCompatibilityLevelPerPlatform: {}
   editorAssembliesCompatibilityLevel: 1
