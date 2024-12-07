@@ -39,8 +39,6 @@ pipeline {
                 -batchmode \
                 -nographics \
                 -logFile ${PROJECT_PATH}/Editor.log \
-                -username "${UNITY_USERNAME}" \
-                -password "${UNITY_PASSWORD}" \
                 -projectPath ${PROJECT_PATH} \
                 -executeMethod CodeBase.Build_CI.Editor.BuildScript.BuildLinuxServer \
                 -quit
