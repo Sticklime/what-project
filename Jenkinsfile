@@ -38,7 +38,6 @@ pipeline {
                 ${UNITY_PATH} \
                 -batchmode \
                 -nographics \
-                -logFile ${PROJECT_PATH}/Editor.log \
                 -projectPath ${PROJECT_PATH} \
                 -executeMethod CodeBase.Build_CI.Editor.BuildScript.BuildLinuxServer \
                 -quit
