@@ -5,13 +5,13 @@ pipeline {
         UNITY_PATH = "/home/unitybuild/Unity/Hub/Editor/6000.0.29f1/Editor/Unity"
         PROJECT_PATH = "/home/unitybuild/what-project"
         BUILD_PATH = "${PROJECT_PATH}/Builds/LinuxServer"
+        EXECUTABLE_NAME = "LinuxServer.x86_64" // Имя исполняемого файла
     }
 
     stages {
         stage('Abort Previous Builds') {
             steps {
                 script {
-                    // Jenkins script to abort running builds for the same job
                     def builds = currentBuild.rawBuild.getParent().getBuilds()
                     for (def b : builds) {
                         if (b.isBuilding() && b.getNumber() != currentBuild.number) {
@@ -23,6 +23,24 @@ pipeline {
             }
         }
 
+        stage('Git Pull (Manual Approval)') {
+            steps {
+                script {
+                    // Если хотите делать git pull вручную через кнопку в Jenkins
+                    // Используем input для того, чтобы ручной разрешения от пользователя
+                    input message: 'Git Pull approval needed. Do you want to continue?', ok: 'Proceed'
+
+                    // Выполнение git pull
+                    echo "Performing git pull..."
+                    sh """
+                    cd ${PROJECT_PATH}
+                    git reset --hard HEAD  # Принудительный сброс изменений (если нужно)
+                    git pull origin main  # Здесь используйте вашу ветку вместо "main", если необходимо
+                    """
+                }
+            }
+        }
+
         stage('Checkout Repository') {
             steps {
                 checkout scm
@@ -30,32 +48,34 @@ pipeline {
         }
 
         stage('Build Linux Server') {
-    steps {
-        script {
-            def status = sh(script: '''
-                ${UNITY_PATH} \
-                -batchmode \
-                -nographics \
-                -projectPath ${PROJECT_PATH} \
-                -executeMethod CodeBase.Build_CI.Editor.BuildScript.BuildLinuxServer \
-                -quit
-                ''', returnStatus: true)
-            if (status != 0) {
-                echo "Unity build failed. Check Editor.log for details."
-                sh 'cat ${PROJECT_PATH}/Editor.log'
-                error("Unity build failed with exit code ${status}")
+            steps {
+                script {
+                    def status = sh(script: """
+                        ${UNITY_PATH} \
+                        -batchmode \
+                        -nographics \
+                        -projectPath ${PROJECT_PATH} \
+                        -executeMethod CodeBase.Build_CI.Editor.BuildScript.BuildLinuxServer \
+                        -quit
+                        """, returnStatus: true)
+                    if (status != 0) {
+                        echo "Unity build failed. Check Editor.log for details."
+                        sh "cat ${PROJECT_PATH}/Editor.log"
+                        error("Unity build failed with exit code ${status}")
+                    }
+                }
             }
         }
-    }
-}
-
 
         stage('Run Linux Server Build') {
             steps {
-                sh '''
-                chmod +x ${BUILD_PATH}
-                ${BUILD_PATH}
-                '''
+                script {
+                    def executablePath = "${BUILD_PATH}/${EXECUTABLE_NAME}"
+                    sh """
+                    chmod +x ${executablePath}
+                    ${executablePath} -batchmode -nographics
+                    """
+                }
             }
         }
     }
