@@ -15,9 +15,10 @@ namespace CodeBase.Infrastructure.State
 
         private const string _serverAddress = "45.12.108.146";
         private const ushort _serverPort = 5055;
+        private const int _maxPlayers = 2;
+        
         private const GameMode _clientMode = GameMode.Client;
         private const GameMode _serverMode = GameMode.Server; 
-        private const int _maxPlayers = 2;
 
         private readonly NetworkRunner _runner;
         private readonly IGameStateMachine _gameStateMachine;
@@ -127,7 +128,8 @@ namespace CodeBase.Infrastructure.State
         
         private NetworkSceneInfo? GetSceneInfo()
         {
-            var scene = SceneRef.FromIndex(SceneManager.GetSceneByName(NameScene).buildIndex);
+            Debug.Log(SceneManager.GetSceneByName(NameScene).buildIndex);
+            var scene = SceneRef.FromIndex(SceneManager.GetSceneByName(NameScene).buildIndex * -1);
             
             var networkSceneInfo = new NetworkSceneInfo();
             

@@ -10,7 +10,6 @@ namespace CodeBase.Infrastructure.State
 {
     public class LoadMapState : IState
     {
-
         private readonly IPersistentProgress _persistentProgress;
         private readonly IConfigProvider _configProvider;
         private readonly IGameStateMachine _stateMachine;
