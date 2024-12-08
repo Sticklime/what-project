@@ -9,7 +9,8 @@ pipeline {
         SUDO_PASSWORD = "Galaxys3" // Пароль для sudo
     }
 
- stage('Update Repository') {
+    stages {
+        stage('Update Repository') {
             steps {
                 script {
                     sh """
@@ -23,7 +24,6 @@ pipeline {
             }
         }
 
-    stages {
         stage('Abort Previous Builds') {
             steps {
                 script {
@@ -92,14 +92,18 @@ pipeline {
     post {
         always {
             echo "Pipeline completed."
-            sh 'cat "${PROJECT_PATH}/Editor.log" || echo "Log file not found."'
+            sh """
+                cat "${PROJECT_PATH}/Editor.log" || echo "Log file not found."
+            """
         }
         success {
             echo "Build and deployment succeeded!"
         }
         failure {
             echo "Build or deployment failed."
-            sh 'cat "${PROJECT_PATH}/Editor.log" || echo "Log file not found."'
+            sh """
+                cat "${PROJECT_PATH}/Editor.log" || echo "Log file not found."
+            """
         }
     }
 }
