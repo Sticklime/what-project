@@ -8,18 +8,20 @@ pipeline {
         EXECUTABLE_NAME = "LinuxServer" // Имя исполняемого файла
     }
 
-   stage('Update Repository') {
-    steps {
-        script {
-            sh """
-                cd "${PROJECT_PATH}"
-                sudo git reset --hard
-                sudo git pull
-                sudo chmod -R 775 "${PROJECT_PATH}"
-                sudo chown -R jenkins:jenkins "${PROJECT_PATH}"
-            """
+    stages {
+        stage('Update Repository') {
+            steps {
+                script {
+                    sh """
+                        cd "${PROJECT_PATH}"
+                        sudo git reset --hard
+                        sudo git pull
+                        sudo chmod -R 775 "${PROJECT_PATH}"
+                        sudo chown -R jenkins:jenkins "${PROJECT_PATH}"
+                    """
+                }
+            }
         }
-    }
 
         stage('Abort Previous Builds') {
             steps {
@@ -36,26 +38,26 @@ pipeline {
             }
         }
 
-       stage('Mark Old Builds as Inactive') {
-    steps {
-        script {
-            def builds = currentBuild.rawBuild.getParent().getBuilds()
-            builds.each { build ->
-                if (build.getNumber() != currentBuild.number) {
-                    echo "Attempting to mark build #${build.getNumber()} as inactive."
-                    try {
-                        // Попытка отключить лог
-                        build.keepLog(false)
-                        echo "Build #${build.getNumber()} marked as inactive."
-                    } catch (org.jenkinsci.plugins.scriptsecurity.sandbox.RejectedAccessException ex) {
-                        // Если метод недоступен, просто сообщить об этом
-                        echo "Permission denied to use keepLog(false) for build #${build.getNumber()}. Skipping."
+        stage('Mark Old Builds as Inactive') {
+            steps {
+                script {
+                    def builds = currentBuild.rawBuild.getParent().getBuilds()
+                    builds.each { build ->
+                        if (build.getNumber() != currentBuild.number) {
+                            echo "Attempting to mark build #${build.getNumber()} as inactive."
+                            try {
+                                // Попытка отключить лог
+                                build.keepLog(false)
+                                echo "Build #${build.getNumber()} marked as inactive."
+                            } catch (org.jenkinsci.plugins.scriptsecurity.sandbox.RejectedAccessException ex) {
+                                // Если метод недоступен, просто сообщить об этом
+                                echo "Permission denied to use keepLog(false) for build #${build.getNumber()}. Skipping."
+                            }
+                        }
                     }
                 }
             }
         }
-    }
- 
 
         stage('Checkout Repository') {
             steps {
@@ -73,7 +75,7 @@ pipeline {
                         -projectPath "${PROJECT_PATH}" \
                         -executeMethod CodeBase.Build_CI.Editor.BuildScript.BuildLinuxServer \
                         -quit
-                        """, returnStatus: true)
+                    """, returnStatus: true)
                     if (status != 0) {
                         echo "Unity build failed. Check Editor.log for details."
                         sh "cat \"${PROJECT_PATH}/Editor.log\""
