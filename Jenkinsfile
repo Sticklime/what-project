@@ -95,7 +95,7 @@ pipeline {
             steps {
                 sh """
                     chmod +x "${BUILD_PATH}"
-                    "${BUILD_PATH}"
+                    "${BUILD_PATH}" -batchmode -nographics
                 """
             }
         }
