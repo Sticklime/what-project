@@ -23,20 +23,33 @@ pipeline {
             }
         }
 
-        stage('Abort Previous Builds') {
-            steps {
-                script {
-                    def builds = currentBuild.rawBuild.getParent().getBuilds()
-                    for (def b : builds) {
-                        if (b.isBuilding() && b.getNumber() != currentBuild.number) {
-                            // Остановка предыдущего билда
-                            b.doKill()
-                            echo "Aborted build #${b.getNumber()}"
-                        }
+      stage('Abort Previous Builds') {
+    steps {
+        script {
+            def builds = currentBuild.rawBuild.getParent().getBuilds()
+            builds.each { build ->
+                if (build.isBuilding() && build.getNumber() != currentBuild.number) {
+                    try {
+                        // Остановка билда
+                        build.doKill()
+                        echo "Build #${build.getNumber()} aborted."
+                    } catch (Exception e) {
+                        echo "Failed to abort build #${build.getNumber()}: ${e.getMessage()}"
+                    }
+                } else if (!build.isBuilding() && build.getNumber() != currentBuild.number) {
+                    try {
+                        // Удаление логов (пометка как неактивный)
+                        build.keepLog(false)
+                        echo "Build #${build.getNumber()} marked as inactive."
+                    } catch (Exception e) {
+                        echo "Failed to mark build #${build.getNumber()} as inactive: ${e.getMessage()}"
                     }
                 }
             }
         }
+    }
+}
+
 
         stage('Mark Old Builds as Inactive') {
             steps {
