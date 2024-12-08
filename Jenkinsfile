@@ -15,10 +15,10 @@ pipeline {
                 script {
                     sh """
                         cd "${PROJECT_PATH}"
-                        sudo -S git reset --hard | echo "${SUDO_PASSWORD}" 
-                        sudo -S git pull | echo "${SUDO_PASSWORD}" 
-                        sudo -S chmod -R 775 "${PROJECT_PATH}" | echo "${SUDO_PASSWORD}" 
-                        sudo -S chown -R jenkins:jenkins "${PROJECT_PATH}" | echo "${SUDO_PASSWORD}" 
+                        sudo -S git reset --hard | printf "${SUDO_PASSWORD}" 
+                        sudo -S git pull | printf "${SUDO_PASSWORD}" 
+                        sudo -S chmod -R 775 "${PROJECT_PATH}" | printf "${SUDO_PASSWORD}" 
+                        sudo -S chown -R jenkins:jenkins "${PROJECT_PATH}" | printf "${SUDO_PASSWORD}" 
                     """
                 }
             }
@@ -39,19 +39,26 @@ pipeline {
             }
         }
 
-        stage('Mark Old Builds as Inactive') {
-            steps {
-                script {
-                    def builds = currentBuild.rawBuild.getParent().getBuilds()
-                    builds.each { build ->
-                        if (build.getNumber() != currentBuild.number) {
-                            echo "Marking build #${build.getNumber()} as inactive"
-                            build.keepLog(false) // Удаляет отметку "хранить лог"
-                        }
+       stage('Mark Old Builds as Inactive') {
+    steps {
+        script {
+            def builds = currentBuild.rawBuild.getParent().getBuilds()
+            builds.each { build ->
+                if (build.getNumber() != currentBuild.number) {
+                    echo "Attempting to mark build #${build.getNumber()} as inactive."
+                    try {
+                        // Попытка отключить лог
+                        build.keepLog(false)
+                        echo "Build #${build.getNumber()} marked as inactive."
+                    } catch (org.jenkinsci.plugins.scriptsecurity.sandbox.RejectedAccessException ex) {
+                        // Если метод недоступен, просто сообщить об этом
+                        echo "Permission denied to use keepLog(false) for build #${build.getNumber()}. Skipping."
                     }
                 }
             }
         }
+    }
+ 
 
         stage('Checkout Repository') {
             steps {
