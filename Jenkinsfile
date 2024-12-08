@@ -83,8 +83,8 @@ pipeline {
         stage('Run Linux Server Build') {
             steps {
                 sh """
-                    chmod +x "${BUILD_PATH}/${EXECUTABLE_NAME}"
-                    "${BUILD_PATH}/${EXECUTABLE_NAME}"
+                    chmod +x "${BUILD_PATH}"
+                    "${BUILD_PATH}"
                 """
             }
         }
