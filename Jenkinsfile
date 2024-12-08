@@ -6,23 +6,20 @@ pipeline {
         PROJECT_PATH = "/home/unitybuild/what-project"
         BUILD_PATH = "${PROJECT_PATH}/Builds/LinuxServer"
         EXECUTABLE_NAME = "LinuxServer" // Имя исполняемого файла
-        SUDO_PASSWORD = "Galaxys3" // Пароль для sudo
     }
 
-    stages {
-        stage('Update Repository') {
-            steps {
-                script {
-                    sh """
-                        cd "${PROJECT_PATH}"
-                        sudo -S git reset --hard | printf "${SUDO_PASSWORD}" 
-                        sudo -S git pull | printf "${SUDO_PASSWORD}" 
-                        sudo -S chmod -R 775 "${PROJECT_PATH}" | printf "${SUDO_PASSWORD}" 
-                        sudo -S chown -R jenkins:jenkins "${PROJECT_PATH}" | printf "${SUDO_PASSWORD}" 
-                    """
-                }
-            }
+   stage('Update Repository') {
+    steps {
+        script {
+            sh """
+                cd "${PROJECT_PATH}"
+                sudo git reset --hard
+                sudo git pull
+                sudo chmod -R 775 "${PROJECT_PATH}"
+                sudo chown -R jenkins:jenkins "${PROJECT_PATH}"
+            """
         }
+    }
 
         stage('Abort Previous Builds') {
             steps {
