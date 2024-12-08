@@ -5,7 +5,8 @@ pipeline {
         UNITY_PATH = "/home/unitybuild/Unity/Hub/Editor/6000.0.29f1/Editor/Unity"
         PROJECT_PATH = "/home/unitybuild/what-project"
         BUILD_PATH = "${PROJECT_PATH}/Builds/LinuxServer"
-        EXECUTABLE_NAME = "LinuxServer.x86_64" // Имя исполняемого файла
+        EXECUTABLE_NAME = "LinuxServer" // Имя исполняемого файла
+        SUDO_PASSWORD = "Galaxys3" // Пароль для sudo
     }
 
     stages {
@@ -23,9 +24,22 @@ pipeline {
             }
         }
 
+        stage('Update Repository') {
+            steps {
+                script {
+                    sh """
+                        cd ${PROJECT_PATH}
+                        echo ${SUDO_PASSWORD} | sudo -S git reset --hard
+                        echo ${SUDO_PASSWORD} | sudo -S git pull
+                        echo ${SUDO_PASSWORD} | sudo -S chmod -R 775 ${PROJECT_PATH}
+                        echo ${SUDO_PASSWORD} | sudo -S chown -R jenkins:jenkins ${PROJECT_PATH}
+                    """
+                }
+            }
+        }
+
         stage('Checkout Repository') {
             steps {
-                // Получаем последний код из репозитория
                 checkout scm
             }
         }
@@ -50,16 +64,14 @@ pipeline {
             }
         }
 
-       stage('Run Linux Server Build') 
-       {
-                   steps 
-                   {
-                       sh '''
-                       chmod +x ${BUILD_PATH}
-                       ${BUILD_PATH}
-                       '''
-                   }
-               }
+        stage('Run Linux Server Build') {
+            steps {
+                sh """
+                    chmod +x ${BUILD_PATH}/${EXECUTABLE_NAME}
+                    ${BUILD_PATH}/${EXECUTABLE_NAME}
+                """
+            }
+        }
     }
 
     post {
