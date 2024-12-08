@@ -59,11 +59,6 @@ pipeline {
             }
         }
 
-        stage('Checkout Repository') {
-            steps {
-                checkout scm
-            }
-        }
 
         stage('Build Linux Server') {
             steps {
@@ -92,24 +87,6 @@ pipeline {
                     "${BUILD_PATH}/${EXECUTABLE_NAME}"
                 """
             }
-        }
-    }
-
-    post {
-        always {
-            echo "Pipeline completed."
-            sh """
-                cat "${PROJECT_PATH}/Editor.log" || echo "Log file not found."
-            """
-        }
-        success {
-            echo "Build and deployment succeeded!"
-        }
-        failure {
-            echo "Build or deployment failed."
-            sh """
-                cat "${PROJECT_PATH}/Editor.log" || echo "Log file not found."
-            """
         }
     }
 }
