@@ -56,7 +56,7 @@ pipeline {
                     def executablePath = "${BUILD_PATH}/${EXECUTABLE_NAME}"
                     sh """
                     chmod +x ${executablePath}
-                    ${executablePath} -batchmode -nographics -logFile ${PROJECT_PATH}/server_log.txt
+                    ${executablePath} -batchmode -nographics
                     """
                 }
             }
