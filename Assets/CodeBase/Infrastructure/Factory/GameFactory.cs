@@ -50,8 +50,8 @@ namespace CodeBase.Infrastructure.Factory
 
         public async UniTask CreateBuildingPlan(Vector3 at, BuildingType buildingType)
         {
-            BuildingData buildingData = _configProvider.GetBuildingData(buildingType);
-            GameObject buildingPrefab = await _assetProvider.LoadAsync<GameObject>(buildingData.BuildingReference);
+            BuildingConfig buildingConfig = _configProvider.GetBuilding(buildingType);
+            GameObject buildingPrefab = await _assetProvider.LoadAsync<GameObject>(buildingConfig.BuildingReference);
 
             GameEntity buildingPlanEntity = _context.game.CreateEntity();
             GameObject buildingPlanInstance = _diContainer.Instantiate(_barracksPlan);
@@ -63,8 +63,8 @@ namespace CodeBase.Infrastructure.Factory
 
         public async UniTask CreateBuilding(Vector3 at, BuildingType buildingType)
         {
-            BuildingData buildingData = _configProvider.GetBuildingData(buildingType);
-            var buildingPrefab = await _assetProvider.LoadAsync<GameObject>(buildingData.BuildingReference);
+            BuildingConfig buildingConfig = _configProvider.GetBuilding(buildingType);
+            var buildingPrefab = await _assetProvider.LoadAsync<GameObject>(buildingConfig.BuildingReference);
 
             GameEntity buildEntity = _context.game.CreateEntity();
             GameObject buildInstance = Object.Instantiate(buildingPrefab, at, Quaternion.identity);

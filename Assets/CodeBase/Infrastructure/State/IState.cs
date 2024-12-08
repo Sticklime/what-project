@@ -6,7 +6,7 @@ namespace CodeBase.Infrastructure.State
     {
         void Enter();
     }
-    
+
     public interface IExitableState
     {
         void Exit();

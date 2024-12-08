@@ -21,7 +21,6 @@ namespace CodeBase.Infrastructure.State
         private VisualElement _rootHud;
         private VisualElement _buttonBuild;
         private VisualElement _resourceContainer;
-        private readonly ConnectServerState _connectServerState;
 
         public LoadMapState(IGameStateMachine stateMachine, IGameFactory gameFactory,
             IUIFactory uiFactory, IPersistentProgress persistentProgress, IConfigProvider configProvider)

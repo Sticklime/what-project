@@ -9,7 +9,7 @@ namespace CodeBase.UserInterface.ViewModel
     public class BuildPlanViewModel
     {
         private readonly BuildingOperation _buildingOperation;
-        private readonly BuildingData _buildingData;
+        private readonly BuildingConfig _buildingConfig;
         private readonly BuildingType _buildingType;
 
         [CreateProperty] public string NameButton { get; set; }
@@ -17,8 +17,8 @@ namespace CodeBase.UserInterface.ViewModel
         public BuildPlanViewModel(BuildingOperation buildingOperation, IConfigProvider configProvider, BuildingType buildingType)
         {
             _buildingType = buildingType;
-            _buildingData = configProvider.GetBuildingData(_buildingType);
-            NameButton = _buildingData.Name;
+            _buildingConfig = configProvider.GetBuilding(_buildingType);
+            NameButton = _buildingConfig.Name;
             _buildingOperation = buildingOperation;
         }
 

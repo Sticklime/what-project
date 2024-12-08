@@ -5,7 +5,7 @@ using UnityEngine.AddressableAssets;
 namespace CodeBase.Data.StaticData
 {
     [CreateAssetMenu(menuName = "StaticData/BuildingData", fileName = "NewBuildingData")]
-    public class BuildingData : ScriptableObject
+    public class BuildingConfig : ScriptableObject
     {
         [field: SerializeField] public string Name { get; private set; }
         [field: SerializeField] public AssetReference BuildingReference { get; private set; }

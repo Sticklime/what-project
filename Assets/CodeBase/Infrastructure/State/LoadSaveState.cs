@@ -23,14 +23,17 @@ namespace CodeBase.Infrastructure.State
         {
             var resources = new Dictionary<ResourcesType, ResourceData>();
 
-            GameModeData resourcesStaticData = _configProvider.GetGameModeData(GameModeType.Default);
+            GameModeConfig resourcesStaticConfig = _configProvider.GetGameMode(GameModeType.Default);
 
-            foreach (var resourcesData in resourcesStaticData.Resources) 
+            foreach (var resourcesData in resourcesStaticConfig.Resources)
                 resources.Add(resourcesData.ResourcesType, new ResourceData(resourcesData.ValueResources));
 
             _persistentProgress.Data = new PlayerData(resources);
 
-            _stateMachine.Enter<ConnectServerState>();
+#if SERVER
+            _stateMachine.Enter<StartServerState>();   
+#endif
+            _stateMachine.Enter<ConnectToServer>();
         }
 
         public void Exit()

@@ -6,7 +6,8 @@ namespace CodeBase.Infrastructure.Services.ConfigProvider
     public interface IConfigProvider
     {
         UniTask Load();
-        GameModeData GetGameModeData(GameModeType gameModeType);
-        BuildingData GetBuildingData(BuildingType buildingType);
+        GameModeConfig GetGameMode(GameModeType gameModeType);
+        BuildingConfig GetBuilding(BuildingType buildingType);
+        ServerConnectConfig GetServerConnectConfig();
     }
 }

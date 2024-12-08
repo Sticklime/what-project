@@ -22,9 +22,9 @@ namespace CodeBase.Domain.BuildingSystem
 
         public void PurchaseBuilding(BuildingType buildingType, Vector3 at)
         {
-            BuildingData buildingData = _configProvider.GetBuildingData(buildingType);
+            BuildingConfig buildingConfig = _configProvider.GetBuilding(buildingType);
 
-            if (_resourcesOperation.TryPurchaseWithResource(buildingData.RequiredResources.ToArray()))
+            if (_resourcesOperation.TryPurchaseWithResource(buildingConfig.RequiredResources.ToArray()))
             {
                 _gameFactory.CreateBuildingPlan(at, buildingType);
             }

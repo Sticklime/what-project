@@ -4,7 +4,7 @@ using UnityEngine;
 namespace CodeBase.Data.StaticData
 {
     [CreateAssetMenu(menuName = "StaticData/GameModeData", fileName = "NewGameModeData")]
-    public class GameModeData : ScriptableObject
+    public class GameModeConfig : ScriptableObject
     {
         [field: SerializeField] public List<ResourcesStaticData> Resources { get; private set; }
         [field: SerializeField] public GameModeType GameModeType { get; private set; }

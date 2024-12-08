@@ -2,6 +2,7 @@
 using System.Linq;
 using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.AssetProvider;
+using CodeBase.Infrastructure.State;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -22,11 +23,14 @@ namespace CodeBase.Infrastructure.Services.ConfigProvider
             _staticData = await _assetProvider.LoadAssetsByLabelAsync<ScriptableObject>("Configs");
         }
 
-        public GameModeData GetGameModeData(GameModeType gameModeType) =>
-            GetListDataOfType<GameModeData>(_staticData).FirstOrDefault(x => x.GameModeType == gameModeType);
+        public GameModeConfig GetGameMode(GameModeType gameModeType) =>
+            GetListDataOfType<GameModeConfig>(_staticData).FirstOrDefault(x => x.GameModeType == gameModeType);
 
-        public BuildingData GetBuildingData(BuildingType buildingType) =>
-            GetListDataOfType<BuildingData>(_staticData).FirstOrDefault(x => x.BuildingType == buildingType);
+        public BuildingConfig GetBuilding(BuildingType buildingType) =>
+            GetListDataOfType<BuildingConfig>(_staticData).FirstOrDefault(x => x.BuildingType == buildingType);
+
+        public ServerConnectConfig GetServerConnectConfig() =>
+            GetFirstDataOfType<ServerConnectConfig>(_staticData);
 
         private TData GetFirstDataOfType<TData>(List<ScriptableObject> allData)
         {
