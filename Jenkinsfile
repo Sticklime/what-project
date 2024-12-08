@@ -29,7 +29,7 @@ pipeline {
                 script {
                     sh """
                         cd ${PROJECT_PATH}
-                        echo ${SUDO_PASSWORD} | sudo -S git reset --hard
+                        sudo -S git reset --hard | echo ${SUDO_PASSWORD} 
                         sudo -S git pull
                         sudo -S chmod -R 775 ${PROJECT_PATH}
                         sudo -S chown -R jenkins:jenkins ${PROJECT_PATH}
