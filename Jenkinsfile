@@ -55,8 +55,12 @@ pipeline {
                 script {
                     def executablePath = "${BUILD_PATH}/${EXECUTABLE_NAME}"
                     sh """
+                    if [ ! -f "${executablePath}" ]; then
+                        echo "Error: Executable not found at ${executablePath}"
+                        exit 1
+                    fi
                     chmod +x ${executablePath}
-                    ${executablePath} -batchmode -nographics
+                    ${executablePath} -batchmode -nographics -logFile ${PROJECT_PATH}/server_log.txt
                     """
                 }
             }
