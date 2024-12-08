@@ -9,23 +9,22 @@ namespace CodeBase.Infrastructure.State
     public class ConnectServerState : IState
     {
         private const string NameScene = "MapScene";
-        
+
         private const string _sessionName = "Session";
         private int _sessionIndex;
 
         private const string _serverAddress = "45.12.108.146";
         private const ushort _serverPort = 5055;
         private const int _maxPlayers = 2;
-        
+
         private const GameMode _clientMode = GameMode.Client;
-        private const GameMode _serverMode = GameMode.Server; 
+        private const GameMode _serverMode = GameMode.Server;
 
         private readonly NetworkRunner _runner;
         private readonly IGameStateMachine _gameStateMachine;
         private readonly bool _isServerMode;
 
-        public ConnectServerState(IGameStateMachine stateMachine,
-            NetworkRunner runner)
+        public ConnectServerState(IGameStateMachine stateMachine, NetworkRunner runner)
         {
             _runner = runner;
             _gameStateMachine = stateMachine;
@@ -74,8 +73,14 @@ namespace CodeBase.Infrastructure.State
             }
         }
 
-        private Task<StartGameResult> StartGame()
+        private async Task<StartGameResult> StartGame()
         {
+            if (_runner.SessionInfo != null)
+            {
+                Debug.Log("Shutting down the existing session...");
+                await _runner.Shutdown();
+            }
+
             var startGameArgs = new StartGameArgs
             {
                 GameMode = _clientMode,
@@ -85,11 +90,17 @@ namespace CodeBase.Infrastructure.State
                 PlayerCount = _maxPlayers,
             };
 
-            return _runner.StartGame(startGameArgs);
+            return await _runner.StartGame(startGameArgs);
         }
 
-        private Task<StartGameResult> StartServer()
+        private async Task<StartGameResult> StartServer()
         {
+            if (_runner.SessionInfo != null)
+            {
+                Debug.Log("Shutting down the existing session...");
+                await _runner.Shutdown();
+            }
+
             var startGameArgs = new StartGameArgs
             {
                 GameMode = _serverMode,
@@ -99,11 +110,17 @@ namespace CodeBase.Infrastructure.State
                 PlayerCount = _maxPlayers,
             };
 
-            return _runner.StartGame(startGameArgs);
+            return await _runner.StartGame(startGameArgs);
         }
 
         private async Task StartNewSession()
         {
+            if (_runner.SessionInfo != null)
+            {
+                Debug.Log("Shutting down the existing session...");
+                await _runner.Shutdown();
+            }
+
             _sessionIndex++;
 
             var startGameArgs = new StartGameArgs
@@ -125,21 +142,20 @@ namespace CodeBase.Infrastructure.State
             else
                 Debug.Log($"Failed to create a new session: {res.ErrorMessage}");
         }
-        
-        private NetworkSceneInfo? GetSceneInfo()
+
+        private SceneRef GetSceneInfo()
         {
-            Debug.Log(SceneManager.GetSceneByName(NameScene).buildIndex);
-            var scene = SceneRef.FromIndex(SceneManager.GetSceneByName(NameScene).buildIndex * -1);
-            
-            var networkSceneInfo = new NetworkSceneInfo();
-            
-            networkSceneInfo.AddSceneRef(scene);
-            
-            return networkSceneInfo;
+            var scene = SceneManager.GetSceneByName(NameScene);
+            if (!scene.IsValid())
+            {
+                Debug.LogError($"Scene {NameScene} is not valid or not loaded.");
+                return SceneRef.None;
+            }
+
+            return SceneRef.FromIndex(scene.buildIndex);
         }
 
 
-        private string GetSessionName() => 
-            $"{_sessionName}_{_sessionIndex}";
+        private string GetSessionName() => $"{_sessionName}_{_sessionIndex}";
     }
 }
