@@ -1,17 +1,21 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace CodeBase.Infrastructure.Services.InputSystem
 {
     public class InputSystem : IInitializationInput
     {
-        private readonly PlayerInput _playerInput = new();
+        private readonly PlayerInput _playerInput;
 
         public Vector3 DirectionAxis => GetDirection();
         public Vector2 MousePosition => _playerInput.Camera.MousePosition.ReadValue<Vector2>();
         public bool LeftMouseButton => _playerInput.Camera.Selection.ReadValue<float>() != 0;
         public bool RightMouseButton => _playerInput.Camera.SetTargetPosition.ReadValue<float>() != 0;
         public bool RotationBuilding => _playerInput.Camera.RotateBuilding.ReadValue<float>() != 0;
+
+        public InputSystem()
+        {
+            _playerInput = new();
+        }
 
         private Vector3 GetDirection()
         {
@@ -36,7 +40,7 @@ namespace CodeBase.Infrastructure.Services.InputSystem
         private Vector3 GetMouseDelta()
         {
             Vector2 mouseDelta = _playerInput.Camera.MouseDelta.ReadValue<Vector2>();
-            
+
             return new Vector3(-mouseDelta.x, 0, -mouseDelta.y);
         }
 
