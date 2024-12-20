@@ -25,7 +25,7 @@ namespace CodeBase.Infrastructure.Bootstrapper
 #if SERVER
             _stateMachine.Enter<StartServerState>();   
 #endif
-            _stateMachine.Enter<ConnectToServer>();
+            _stateMachine.Enter<BootstrapState>();
         }
 
         private void RegisterState()

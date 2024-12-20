@@ -22,7 +22,7 @@ namespace CodeBase.Installer
         
         protected override void Configure(IContainerBuilder builder)
         {
-            /*RegisterInputSystem(builder);
+            RegisterInputSystem(builder);
             RegisterSystem(builder);
             RegisterGameStateMachine(builder);
             RegisterAssetProvider(builder);
@@ -38,7 +38,7 @@ namespace CodeBase.Installer
             RegisterResourcesOperation(builder);
             RegisterBuildingOperation(builder);
             RegisterEntryPoint(builder);
-            RegisterNetworkRunner(builder);*/
+            RegisterNetworkRunner(builder);
         }
 
         private void RegisterNetworkRunner(IContainerBuilder builder) => 
