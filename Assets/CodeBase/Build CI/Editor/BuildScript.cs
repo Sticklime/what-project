@@ -11,15 +11,15 @@ namespace CodeBase.Build_CI.Editor
 
         public static void BuildLinuxServer()
         {
-            SwitchManifest(ManifestLinuxServerPath);
-            
+            // SwitchManifest(ManifestLinuxServerPath);
+
             string[] scenesToBuild = EditorBuildSettings.scenes
                 .Where(scene => scene.enabled)
                 .Select(scene => scene.path)
                 .ToArray();
-            
+
             string buildPath = "Builds/LinuxServer";
-            
+
             BuildPipeline.BuildPlayer(
                 scenesToBuild,
                 buildPath,
@@ -28,23 +28,22 @@ namespace CodeBase.Build_CI.Editor
             );
 
             UnityEngine.Debug.Log("Build completed: " + buildPath);
-            
         }
 
-        private static void SwitchManifest(string sourcePath)
+        /*private static void SwitchManifest(string sourcePath)
         {
             if (!File.Exists(sourcePath))
             {
                 UnityEngine.Debug.LogError($"Manifest file not found: {sourcePath}");
                 return;
             }
-            
+
             if (!File.Exists(ManifestPath + ".backup"))
                 File.Copy(ManifestPath, ManifestPath + ".backup", overwrite: true);
-            
+
             File.Copy(sourcePath, ManifestPath, overwrite: true);
             UnityEngine.Debug.Log($"Switched manifest to {sourcePath}");
-        }
+        }*/
 
         private static void RestoreOriginalManifest()
         {
