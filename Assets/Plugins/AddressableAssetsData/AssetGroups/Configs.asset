@@ -13,12 +13,16 @@ MonoBehaviour:
   m_Name: Configs
   m_EditorClassIdentifier: 
   m_GroupName: Configs
-  m_Data:
-    m_SerializedData: []
   m_GUID: f82f80a560f673b4796f7442184dd11b
   m_SerializeEntries:
   - m_GUID: 06ef9272534979645b76b599b6f165a1
     m_Address: DefaultGameModeData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Configs
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 42624b34b8e5df146ba4bfdac72aa09b
+    m_Address: Assets/StaticData/ServerConnect.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - Configs

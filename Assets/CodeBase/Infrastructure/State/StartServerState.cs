@@ -11,12 +11,12 @@ namespace CodeBase.Infrastructure.State
     public class StartServerState : IState
     {
         private readonly IGameStateMachine _gameStateMachine;
-        private ServerConnectConfig _serverConnectConfig;
         private readonly IConfigProvider _configProvider;
         private readonly NetworkRunner _runner;
 
-        private const string NameScene = "MapScene";
+        private ServerConnectConfig _serverConnectConfig;
 
+        private const string NameScene = "MapScene";
         private int _sessionIndex;
 
         public StartServerState(IGameStateMachine stateMachine, NetworkRunner networkRunner,
@@ -47,7 +47,6 @@ namespace CodeBase.Infrastructure.State
         {
         }
 
-
         private async Task<StartGameResult> LaunchServer()
         {
             if (_runner.SessionInfo != null)
@@ -61,7 +60,6 @@ namespace CodeBase.Infrastructure.State
                 GameMode = GameMode.Server,
                 Address = NetAddress.Any(),
                 SessionName = GetSessionName(),
-                Scene = GetSceneInfo(),
                 PlayerCount = _serverConnectConfig.MaxPlayers,
             };
 
@@ -70,7 +68,7 @@ namespace CodeBase.Infrastructure.State
 
         private SceneRef GetSceneInfo()
         {
-            var scene = SceneManager.GetSceneByName(NameScene);
+            Scene scene = SceneManager.GetSceneByName(NameScene);
             if (!scene.IsValid())
             {
                 Debug.LogError($"Scene {NameScene} is not valid or not loaded.");
@@ -80,6 +78,10 @@ namespace CodeBase.Infrastructure.State
             return SceneRef.FromIndex(scene.buildIndex);
         }
 
-        private string GetSessionName() => $"{_serverConnectConfig.SessionName}_{_sessionIndex}";
+        private string GetSessionName()
+        {
+            Debug.Log($"{_serverConnectConfig.SessionName}_{_sessionIndex}");
+            return $"{_serverConnectConfig.SessionName}_{_sessionIndex}";
+        }
     }
 }

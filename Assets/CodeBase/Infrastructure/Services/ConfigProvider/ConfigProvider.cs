@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using CodeBase.Infrastructure.Services.AssetProvider;
+using System.Collections.Generic;
 using CodeBase.Data.StaticData;
-using CodeBase.Infrastructure.Services.AssetProvider;
-using CodeBase.Infrastructure.State;
 using Cysharp.Threading.Tasks;
+using System.Linq;
 using UnityEngine;
 
 namespace CodeBase.Infrastructure.Services.ConfigProvider
@@ -18,10 +17,8 @@ namespace CodeBase.Infrastructure.Services.ConfigProvider
             _assetProvider = assetProvider;
         }
 
-        public async UniTask Load()
-        {
+        public async UniTask Load() => 
             _staticData = await _assetProvider.LoadAssetsByLabelAsync<ScriptableObject>("Configs");
-        }
 
         public GameModeConfig GetGameMode(GameModeType gameModeType) =>
             GetListDataOfType<GameModeConfig>(_staticData).FirstOrDefault(x => x.GameModeType == gameModeType);

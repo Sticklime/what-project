@@ -43,6 +43,7 @@ namespace CodeBase.Infrastructure.State
 
         private void InitScene()
         {
+            return;
             InitCamera();
             InitCharacters();
             InitHud();
@@ -61,7 +62,9 @@ namespace CodeBase.Infrastructure.State
             _gameFactory.CreateUnit(Vector3.zero);
         }
 
-        private void InitCamera() =>
+        private void InitCamera()
+        {
             _gameFactory.CreateEntityCamera(Camera.main);
+        }
     }
 }

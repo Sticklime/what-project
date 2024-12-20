@@ -13,8 +13,6 @@ MonoBehaviour:
   m_Name: Map
   m_EditorClassIdentifier: 
   m_GroupName: Map
-  m_Data:
-    m_SerializedData: []
   m_GUID: ed6907c065d5d6d4ca3c32ff45ead386
   m_SerializeEntries:
   - m_GUID: 55a91235f7d392345ac4cbeaf1c8fc3e
@@ -26,5 +24,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 72d08425d7f4a3e479096cdeed8396f5, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 534e2a0ba9b265b46b186db933c2f717, type: 2}
     - {fileID: 11400000, guid: 1915765391d8f5f48a088e3b71da4542, type: 2}
+    - {fileID: 11400000, guid: 534e2a0ba9b265b46b186db933c2f717, type: 2}
