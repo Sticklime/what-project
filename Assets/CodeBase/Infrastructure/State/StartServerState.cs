@@ -37,7 +37,7 @@ namespace CodeBase.Infrastructure.State
             if (result.Ok)
             {
                 Debug.Log($"Server started successfully: {GetSessionName()}");
-                _gameStateMachine.Enter<LoadMapState>();
+                //_gameStateMachine.Enter<LoadMapState>();
             }
             else
                 Debug.Log($"Server failed to start: {result.ErrorMessage}");

@@ -30,10 +30,7 @@ namespace CodeBase.Infrastructure.State
 
             _persistentProgress.Data = new PlayerData(resources);
 
-#if SERVER
-            _stateMachine.Enter<StartServerState>();   
-#endif
-            _stateMachine.Enter<ConnectToServer>();
+
         }
 
         public void Exit()

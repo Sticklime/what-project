@@ -48,8 +48,7 @@ namespace CodeBase.Infrastructure.State
             var startGameArgs = new StartGameArgs
             {
                 GameMode = GameMode.Client,
-                Address = NetAddress
-                    .CreateFromIpPort(_serverConnectConfig.ServerAddress, _serverConnectConfig.ServerPort),
+                Address = NetAddress.CreateFromIpPort(_serverConnectConfig.ServerAddress, _serverConnectConfig.ServerPort),
                 SessionName = GetSessionName(),
                 Scene = null,
                 PlayerCount = _serverConnectConfig.MaxPlayers,

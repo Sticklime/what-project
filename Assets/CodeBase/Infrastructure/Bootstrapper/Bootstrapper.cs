@@ -20,8 +20,12 @@ namespace CodeBase.Infrastructure.Bootstrapper
         public void Initialize()
         {
             RegisterState();
-
-            _stateMachine.Enter<BootstrapState>();
+            
+            
+#if SERVER
+            _stateMachine.Enter<StartServerState>();   
+#endif
+            _stateMachine.Enter<ConnectToServer>();
         }
 
         private void RegisterState()
