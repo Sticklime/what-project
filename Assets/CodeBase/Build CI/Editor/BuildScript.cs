@@ -29,7 +29,6 @@ namespace CodeBase.Build_CI.Editor
 
             UnityEngine.Debug.Log("Build completed: " + buildPath);
             
-            RestoreOriginalManifest();
         }
 
         private static void SwitchManifest(string sourcePath)
