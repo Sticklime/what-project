@@ -1,89 +1,67 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Sockets;
+using System.Threading.Tasks;
 using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.ConfigProvider;
+using CodeBase.Network.Attributes;
+using CodeBase.Network.Proxy;
+using Cysharp.Threading.Tasks;
 using Fusion;
-using Fusion.Sockets;
 using UnityEngine;
 
 namespace CodeBase.Infrastructure.State
 {
-    public class ConnectToServer : IState
+    public class ConnectToServer : IState, IRPCCaller
     {
+        public static bool IsServer { get; } = false;
+        public static List<Socket> ServerSocket { get; private set; } = new();
+        
         private ServerConnectConfig _serverConnectConfig;
         private readonly IConfigProvider _configProvider;
         private readonly NetworkRunner _runner;
 
         private int _sessionIndex;
+        
+        private static ConnectToServer _instance;
 
-        public ConnectToServer(NetworkRunner runner, IConfigProvider configProvider)
+        public ConnectToServer(IConfigProvider configProvider)
         {
-            _runner = runner;
             _configProvider = configProvider;
+
+            _instance = this;
+            RpcProxy.RegisterRPCInstance<ConnectToServer>(_instance);
         }
 
         public async void Enter()
         {
-            _serverConnectConfig = _configProvider.GetServerConnectConfig();
-            StartGameResult result = await StartGame();
-
-            if (!result.Ok)
-            {
-                Debug.Log("Failed to join the game session. Trying to start a new session...");
-                await StartNewSession();
-            }
+            StartClient();
         }
 
+        private static async void StartClient()
+        {
+            var serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            await serverSocket.ConnectAsync("127.0.0.1", 5055);
+            
+            UniTask.Run(() => RpcProxy.ListenForRpcCalls(serverSocket));
+            
+            ServerSocket.Add(serverSocket);
+        
+            Debug.Log($"Клиент подключен к серверу: {serverSocket.RemoteEndPoint}");
+
+            var methodInfoClient = typeof(ConnectToServer).GetMethod("ServerMethod");
+            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ServerSocket, "Привет от Клиента!");
+        }
+        
         public void Exit()
         {
         }
-
-        private async Task<StartGameResult> StartGame()
+        
+        [RPCAttributes.ServerRPC]
+        public static void ServerMethod(string message)
         {
-            if (_runner.SessionInfo != null)
-            {
-                Debug.Log("Shutting down the existing session...");
-                await _runner.Shutdown();
-            }
-
-            var startGameArgs = new StartGameArgs
-            {
-                GameMode = GameMode.Client,
-                Address = NetAddress.CreateFromIpPort(_serverConnectConfig.ServerAddress, _serverConnectConfig.ServerPort),
-                SessionName = GetSessionName(),
-                Scene = null,
-                PlayerCount = _serverConnectConfig.MaxPlayers,
-            };
-
-            return await _runner.StartGame(startGameArgs);
+            Debug.Log($"Server received: {message}");
         }
-
-        private async Task StartNewSession()
-        {
-            if (_runner.SessionInfo != null)
-            {
-                Debug.Log("Shutting down the existing session...");
-                await _runner.Shutdown();
-            }
-
-            _sessionIndex++;
-
-            var startGameArgs = new StartGameArgs
-            {
-                GameMode = GameMode.Client,
-                Address = NetAddress.CreateFromIpPort(_serverConnectConfig.ServerAddress,
-                    _serverConnectConfig.ServerPort),
-                SessionName = GetSessionName(),
-                Scene = null,
-                PlayerCount = _serverConnectConfig.MaxPlayers,
-            };
-
-            StartGameResult res = await _runner.StartGame(startGameArgs);
-
-            Debug.Log(res.Ok
-                ? $"New session created: {_runner.SessionInfo?.Name}"
-                : $"Failed to create a new session: {res.ErrorMessage}");
-        }
-
-        private string GetSessionName() => $"{_serverConnectConfig.SessionName}_{_sessionIndex}";
     }
 }
