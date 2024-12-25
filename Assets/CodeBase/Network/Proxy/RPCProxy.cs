@@ -118,7 +118,7 @@ namespace CodeBase.Network.Proxy
                 Debug.Log("Waiting for RPC calls...");
 
                 int bytesRead = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
-
+Debug.Log("get");
                 if (bytesRead <= 0)
                     continue;
 

@@ -35,6 +35,7 @@ namespace CodeBase.Infrastructure.State
             _networkRunner = networkRunner;
 
             RpcProxy.RegisterRPCInstance<StartServerState>(this);
+            _networkRunner.OnPlayerConnected += SendData;
         }
 
         public async void Enter()
@@ -47,14 +48,14 @@ namespace CodeBase.Infrastructure.State
             };
             
             await _networkRunner.StartServer(serverData);
-            SendData();
         }
         
-        private void SendData()
+        private void SendData(int playerId)
         {
+            Debug.Log("asd");
             var methodInfoClient = typeof(StartServerState).GetMethod("ClientMethod");
-            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, "Привет от сервера UDP!");
-            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Tcp, "Привет от сервера TCP!");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
         }
         
         public void Exit()
