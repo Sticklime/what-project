@@ -42,28 +42,6 @@ namespace CodeBase.Infrastructure.State
             StartServer();
         }
         
-        private static async void StartServer()
-        {
-            ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            ServerSocket.Bind(new IPEndPoint(IPAddress.Any, 5055));
-            ServerSocket.Listen(10);
-
-            
-            Console.WriteLine("Сервер ожидает подключения...");
-        
-            var clientSocket = await ServerSocket.AcceptAsync();
-            ClientsSockets.Add(clientSocket);
-
-            foreach (var socket in ClientsSockets)
-                UniTask.Run(() => RpcProxy.ListenForRpcCalls(socket));
-            
-            Debug.Log($"Клиент подключен: {clientSocket.RemoteEndPoint}");
-
-            var methodInfoClient = typeof(StartServerState).GetMethod("ClientMethod");
-            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ClientsSockets, "Привет от Сервера!");
-        }
-
-
         public void Exit()
         {
         }

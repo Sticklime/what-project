@@ -6,8 +6,8 @@ using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.ConfigProvider;
 using CodeBase.Network.Attributes;
 using CodeBase.Network.Proxy;
+using CodeBase.Network.Runner;
 using Cysharp.Threading.Tasks;
-using Fusion;
 using UnityEngine;
 
 namespace CodeBase.Infrastructure.State
@@ -25,9 +25,11 @@ namespace CodeBase.Infrastructure.State
         
         private static ConnectToServer _instance;
 
-        public ConnectToServer(IConfigProvider configProvider)
+        public ConnectToServer(IConfigProvider configProvider,
+            NetworkRunner runner)
         {
             _configProvider = configProvider;
+            _runner = runner;
 
             _instance = this;
             RpcProxy.RegisterRPCInstance<ConnectToServer>(_instance);
@@ -35,6 +37,7 @@ namespace CodeBase.Infrastructure.State
 
         public async void Enter()
         {
+            _runner.StartClient();
             StartClient();
         }
 

@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using CodeBase.Network.Attributes;
 using CodeBase.Network.Data;
+using CodeBase.Network.Runner;
 using Cysharp.Threading.Tasks;
 using MessagePack;
 using UnityEngine;
@@ -14,11 +15,16 @@ namespace CodeBase.Network.Proxy
     public static class RpcProxy
     {
         private static Dictionary<Type, IRPCCaller> _callers = new();
+        private static NetworkRunner _runner;
+
+        public static void Initialize(NetworkRunner runner) =>
+            _runner = runner;
 
         public static void RegisterRPCInstance<T>(IRPCCaller caller) where T : IRPCCaller =>
             _callers[typeof(T)] = caller;
 
-        public static bool TryInvokeRPC<TObject>(MethodInfo methodInfo, List<Socket> sockets, params object[] parameters) where TObject : class
+        public static bool TryInvokeRPC<TObject>(MethodInfo methodInfo,
+            params object[] parameters) where TObject : class
         {
             if (methodInfo.GetCustomAttribute<RPCAttributes.ClientRPC>() == null &&
                 methodInfo.GetCustomAttribute<RPCAttributes.ServerRPC>() == null)
@@ -33,14 +39,18 @@ namespace CodeBase.Network.Proxy
                 return false;
             }
 
-            var serializedParameters = parameters.Select(param => 
+            var serializedParameters = parameters.Select(param =>
                 MessagePackSerializer.Serialize(param)).ToArray();
+
+            var serializedParamTypes = parameters.Select(param => param.GetType()).ToArray();
+            var serializedParamTypesBytes = MessagePackSerializer.Serialize(serializedParamTypes);
 
             var message = new RpcMessage
             {
                 MethodName = methodInfo.Name,
                 Parameters = serializedParameters,
-                ClassType = typeof(TObject).ToString()
+                ClassType = typeof(TObject).ToString(),
+                MethodParam = serializedParamTypesBytes
             };
 
             byte[] data = SerializeMessage(message);
@@ -48,12 +58,11 @@ namespace CodeBase.Network.Proxy
             try
             {
                 if (methodInfo.GetCustomAttribute<RPCAttributes.ClientRPC>() != null)
-                    foreach (var socket in sockets)
+                    foreach (var socket in _runner.ClientSockets)
                         socket.Send(data);
-                
-                else if (methodInfo.GetCustomAttribute<RPCAttributes.ServerRPC>() != null) 
-                    foreach (var socket in sockets)
-                        socket.Send(data);
+
+                else if (methodInfo.GetCustomAttribute<RPCAttributes.ServerRPC>() != null)
+                    _runner.ServerSocket.Send(data);
             }
             catch (Exception e)
             {
@@ -64,7 +73,7 @@ namespace CodeBase.Network.Proxy
             return true;
         }
 
-        private static byte[] SerializeMessage(RpcMessage message) => 
+        private static byte[] SerializeMessage(RpcMessage message) =>
             MessagePackSerializer.Serialize(message);
 
         public static async UniTask ListenForRpcCalls(Socket socket)
@@ -80,14 +89,14 @@ namespace CodeBase.Network.Proxy
                 if (bytesRead <= 0)
                     continue;
 
-                RpcMessage? message = DeserializeMessage(buffer.Take(bytesRead).ToArray());
+                RpcMessage message = DeserializeMessage(buffer.Take(bytesRead).ToArray());
 
-                if (message != null) 
+                if (message != null)
                     ProcessRpcMessage(Type.GetType(message.ClassType), message);
             }
         }
 
-        private static RpcMessage? DeserializeMessage(byte[] data)
+        private static RpcMessage DeserializeMessage(byte[] data)
         {
             try
             {
@@ -100,7 +109,7 @@ namespace CodeBase.Network.Proxy
             }
         }
 
-        private static void ProcessRpcMessage(Type? callerType, RpcMessage message)
+        private static void ProcessRpcMessage(Type callerType, RpcMessage message)
         {
             if (callerType == null) return;
 
@@ -115,12 +124,25 @@ namespace CodeBase.Network.Proxy
             method.Invoke(rpcCaller, parameters);
         }
 
-        private static MethodInfo? GetRpcMethod(Type callerType, RpcMessage message) =>
-            callerType.GetMethods().FirstOrDefault(m => m.Name == message.MethodName);
-
-        private static object?[] ConvertParameters(byte[][] serializedParameters, ParameterInfo[] parameterInfos)
+        private static MethodInfo GetRpcMethod(Type callerType, RpcMessage message)
         {
-            var parameters = new object?[serializedParameters.Length];
+            var paramTypes = MessagePackSerializer.Deserialize<Type[]>(message.MethodParam);
+            return callerType.GetMethods().FirstOrDefault(m =>
+                m.Name == message.MethodName && ParametersMatch(m.GetParameters(), paramTypes));
+        }
+
+        private static bool ParametersMatch(ParameterInfo[] parameterInfos, Type[] paramTypes)
+        {
+            if (parameterInfos.Length != paramTypes.Length)
+                return false;
+
+            return !parameterInfos.Where((t, i) =>
+                t.ParameterType != paramTypes[i]).Any();
+        }
+
+        private static object[] ConvertParameters(byte[][] serializedParameters, ParameterInfo[] parameterInfos)
+        {
+            var parameters = new object[serializedParameters.Length];
             for (int i = 0; i < serializedParameters.Length; i++)
                 parameters[i] = MessagePackSerializer.Deserialize
                     (parameterInfos[i].ParameterType, serializedParameters[i]);
