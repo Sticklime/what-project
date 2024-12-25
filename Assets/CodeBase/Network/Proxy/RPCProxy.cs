@@ -30,13 +30,13 @@ namespace CodeBase.Network.Proxy
             if (methodInfo.GetCustomAttribute<RPCAttributes.ClientRPC>() == null &&
                 methodInfo.GetCustomAttribute<RPCAttributes.ServerRPC>() == null)
             {
-                Console.WriteLine($"Method: {methodInfo.Name} must have RPC attributes.");
+                Debug.Log($"Method: {methodInfo.Name} must have RPC attributes.");
                 return false;
             }
     
             if (!_callers.ContainsKey(typeof(TObject)))
             {
-                Console.WriteLine($"{typeof(TObject)} must be registered.");
+                Debug.Log($"{typeof(TObject)} must be registered.");
                 return false;
             }
            
@@ -66,7 +66,7 @@ namespace CodeBase.Network.Proxy
                         {
                             foreach (var socket in _runner.TcpClientSockets)
                                 socket.Send(data);
-
+                 
                             break;
                         }
                         case ProtocolType.Udp:
@@ -98,7 +98,7 @@ namespace CodeBase.Network.Proxy
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error: {e.Message}");
+                Debug.Log($"Error: {e.Message}");
                 return false;
             }
 
@@ -128,7 +128,7 @@ namespace CodeBase.Network.Proxy
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Exception: {ex.Message}");
+                    Debug.Log($"Exception: {ex.Message}");
                 }
             }
         }
@@ -155,7 +155,7 @@ namespace CodeBase.Network.Proxy
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Exception: {ex.Message}");
+                    Debug.Log($"Exception: {ex.Message}");
                 }
             }
         }
@@ -169,7 +169,7 @@ namespace CodeBase.Network.Proxy
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Deserialization failed: {ex.Message}");
+                Debug.Log($"Deserialization failed: {ex.Message}");
                 return null;
             }
         }

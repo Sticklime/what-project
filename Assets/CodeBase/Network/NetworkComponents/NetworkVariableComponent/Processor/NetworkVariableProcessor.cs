@@ -102,16 +102,14 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor
         [RPCAttributes.ClientRPC]
         public void SyncVariableOnClients(NetworkVariableMessage message)
         {
-            Debug.Log(message.VariableName);
-            
             if (!_networkVariables.TryGetValue(message.VariableName, out var variable))
                 return;
-
+            
             var variableType = variable.GetType().GetGenericArguments()[0];
             var deserializedValue = MessagePackSerializer.Deserialize(variableType, message.SerializedValue);
-            var method = variable.GetType().GetProperty(nameof(NetworkVariable<object>.Value))?.SetMethod;
-
-            method?.Invoke(variable, new[] { deserializedValue });
+            
+            var property = variable.GetType().GetProperty(nameof(NetworkVariable<object>.Value));
+            property?.SetValue(variable, deserializedValue);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor;
 
 namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent
 {
@@ -18,18 +19,16 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent
 
                 _value = value;
                 OnValueChanged?.Invoke(value);
-
-                _syncCallback?.Invoke(_variableName, value);
+                NetworkVariableProcessor.Instance.SyncVariable(_variableName, value);
             }
         }
 
         public event Action<T> OnValueChanged;
 
-        public NetworkVariable(string variableName, T initialValue, Action<string, T> syncCallback)
+        public NetworkVariable(string variableName, T initialValue)
         {
             _variableName = variableName;
             _value = initialValue;
-            _syncCallback = syncCallback;
         }
     }
 }

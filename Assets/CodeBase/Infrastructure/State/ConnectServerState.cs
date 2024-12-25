@@ -49,15 +49,15 @@ namespace CodeBase.Infrastructure.State
         private void SendData()
         {
             var methodInfoClient = typeof(ConnectToServer).GetMethod(nameof(ServerMethod));
-            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Tcp, "Привет от Клиента TCP!");
-            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Udp, "Привет от Клиента UDP!");
+            //RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Tcp, "Привет от Клиента TCP!");
+            //RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Udp, "Привет от Клиента UDP!");
             
-            var anotherVariable = new NetworkVariable<int>("AnotherVariable", 42, null);
-            NetworkVariableProcessor.Instance.RegisterNetworkVariable("AnotherVariable", anotherVariable);
+            var playerScore = new NetworkVariable<int>("PlayerScore", 0);
+            NetworkVariableProcessor.Instance.RegisterNetworkVariable("PlayerScore", playerScore);
 
-            anotherVariable.OnValueChanged += newValue =>
+            playerScore.OnValueChanged += newValue =>
             {
-                Console.WriteLine($"Переменная AnotherVariable обновлена: {newValue}");
+                Debug.Log($"Переменная AnotherVariable обновлена: {newValue}");
             };
         }
         
