@@ -9,7 +9,6 @@ using CodeBase.Network.Data;
 using CodeBase.Network.Runner;
 using Cysharp.Threading.Tasks;
 using MessagePack;
-using UnityEngine;
 
 namespace CodeBase.Network.Proxy
 {
@@ -66,18 +65,17 @@ namespace CodeBase.Network.Proxy
                         {
                             foreach (var socket in _runner.TcpClientSockets)
                                 socket.Send(data);
-                
+
                             break;
                         }
                         case ProtocolType.Udp:
                         {
                             foreach (var socket in _runner.UdpClientSockets)
                             {
-                                IPEndPoint localEndPoint = (IPEndPoint)socket.LocalEndPoint;
-                                IPEndPoint remoteEndPoint = new IPEndPoint(localEndPoint.Address, localEndPoint.Port);
-                                Debug.Log("Send UDP");
+                                IPEndPoint remoteEndPoint = (IPEndPoint)socket.RemoteEndPoint;
                                 socket.SendTo(data, remoteEndPoint);
                             }
+
                             break;
                         }
                     }
@@ -90,13 +88,9 @@ namespace CodeBase.Network.Proxy
                             _runner.TcpServerSocket.Send(data);
                             break;
                         case ProtocolType.Udp:
-                            foreach (var socket in _runner.UdpClientSockets)
-                            {
-                                IPEndPoint localEndPoint = (IPEndPoint)socket.LocalEndPoint;
-                                IPEndPoint remoteEndPoint = new IPEndPoint(localEndPoint.Address, localEndPoint.Port);
-                                Debug.Log("Send UDP");
-                                socket.SendTo(data, remoteEndPoint);
-                            }
+                            //IPEndPoint remoteEndPoint = (IPEndPoint)_runner.UdpServerSocket.RemoteEndPoint;
+                            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5057);
+                            _runner.UdpServerSocket.SendTo(data, remoteEndPoint);
                             break;
                     }
                 }
@@ -121,8 +115,6 @@ namespace CodeBase.Network.Proxy
             {
                 try
                 {
-                    Debug.Log("Waiting for Tcp RPC calls...");
-
                     int bytesRead = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
 
                     if (bytesRead <= 0)
@@ -139,36 +131,34 @@ namespace CodeBase.Network.Proxy
                 }
             }
         }
-        
-        public static async UniTask ListenForUdpRpcCalls(Socket socket)
+
+        public static async UniTask ListenForUdpRpcCalls(Socket socket, IPEndPoint ipEndPoint)
         {
             byte[] buffer = new byte[1024 * 64];
 
             while (true)
             {
-                Debug.Log("Waiting for RPC calls...");
-
-                while (true)
+                try
                 {
-                    try
-                    {
-                        int bytesRead = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
-                        
-                        if (bytesRead <= 0)
-                            continue;
+                    var bytesRead = await socket
+                        .ReceiveFromAsync(new ArraySegment<byte>(buffer),
+                            SocketFlags.None, ipEndPoint);
+                    
+                    if (bytesRead.ReceivedBytes <= 0)
+                        continue;
 
-                        RpcMessage message = DeserializeMessage(buffer.Take(bytesRead).ToArray());
-                
-                        if (message != null)
-                            ProcessRpcMessage(Type.GetType(message.ClassType), message);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Exception: {ex.Message}");
-                    }
+                    RpcMessage message = DeserializeMessage(buffer.Take(bytesRead.ReceivedBytes).ToArray());
+
+                    if (message != null)
+                        ProcessRpcMessage(Type.GetType(message.ClassType), message);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
                 }
             }
         }
+
 
         private static RpcMessage DeserializeMessage(byte[] data)
         {
@@ -186,7 +176,7 @@ namespace CodeBase.Network.Proxy
         private static void ProcessRpcMessage(Type callerType, RpcMessage message)
         {
             if (callerType == null) return;
-            
+
             var method = GetRpcMethod(callerType, message);
 
             if (method == null) return;
@@ -194,7 +184,7 @@ namespace CodeBase.Network.Proxy
             var parameters = ConvertParameters(message.Parameters, method.GetParameters());
 
             if (!_callers.TryGetValue(callerType, out IRPCCaller rpcCaller)) return;
-            
+
             method.Invoke(rpcCaller, parameters);
         }
 

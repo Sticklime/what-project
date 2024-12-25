@@ -15,10 +15,6 @@ namespace CodeBase.Infrastructure.State
 {
     public class StartServerState : IState, IRPCCaller
     {
-        public static bool IsServer { get; } = true;
-        public static Socket ServerSocket { get; private set; }
-        public static List<Socket> ClientsSockets { get; } = new();
-        
         private readonly IGameStateMachine _gameStateMachine;
         private readonly IConfigProvider _configProvider;
         private readonly INetworkRunner _networkRunner;
@@ -44,7 +40,7 @@ namespace CodeBase.Infrastructure.State
             {
                 MaxClients = 2,
                 TcpPort = 5055,
-                UdpPort = 5056
+                UdpPort = 5057
             };
             
             await _networkRunner.StartServer(serverData);
@@ -52,10 +48,9 @@ namespace CodeBase.Infrastructure.State
         
         private void SendData(int playerId)
         {
-            Debug.Log("asd");
             var methodInfoClient = typeof(StartServerState).GetMethod("ClientMethod");
-            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
             RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
         }
         
         public void Exit()
