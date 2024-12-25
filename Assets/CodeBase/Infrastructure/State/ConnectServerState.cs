@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using CodeBase.Data.StaticData;
@@ -19,42 +20,39 @@ namespace CodeBase.Infrastructure.State
         
         private ServerConnectConfig _serverConnectConfig;
         private readonly IConfigProvider _configProvider;
-        private readonly NetworkRunner _runner;
+        private readonly INetworkRunner _runner;
 
         private int _sessionIndex;
         
-        private static ConnectToServer _instance;
-
         public ConnectToServer(IConfigProvider configProvider,
-            NetworkRunner runner)
+            INetworkRunner runner)
         {
             _configProvider = configProvider;
             _runner = runner;
 
-            _instance = this;
-            RpcProxy.RegisterRPCInstance<ConnectToServer>(_instance);
+            RpcProxy.RegisterRPCInstance<ConnectToServer>(this);
         }
 
         public async void Enter()
         {
-            _runner.StartClient();
-            StartClient();
+            IPAddress.TryParse("127.0.0.1", out IPAddress ipAddress);
+            
+            ConnectClientData clientData = new ()
+            {
+                Ip = ipAddress,
+                TcpPort = 5055,
+                UdpPort = 5056
+            };
+            
+            await _runner.StartClient(clientData);
+            SendData();
         }
 
-        private static async void StartClient()
+        private void SendData()
         {
-            var serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-            await serverSocket.ConnectAsync("127.0.0.1", 5055);
-            
-            UniTask.Run(() => RpcProxy.ListenForRpcCalls(serverSocket));
-            
-            ServerSocket.Add(serverSocket);
-        
-            Debug.Log($"Клиент подключен к серверу: {serverSocket.RemoteEndPoint}");
-
             var methodInfoClient = typeof(ConnectToServer).GetMethod("ServerMethod");
-            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ServerSocket, "Привет от Клиента!");
+            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Udp, "Привет от Клиента UDP!");
+            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Tcp, "Привет от Клиента TCP!");
         }
         
         public void Exit()
@@ -62,7 +60,7 @@ namespace CodeBase.Infrastructure.State
         }
         
         [RPCAttributes.ServerRPC]
-        public static void ServerMethod(string message)
+        public void ServerMethod(string message)
         {
             Debug.Log($"Server received: {message}");
         }

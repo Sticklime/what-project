@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using CodeBase.Network.Attributes;
@@ -23,7 +24,7 @@ namespace CodeBase.Network.Proxy
         public static void RegisterRPCInstance<T>(IRPCCaller caller) where T : IRPCCaller =>
             _callers[typeof(T)] = caller;
 
-        public static bool TryInvokeRPC<TObject>(MethodInfo methodInfo,
+        public static bool TryInvokeRPC<TObject>(MethodInfo methodInfo, ProtocolType protocolType,
             params object[] parameters) where TObject : class
         {
             if (methodInfo.GetCustomAttribute<RPCAttributes.ClientRPC>() == null &&
@@ -58,11 +59,41 @@ namespace CodeBase.Network.Proxy
             try
             {
                 if (methodInfo.GetCustomAttribute<RPCAttributes.ClientRPC>() != null)
-                    foreach (var socket in _runner.ClientSockets)
-                        socket.Send(data);
-
+                {
+                    switch (protocolType)
+                    {
+                        case ProtocolType.Tcp:
+                        {
+                            foreach (var socket in _runner.TcpClientSockets) socket.Send(data);
+                            break;
+                        }
+                        case ProtocolType.Udp:
+                        {
+                            foreach (var socket in _runner.UdpClientSockets)
+                            {
+                                var endpoint = new IPEndPoint(IPAddress.Broadcast, ((IPEndPoint)socket.LocalEndPoint).Port);
+                                socket.SendTo(data, endpoint);
+                            }
+                            break;
+                        }
+                    }
+                }
                 else if (methodInfo.GetCustomAttribute<RPCAttributes.ServerRPC>() != null)
-                    _runner.ServerSocket.Send(data);
+                {
+                    switch (protocolType)
+                    {
+                        case ProtocolType.Tcp:
+                            _runner.TcpServerSocket.Send(data);
+                            break;
+                        case ProtocolType.Udp:
+                            foreach (var socket in _runner.UdpClientSockets)
+                            {
+                                var endpoint = new IPEndPoint(IPAddress.Broadcast, ((IPEndPoint)socket.LocalEndPoint).Port);
+                                socket.SendTo(data, endpoint);
+                            }
+                            break;
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -85,7 +116,7 @@ namespace CodeBase.Network.Proxy
                 Debug.Log("Waiting for RPC calls...");
 
                 int bytesRead = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
-
+    
                 if (bytesRead <= 0)
                     continue;
 
@@ -95,6 +126,7 @@ namespace CodeBase.Network.Proxy
                     ProcessRpcMessage(Type.GetType(message.ClassType), message);
             }
         }
+
 
         private static RpcMessage DeserializeMessage(byte[] data)
         {
@@ -112,7 +144,7 @@ namespace CodeBase.Network.Proxy
         private static void ProcessRpcMessage(Type callerType, RpcMessage message)
         {
             if (callerType == null) return;
-
+            
             var method = GetRpcMethod(callerType, message);
 
             if (method == null) return;

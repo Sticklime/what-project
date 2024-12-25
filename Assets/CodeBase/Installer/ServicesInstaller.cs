@@ -9,6 +9,7 @@ using CodeBase.Infrastructure.Services.AssetProvider;
 using CodeBase.Infrastructure.Services.ConfigProvider;
 using CodeBase.Infrastructure.Services.InputSystem;
 using CodeBase.Infrastructure.State;
+using CodeBase.Network.Runner;
 using VContainer;
 using VContainer.Unity;
 
@@ -34,6 +35,7 @@ namespace CodeBase.Installer
             RegisterResourcesOperation(builder);
             RegisterBuildingOperation(builder);
             RegisterEntryPoint(builder);
+            RegisterRunner(builder);
         }
 
         private void RegisterEntryPoint(IContainerBuilder builder) =>
@@ -83,5 +85,8 @@ namespace CodeBase.Installer
 
         private void RegisterGameFactory(IContainerBuilder builder) =>
             builder.Register<IGameFactory, GameFactory>(Lifetime.Singleton);
+        
+        private void RegisterRunner(IContainerBuilder builder) =>
+            builder.Register<INetworkRunner, NetworkRunner>(Lifetime.Singleton);
     }
 }

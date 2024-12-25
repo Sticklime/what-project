@@ -7,6 +7,7 @@ using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.ConfigProvider;
 using CodeBase.Network.Attributes;
 using CodeBase.Network.Proxy;
+using CodeBase.Network.Runner;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -20,26 +21,41 @@ namespace CodeBase.Infrastructure.State
         
         private readonly IGameStateMachine _gameStateMachine;
         private readonly IConfigProvider _configProvider;
+        private readonly INetworkRunner _networkRunner;
 
         private const string NameScene = "MapScene";
         private int _sessionIndex;
 
-        private static StartServerState _instance;
-
         public StartServerState(IGameStateMachine stateMachine,
-            IConfigProvider configProvider)
+            IConfigProvider configProvider,
+            INetworkRunner networkRunner)
         {
             _gameStateMachine = stateMachine;
             _configProvider = configProvider;
+            _networkRunner = networkRunner;
 
-            _instance = this;    
-            RpcProxy.RegisterRPCInstance<StartServerState>(_instance);
+            RpcProxy.RegisterRPCInstance<StartServerState>(this);
         }
 
         public async void Enter()
         {
-            Debug.Log("Starting in SERVER mode...");
-            StartServer();
+            ConnectServerData serverData = new()
+            {
+                MaxClients = 2,
+                TcpPort = 5055,
+                UdpPort = 5056
+            };
+            
+            await _networkRunner.StartServer(serverData);
+            SendData();
+        }
+        
+        private void SendData()
+        {
+            var methodInfoClient = typeof(StartServerState).GetMethod("ClientMethod");
+            Debug.Log(methodInfoClient);
+            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Udp, "Привет от сервера UDP!");
+            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Tcp, "Привет от сервера TCP!");
         }
         
         public void Exit()
@@ -47,7 +63,7 @@ namespace CodeBase.Infrastructure.State
         }
         
         [RPCAttributes.ClientRPC]
-        public static void ClientMethod(string message)
+        public void ClientMethod(string message)
         {
             Debug.Log($"Client received: {message}");
         }
