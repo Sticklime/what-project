@@ -2,22 +2,20 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.ConfigProvider;
 using CodeBase.Network.Attributes;
+using CodeBase.Network.Data.ConnectionData;
+using CodeBase.Network.NetworkComponents.NetworkVariableComponent;
+using CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor;
 using CodeBase.Network.Proxy;
 using CodeBase.Network.Runner;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace CodeBase.Infrastructure.State
 {
     public class ConnectToServer : IState, IRPCCaller
     {
-        public static bool IsServer { get; } = false;
-        public static List<Socket> ServerSocket { get; private set; } = new();
-        
         private ServerConnectConfig _serverConnectConfig;
         private readonly IConfigProvider _configProvider;
         private readonly INetworkRunner _runner;
@@ -50,9 +48,17 @@ namespace CodeBase.Infrastructure.State
 
         private void SendData()
         {
-            var methodInfoClient = typeof(ConnectToServer).GetMethod("ServerMethod");
+            var methodInfoClient = typeof(ConnectToServer).GetMethod(nameof(ServerMethod));
             RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Tcp, "Привет от Клиента TCP!");
             RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Udp, "Привет от Клиента UDP!");
+            
+            var anotherVariable = new NetworkVariable<int>("AnotherVariable", 42, null);
+            NetworkVariableProcessor.Instance.RegisterNetworkVariable("AnotherVariable", anotherVariable);
+
+            anotherVariable.OnValueChanged += newValue =>
+            {
+                Console.WriteLine($"Переменная AnotherVariable обновлена: {newValue}");
+            };
         }
         
         public void Exit()

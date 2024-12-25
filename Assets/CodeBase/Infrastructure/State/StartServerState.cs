@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.ConfigProvider;
 using CodeBase.Network.Attributes;
+using CodeBase.Network.Data.ConnectionData;
+using CodeBase.Network.NetworkComponents.NetworkVariableComponent;
+using CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor;
 using CodeBase.Network.Proxy;
 using CodeBase.Network.Runner;
 using Cysharp.Threading.Tasks;
@@ -48,9 +51,14 @@ namespace CodeBase.Infrastructure.State
         
         private void SendData(int playerId)
         {
-            var methodInfoClient = typeof(StartServerState).GetMethod("ClientMethod");
+            var methodInfoClient = typeof(StartServerState).GetMethod(nameof(ClientMethod));
             RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
             RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
+            
+            var playerScore = new NetworkVariable<int>("PlayerScore", 0, NetworkVariableProcessor.Instance.SyncVariable);
+            NetworkVariableProcessor.Instance.RegisterNetworkVariable("PlayerScore", playerScore);
+
+            playerScore.Value = 100;
         }
         
         public void Exit()

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using CodeBase.Network.Data.ConnectionData;
+using CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor;
 using CodeBase.Network.Proxy;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -41,6 +43,7 @@ namespace CodeBase.Network.Runner
             
             IsServer = true;
             RpcProxy.Initialize(this);
+            NetworkVariableProcessor.Instance.Initialize(this);
 
             Console.WriteLine("Сервер ожидает подключения...");
 
@@ -60,6 +63,7 @@ namespace CodeBase.Network.Runner
             Debug.Log($"Клиент подключен к серверу: {TcpServerSocket.RemoteEndPoint}");
 
             RpcProxy.Initialize(this);
+            NetworkVariableProcessor.Instance.Initialize(this);
 
             UniTask.Run(() => RpcProxy.ListenForTcpRpcCalls(TcpServerSocket));
             UniTask.Run(() => RpcProxy.ListenForUdpRpcCalls(UdpServerSocket, remoteEndPoint));
@@ -94,41 +98,5 @@ namespace CodeBase.Network.Runner
             UdpPort = data.UdpPort;
             MaxClients = data.MaxClients;
         }
-    }
-
-    public interface INetworkRunner
-    {
-        UniTask StartServer(ConnectServerData connectServerData);
-        UniTask StartClient(ConnectClientData connectClientData);
-
-        event Action<int> OnPlayerConnected;
-
-        Dictionary<int, Socket> ConnectedClients { get; }
-
-        List<Socket> TcpClientSockets { get; }
-        List<Socket> UdpClientSockets { get; }
-
-        Socket TcpServerSocket { get; }
-        Socket UdpServerSocket { get; }
-
-        int TcpPort { get; }
-        int UdpPort { get; }
-        int MaxClients { get; }
-
-        bool IsServer { get; }
-    }
-
-    public struct ConnectServerData
-    {
-        public int TcpPort;
-        public int UdpPort;
-        public int MaxClients;
-    }
-
-    public struct ConnectClientData
-    {
-        public IPAddress Ip;
-        public int TcpPort;
-        public int UdpPort;
     }
 }

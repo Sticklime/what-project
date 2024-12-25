@@ -9,6 +9,7 @@ using CodeBase.Network.Data;
 using CodeBase.Network.Runner;
 using Cysharp.Threading.Tasks;
 using MessagePack;
+using UnityEngine;
 
 namespace CodeBase.Network.Proxy
 {
@@ -32,13 +33,13 @@ namespace CodeBase.Network.Proxy
                 Console.WriteLine($"Method: {methodInfo.Name} must have RPC attributes.");
                 return false;
             }
-
+    
             if (!_callers.ContainsKey(typeof(TObject)))
             {
                 Console.WriteLine($"{typeof(TObject)} must be registered.");
                 return false;
             }
-
+           
             var serializedParameters = parameters.Select(param =>
                 MessagePackSerializer.Serialize(param)).ToArray();
 
@@ -116,12 +117,12 @@ namespace CodeBase.Network.Proxy
                 try
                 {
                     int bytesRead = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
-
+                    
                     if (bytesRead <= 0)
                         continue;
 
                     RpcMessage message = DeserializeMessage(buffer.Take(bytesRead).ToArray());
-
+  
                     if (message != null)
                         ProcessRpcMessage(Type.GetType(message.ClassType), message);
                 }
@@ -143,7 +144,7 @@ namespace CodeBase.Network.Proxy
                     var bytesRead = await socket
                         .ReceiveFromAsync(new ArraySegment<byte>(buffer),
                             SocketFlags.None, ipEndPoint);
-                    
+                   
                     if (bytesRead.ReceivedBytes <= 0)
                         continue;
 
@@ -175,16 +176,19 @@ namespace CodeBase.Network.Proxy
 
         private static void ProcessRpcMessage(Type callerType, RpcMessage message)
         {
-            if (callerType == null) return;
-
+            if (callerType == null) 
+                return;
+            
             var method = GetRpcMethod(callerType, message);
-
-            if (method == null) return;
-
+            
+            if (method == null) 
+                return;
+            
             var parameters = ConvertParameters(message.Parameters, method.GetParameters());
 
-            if (!_callers.TryGetValue(callerType, out IRPCCaller rpcCaller)) return;
-
+            if (!_callers.TryGetValue(callerType, out IRPCCaller rpcCaller))
+                return;
+            
             method.Invoke(rpcCaller, parameters);
         }
 
