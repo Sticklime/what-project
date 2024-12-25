@@ -18,8 +18,8 @@ namespace CodeBase.Network.Proxy
         private static Dictionary<Type, IRPCCaller> _callers = new();
         private static NetworkRunner _runner;
 
-        public static void Initialize(NetworkRunner runner) =>
-            _runner = runner;
+        public static void Initialize(INetworkRunner runner) =>
+            _runner = (NetworkRunner)runner;
 
         public static void RegisterRPCInstance<T>(IRPCCaller caller) where T : IRPCCaller =>
             _callers[typeof(T)] = caller;
@@ -64,7 +64,9 @@ namespace CodeBase.Network.Proxy
                     {
                         case ProtocolType.Tcp:
                         {
-                            foreach (var socket in _runner.TcpClientSockets) socket.Send(data);
+                            foreach (var socket in _runner.TcpClientSockets)
+                                socket.Send(data);
+                
                             break;
                         }
                         case ProtocolType.Udp:
@@ -116,12 +118,12 @@ namespace CodeBase.Network.Proxy
                 Debug.Log("Waiting for RPC calls...");
 
                 int bytesRead = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
-    
+
                 if (bytesRead <= 0)
                     continue;
 
                 RpcMessage message = DeserializeMessage(buffer.Take(bytesRead).ToArray());
-
+                
                 if (message != null)
                     ProcessRpcMessage(Type.GetType(message.ClassType), message);
             }
@@ -152,7 +154,7 @@ namespace CodeBase.Network.Proxy
             var parameters = ConvertParameters(message.Parameters, method.GetParameters());
 
             if (!_callers.TryGetValue(callerType, out IRPCCaller rpcCaller)) return;
-
+            
             method.Invoke(rpcCaller, parameters);
         }
 

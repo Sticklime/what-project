@@ -53,9 +53,8 @@ namespace CodeBase.Infrastructure.State
         private void SendData()
         {
             var methodInfoClient = typeof(StartServerState).GetMethod("ClientMethod");
-            Debug.Log(methodInfoClient);
-            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Udp, "Привет от сервера UDP!");
-            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Tcp, "Привет от сервера TCP!");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, "Привет от сервера UDP!");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Tcp, "Привет от сервера TCP!");
         }
         
         public void Exit()

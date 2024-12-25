@@ -18,45 +18,65 @@ namespace CodeBase.Network.Runner
         public Socket TcpServerSocket { get; private set; }
         public Socket UdpServerSocket { get; private set; }
 
+        public int TcpPort { get; private set; }
+        public int UdpPort { get; private set; }
+        public int MaxClients { get; private set; }
+        
         public bool IsServer { get; private set; }
 
         public async UniTask StartServer(ConnectServerData connectServerData)
         {
+            SetServerParameters(connectServerData);
+            
             TcpServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            TcpServerSocket.Bind(new IPEndPoint(IPAddress.Any, connectServerData.TcpPort));
-            TcpServerSocket.Listen(connectServerData.MaxClients);
+            TcpServerSocket.Bind(new IPEndPoint(IPAddress.Any, TcpPort));
+            TcpServerSocket.Listen(MaxClients);
 
             UdpServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            UdpServerSocket.Bind(new IPEndPoint(IPAddress.Any, connectServerData.UdpPort));
+            UdpServerSocket.Bind(new IPEndPoint(IPAddress.Any, UdpPort));
 
             IsServer = true;
 
-            Console.WriteLine("Сервер ожидает подключения...");
+            while (TcpClientSockets.Count >= MaxClients 
+                   || UdpClientSockets.Count >= MaxClients)
+            {
+                Console.WriteLine("Сервер ожидает подключения...");
 
-            var clientSocketTCP = await TcpServerSocket.AcceptAsync();
-            TcpClientSockets.Add(clientSocketTCP);
+                var clientSocketTCP = await TcpServerSocket.AcceptAsync();
+                TcpClientSockets.Add(clientSocketTCP);
 
-            UniTask.Run(() => RpcProxy.ListenForRpcCalls(clientSocketTCP));
+                RpcProxy.Initialize(this);
+                
+                UniTask.Run(() => RpcProxy.ListenForRpcCalls(clientSocketTCP));
 
-            Debug.Log($"TCP клиент подключен: {clientSocketTCP.RemoteEndPoint}");
+                Debug.Log($"TCP клиент подключен: {clientSocketTCP.RemoteEndPoint}");
 
-            Debug.Log("UDP сервер готов к приему данных.");
+                Debug.Log("UDP сервер готов к приему данных.");
+            }
         }
 
         public async UniTask StartClient(ConnectClientData connectClientData)
         {
-            var tcpClientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            await tcpClientSocket.ConnectAsync(connectClientData.Ip.ToString(), connectClientData.TcpPort);
-            TcpServerSocket = tcpClientSocket;
+            TcpServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            await TcpServerSocket.ConnectAsync(connectClientData.Ip.ToString(), connectClientData.TcpPort);
 
             var udpClientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             udpClientSocket.Connect(connectClientData.Ip.ToString(), connectClientData.UdpPort);
             UdpServerSocket = udpClientSocket;
 
-            Debug.Log($"Клиент подключен к серверу: {tcpClientSocket.RemoteEndPoint}");
+            Debug.Log($"Клиент подключен к серверу: {TcpServerSocket.RemoteEndPoint}");
 
-            UniTask.Run(() => RpcProxy.ListenForRpcCalls(tcpClientSocket));
+            RpcProxy.Initialize(this);
+            
+            UniTask.Run(() => RpcProxy.ListenForRpcCalls(TcpServerSocket));
             UniTask.Run(() => RpcProxy.ListenForRpcCalls(udpClientSocket));
+        }
+
+        private void SetServerParameters(ConnectServerData data)
+        {
+            TcpPort = data.TcpPort;
+            UdpPort = data.UdpPort;
+            MaxClients = data.MaxClients;
         }
     }
 
