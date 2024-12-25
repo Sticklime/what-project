@@ -73,8 +73,10 @@ namespace CodeBase.Network.Proxy
                         {
                             foreach (var socket in _runner.UdpClientSockets)
                             {
-                                var endpoint = new IPEndPoint(IPAddress.Broadcast, ((IPEndPoint)socket.LocalEndPoint).Port);
-                                socket.SendTo(data, endpoint);
+                                IPEndPoint localEndPoint = (IPEndPoint)socket.LocalEndPoint;
+                                IPEndPoint remoteEndPoint = new IPEndPoint(localEndPoint.Address, localEndPoint.Port);
+                                Debug.Log("Send UDP");
+                                socket.SendTo(data, remoteEndPoint);
                             }
                             break;
                         }
@@ -90,8 +92,10 @@ namespace CodeBase.Network.Proxy
                         case ProtocolType.Udp:
                             foreach (var socket in _runner.UdpClientSockets)
                             {
-                                var endpoint = new IPEndPoint(IPAddress.Broadcast, ((IPEndPoint)socket.LocalEndPoint).Port);
-                                socket.SendTo(data, endpoint);
+                                IPEndPoint localEndPoint = (IPEndPoint)socket.LocalEndPoint;
+                                IPEndPoint remoteEndPoint = new IPEndPoint(localEndPoint.Address, localEndPoint.Port);
+                                Debug.Log("Send UDP");
+                                socket.SendTo(data, remoteEndPoint);
                             }
                             break;
                     }
@@ -109,7 +113,34 @@ namespace CodeBase.Network.Proxy
         private static byte[] SerializeMessage(RpcMessage message) =>
             MessagePackSerializer.Serialize(message);
 
-        public static async UniTask ListenForRpcCalls(Socket socket)
+        public static async UniTask ListenForTcpRpcCalls(Socket socket)
+        {
+            byte[] buffer = new byte[1024 * 64];
+
+            while (true)
+            {
+                try
+                {
+                    Debug.Log("Waiting for Tcp RPC calls...");
+
+                    int bytesRead = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
+
+                    if (bytesRead <= 0)
+                        continue;
+
+                    RpcMessage message = DeserializeMessage(buffer.Take(bytesRead).ToArray());
+
+                    if (message != null)
+                        ProcessRpcMessage(Type.GetType(message.ClassType), message);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                }
+            }
+        }
+        
+        public static async UniTask ListenForUdpRpcCalls(Socket socket)
         {
             byte[] buffer = new byte[1024 * 64];
 
@@ -117,18 +148,27 @@ namespace CodeBase.Network.Proxy
             {
                 Debug.Log("Waiting for RPC calls...");
 
-                int bytesRead = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
-Debug.Log("get");
-                if (bytesRead <= 0)
-                    continue;
+                while (true)
+                {
+                    try
+                    {
+                        int bytesRead = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
+                        
+                        if (bytesRead <= 0)
+                            continue;
 
-                RpcMessage message = DeserializeMessage(buffer.Take(bytesRead).ToArray());
+                        RpcMessage message = DeserializeMessage(buffer.Take(bytesRead).ToArray());
                 
-                if (message != null)
-                    ProcessRpcMessage(Type.GetType(message.ClassType), message);
+                        if (message != null)
+                            ProcessRpcMessage(Type.GetType(message.ClassType), message);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Exception: {ex.Message}");
+                    }
+                }
             }
         }
-
 
         private static RpcMessage DeserializeMessage(byte[] data)
         {
