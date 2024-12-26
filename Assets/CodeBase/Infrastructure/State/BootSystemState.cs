@@ -24,7 +24,7 @@ namespace CodeBase.Infrastructure.State
 
             _systemEngine.StartSystem();
 
-            _stateMachine.Enter<LoadMapState>();
+            _stateMachine.Enter<LoadSaveState>();
         }
 
         public void Exit()

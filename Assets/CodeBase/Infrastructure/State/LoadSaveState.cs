@@ -30,7 +30,7 @@ namespace CodeBase.Infrastructure.State
 
             _persistentProgress.Data = new PlayerData(resources);
 
-            _stateMachine.Enter<BootSystemState>();
+
         }
 
         public void Exit()
