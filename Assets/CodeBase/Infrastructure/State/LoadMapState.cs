@@ -17,14 +17,11 @@ namespace CodeBase.Infrastructure.State
         private readonly IGameFactory _gameFactory;
         private readonly IUIFactory _uiFactory;
 
-        private readonly List<VisualElement> _resourceLabels = new List<VisualElement>();
-        private VisualElement _rootHud;
-        private VisualElement _buttonBuild;
-        private VisualElement _resourceContainer;
-
         public LoadMapState(IGameStateMachine stateMachine, IGameFactory gameFactory,
-            IUIFactory uiFactory, IPersistentProgress persistentProgress, IConfigProvider configProvider)
+            IUIFactory uiFactory, IPersistentProgress persistentProgress, IConfigProvider configProvider,
+            ISceneLoader sceneLoader)
         {
+            _sceneLoader = sceneLoader;
             _stateMachine = stateMachine;
             _gameFactory = gameFactory;
             _uiFactory = uiFactory;
@@ -32,8 +29,9 @@ namespace CodeBase.Infrastructure.State
             _configProvider = configProvider;
         }
 
-        public void Enter()
+        public async void Enter()
         {
+            await _sceneLoader.Load("MapScene");
             InitScene();
         }
 
@@ -43,7 +41,6 @@ namespace CodeBase.Infrastructure.State
 
         private void InitScene()
         {
-            return;
             InitCamera();
             InitCharacters();
             InitHud();

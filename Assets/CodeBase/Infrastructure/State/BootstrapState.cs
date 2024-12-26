@@ -35,13 +35,8 @@ namespace CodeBase.Infrastructure.State
 
             /*if (_inputSystem is IInitializationInput inputSystem)
                 inputSystem.EnableSystem();*/
-            
-#if SERVER
-            _gameStateMachine.Enter<StartServerState>();
-            return;
-#endif
-            
-            _gameStateMachine.Enter<ConnectToServer>();
+
+            _gameStateMachine.Enter<LoadSaveState>();
         }
 
         public void Exit()
