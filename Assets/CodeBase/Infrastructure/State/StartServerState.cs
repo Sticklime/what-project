@@ -47,7 +47,7 @@ namespace CodeBase.Infrastructure.State
         {
             var methodInfoClient = typeof(StartServerState).GetMethod(nameof(ClientMethod));
             RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
-            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
+            //RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
             
             TestVar.Instance.NetworkVariable.Value = 100;
         }

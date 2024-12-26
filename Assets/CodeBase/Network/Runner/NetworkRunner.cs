@@ -13,6 +13,7 @@ namespace CodeBase.Network.Runner
     public class NetworkRunner : INetworkRunner
     {
         public event Action<int> OnPlayerConnected;
+        public event Action<int> OnPlayerDisconnected;
 
         public Dictionary<int, Socket> ConnectedClients { get; } = new();
 
@@ -69,6 +70,19 @@ namespace CodeBase.Network.Runner
             UniTask.Run(() => RpcProxy.ListenForUdpRpcCalls(UdpServerSocket, remoteEndPoint));
         }
 
+        public void ProcessDisconnect(Socket clientSocket)
+        {
+            Debug.Log($"Клиент отключился: {clientSocket.RemoteEndPoint}");
+            
+            int playerIndex = TcpClientSockets.IndexOf(clientSocket);
+            
+            OnPlayerDisconnected?.Invoke(playerIndex);
+            
+            ConnectedClients.Remove(playerIndex - 1);
+            TcpClientSockets.Remove(clientSocket);
+            UdpClientSockets.RemoveAt(playerIndex);
+        }
+        
         private async void WaitConnectClients(IPEndPoint remoteEndPoint)
         {
             while (TcpClientSockets.Count < MaxClients

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor;
 
 namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent
@@ -18,7 +19,21 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent
 
                 _value = value;
                 OnValueChanged?.Invoke(value);
+
                 NetworkVariableProcessor.Instance.SyncVariable(_variableName, value);
+            }
+        }
+
+        public T NonSyncValue
+        {
+            get => _value;
+            set
+            {
+                if (Equals(_value, value))
+                    return;
+
+                _value = value;
+                OnValueChanged?.Invoke(value);
             }
         }
 

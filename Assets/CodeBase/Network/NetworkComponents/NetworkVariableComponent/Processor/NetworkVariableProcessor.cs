@@ -86,7 +86,7 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor
             var variableType = variable.GetType().GetGenericArguments()[0];
             var deserializedValue = MessagePackSerializer.Deserialize(variableType, message.SerializedValue);
             
-            var property = variable.GetType().GetProperty(nameof(NetworkVariable<object>.Value));
+            var property = variable.GetType().GetProperty(nameof(NetworkVariable<object>.NonSyncValue));
             property?.SetValue(variable, deserializedValue);
         }
     }

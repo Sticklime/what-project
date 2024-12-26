@@ -126,9 +126,12 @@ namespace CodeBase.Network.Proxy
                 {
                     Debug.Log("get");
                     int bytesRead = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
-                    
+
                     if (bytesRead <= 0)
-                        continue;
+                    {
+                        _runner.ProcessDisconnect(socket);
+                        return;
+                    }
 
                     RpcMessage message = DeserializeMessage(buffer.Take(bytesRead).ToArray());
   
@@ -156,7 +159,7 @@ namespace CodeBase.Network.Proxy
                             SocketFlags.None, ipEndPoint);
                    
                     if (bytesRead.ReceivedBytes <= 0)
-                        continue;
+                        return;
 
                     RpcMessage message = DeserializeMessage(buffer.Take(bytesRead.ReceivedBytes).ToArray());
 

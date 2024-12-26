@@ -12,6 +12,7 @@ namespace CodeBase.Network.Runner
         UniTask StartClient(ConnectClientData connectClientData);
 
         event Action<int> OnPlayerConnected;
+        event Action<int> OnPlayerDisconnected;
 
         Dictionary<int, Socket> ConnectedClients { get; }
 
