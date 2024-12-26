@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Entitas;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace CodeBase.Infrastructure
 {
@@ -18,7 +19,7 @@ namespace CodeBase.Infrastructure
                 throw new InvalidOperationException("No system registered");
 
             _systems.Initialize();
-            UpdateSystemAsync(_cancellationTokenSource.Token).Forget();
+            UpdateSystemAsync().Forget();
         }
 
         public void Dispose()
@@ -39,12 +40,12 @@ namespace CodeBase.Infrastructure
             _isAtLeastOneSystemRegistered = true;
         }
 
-        private async UniTaskVoid UpdateSystemAsync(CancellationToken cancellationToken)
+        private async UniTaskVoid UpdateSystemAsync()
         {
-            while (!cancellationToken.IsCancellationRequested)
+            while (true)
             {
-                await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
                 _systems.Execute();
+                await UniTask.Yield();
             }
         }
     }

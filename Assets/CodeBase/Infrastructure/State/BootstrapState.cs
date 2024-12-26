@@ -33,8 +33,8 @@ namespace CodeBase.Infrastructure.State
             await _gameFactory.Load();
             await _uiFactory.Load();
 
-            if (_inputSystem is IInitializationInput inputSystem)
-                inputSystem.EnableSystem();
+            /*if (_inputSystem is IInitializationInput inputSystem)
+                inputSystem.EnableSystem();*/
             
 #if SERVER
             _gameStateMachine.Enter<StartServerState>();

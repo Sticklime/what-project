@@ -9,8 +9,7 @@ using CodeBase.Infrastructure.Services.AssetProvider;
 using CodeBase.Infrastructure.Services.ConfigProvider;
 using CodeBase.Infrastructure.Services.InputSystem;
 using CodeBase.Infrastructure.State;
-using CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor;
-using CodeBase.Network.Runner;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -20,7 +19,6 @@ namespace CodeBase.Installer
     {
         protected override void Configure(IContainerBuilder builder)
         {
-            RegisterEntryPoint(builder);
             RegisterInputSystem(builder);
             RegisterSystem(builder);
             RegisterGameStateMachine(builder);
@@ -36,7 +34,7 @@ namespace CodeBase.Installer
             RegisterConfigProvider(builder);
             RegisterResourcesOperation(builder);
             RegisterBuildingOperation(builder);
-            RegisterNetwork(builder);
+            RegisterEntryPoint(builder);
         }
 
         private void RegisterEntryPoint(IContainerBuilder builder) =>
@@ -86,17 +84,5 @@ namespace CodeBase.Installer
 
         private void RegisterGameFactory(IContainerBuilder builder) =>
             builder.Register<IGameFactory, GameFactory>(Lifetime.Singleton);
-
-        private void RegisterRunner(IContainerBuilder builder) =>
-            builder.Register<INetworkRunner, NetworkRunner>(Lifetime.Singleton);
-
-        private void RegisterмVariableProcessor(IContainerBuilder builder) =>
-            builder.Register<NetworkVariableProcessor>(Lifetime.Singleton);
-
-        private void RegisterNetwork(IContainerBuilder builder)
-        {
-            RegisterRunner(builder);
-            RegisterмVariableProcessor(builder);
-        }
     }
 }
