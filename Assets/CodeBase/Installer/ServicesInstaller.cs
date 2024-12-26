@@ -9,6 +9,8 @@ using CodeBase.Infrastructure.Services.AssetProvider;
 using CodeBase.Infrastructure.Services.ConfigProvider;
 using CodeBase.Infrastructure.Services.InputSystem;
 using CodeBase.Infrastructure.State;
+using Fusion;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -16,6 +18,7 @@ namespace CodeBase.Installer
 {
     public class ServicesInstaller : LifetimeScope
     {
+        [SerializeField] private NetworkRunner _runner;
         
         protected override void Configure(IContainerBuilder builder)
         {
@@ -35,7 +38,11 @@ namespace CodeBase.Installer
             RegisterResourcesOperation(builder);
             RegisterBuildingOperation(builder);
             RegisterEntryPoint(builder);
+            RegisterNetworkRunner(builder);
         }
+
+        private void RegisterNetworkRunner(IContainerBuilder builder) => 
+            builder.RegisterInstance(_runner);
 
         private void RegisterEntryPoint(IContainerBuilder builder) =>
             builder.RegisterEntryPoint<Bootstrapper>().AsSelf();
