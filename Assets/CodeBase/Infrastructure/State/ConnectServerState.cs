@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.ConfigProvider;
 using CodeBase.Network.Attributes;
 using CodeBase.Network.Data.ConnectionData;
-using CodeBase.Network.NetworkComponents.NetworkVariableComponent;
-using CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor;
 using CodeBase.Network.Proxy;
 using CodeBase.Network.Runner;
 using UnityEngine;
@@ -49,13 +45,10 @@ namespace CodeBase.Infrastructure.State
         private void SendData()
         {
             var methodInfoClient = typeof(ConnectToServer).GetMethod(nameof(ServerMethod));
-            //RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Tcp, "Привет от Клиента TCP!");
-            //RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Udp, "Привет от Клиента UDP!");
+            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Tcp, "Привет от Клиента TCP!");
+            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Udp, "Привет от Клиента UDP!");
             
-            var playerScore = new NetworkVariable<int>("PlayerScore", 0);
-            NetworkVariableProcessor.Instance.RegisterNetworkVariable("PlayerScore", playerScore);
-
-            playerScore.OnValueChanged += newValue =>
+            TestVar.Instance.NetworkVariable.OnValueChanged += newValue =>
             {
                 Debug.Log($"Переменная AnotherVariable обновлена: {newValue}");
             };

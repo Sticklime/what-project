@@ -6,7 +6,6 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent
     public class NetworkVariable<T>
     {
         private T _value;
-        private readonly Action<string, T> _syncCallback;
         private readonly string _variableName;
 
         public T Value
@@ -29,6 +28,8 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent
         {
             _variableName = variableName;
             _value = initialValue;
+            
+            NetworkVariableProcessor.Instance.RegisterNetworkVariable(variableName, this);
         }
     }
 }

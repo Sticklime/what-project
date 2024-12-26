@@ -46,13 +46,10 @@ namespace CodeBase.Infrastructure.State
         private void SendData(int playerId)
         {
             var methodInfoClient = typeof(StartServerState).GetMethod(nameof(ClientMethod));
-            //RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
-            //RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
             
-            var playerScore = new NetworkVariable<int>("PlayerScore", 0);
-            NetworkVariableProcessor.Instance.RegisterNetworkVariable("PlayerScore", playerScore);
-
-            playerScore.Value = 100;
+            TestVar.Instance.NetworkVariable.Value = 100;
         }
         
         public void Exit()
@@ -63,6 +60,24 @@ namespace CodeBase.Infrastructure.State
         public void ClientMethod(string message)
         {
             Debug.Log($"Client received: {message}");
+        }
+    }
+}
+
+public class TestVar
+{
+    private static TestVar _instance;
+
+    public NetworkVariable<int> NetworkVariable { get; } = new("PlayerScore", 0);
+
+    public static TestVar Instance
+    {
+        get {
+            if (_instance != null)
+                return _instance;
+            
+            _instance = new TestVar();
+            return _instance;
         }
     }
 }

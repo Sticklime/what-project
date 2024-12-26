@@ -79,6 +79,11 @@ namespace CodeBase.Network.Proxy
 
                             break;
                         }
+                        default:
+                            foreach (var socket in _runner.TcpClientSockets)
+                                socket.Send(data);
+                 
+                            break;
                     }
                 }
                 else if (methodInfo.GetCustomAttribute<RPCAttributes.ServerRPC>() != null)
@@ -92,6 +97,9 @@ namespace CodeBase.Network.Proxy
                             //IPEndPoint remoteEndPoint = (IPEndPoint)_runner.UdpServerSocket.RemoteEndPoint;
                             IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5057);
                             _runner.UdpServerSocket.SendTo(data, remoteEndPoint);
+                            break;
+                        default:
+                            _runner.TcpServerSocket.Send(data);
                             break;
                     }
                 }
@@ -116,6 +124,7 @@ namespace CodeBase.Network.Proxy
             {
                 try
                 {
+                    Debug.Log("get");
                     int bytesRead = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
                     
                     if (bytesRead <= 0)
@@ -141,6 +150,7 @@ namespace CodeBase.Network.Proxy
             {
                 try
                 {
+                    Debug.Log("get");
                     var bytesRead = await socket
                         .ReceiveFromAsync(new ArraySegment<byte>(buffer),
                             SocketFlags.None, ipEndPoint);

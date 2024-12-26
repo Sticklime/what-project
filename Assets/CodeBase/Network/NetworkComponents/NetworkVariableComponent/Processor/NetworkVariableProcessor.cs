@@ -12,8 +12,8 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor
 {
     public class NetworkVariableProcessor : IRPCCaller
     {
-        private INetworkRunner _networkRunner;
         private readonly Dictionary<string, object> _networkVariables = new();
+        private INetworkRunner _networkRunner;
 
         private static NetworkVariableProcessor _instance;
 
@@ -37,13 +37,10 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor
 
         public void RegisterNetworkVariable<T>(string name, NetworkVariable<T> networkVariable)
         {
-            if (_networkVariables.ContainsKey(name))
-            {
-                Debug.LogWarning($"Variable {name} is already registered.");
+            if (_networkVariables.TryAdd(name, networkVariable))
                 return;
-            }
-
-            _networkVariables[name] = networkVariable;
+            
+            Debug.LogWarning($"Variable {name} is already registered.");
         }
 
         public NetworkVariable<T> GetNetworkVariable<T>(string name)
@@ -76,25 +73,6 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor
             
             RpcProxy.TryInvokeRPC<NetworkVariableProcessor>(
                 methodInfo,
-                ProtocolType.Tcp,
-                message);
-        }
-
-        [RPCAttributes.ServerRPC]
-        public void SyncVariableRPC(NetworkVariableMessage message)
-        {
-            if (!_networkVariables.TryGetValue(message.VariableName, out var variable))
-                return;
-
-            var variableType = variable.GetType().GetGenericArguments()[0];
-            var deserializedValue = MessagePackSerializer.Deserialize(variableType, message.SerializedValue);
-            var method = variable.GetType().GetProperty(nameof(NetworkVariable<object>.Value))?.SetMethod;
-
-            method?.Invoke(variable, new[] { deserializedValue });
-
-            var clientMethod = typeof(NetworkVariableProcessor).GetMethod(nameof(SyncVariableOnClients));
-            RpcProxy.TryInvokeRPC<NetworkVariableProcessor>(
-                clientMethod,
                 ProtocolType.Tcp,
                 message);
         }
