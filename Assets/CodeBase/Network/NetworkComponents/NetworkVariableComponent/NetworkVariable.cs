@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor;
+using UnityEngine;
 
 namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent
 {
     public class NetworkVariable<T>
     {
+        public event Action<T> OnValueChanged;
+        
         private T _value;
         private readonly string _variableName;
 
@@ -19,7 +21,7 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent
 
                 _value = value;
                 OnValueChanged?.Invoke(value);
-
+       
                 NetworkVariableProcessor.Instance.SyncVariable(_variableName, value);
             }
         }
@@ -36,8 +38,6 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent
                 OnValueChanged?.Invoke(value);
             }
         }
-
-        public event Action<T> OnValueChanged;
 
         public NetworkVariable(string variableName, T initialValue)
         {

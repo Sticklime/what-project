@@ -3,7 +3,6 @@ using CodeBase.Infrastructure.Services.ConfigProvider;
 using CodeBase.Network.Attributes;
 using CodeBase.Network.Data.ConnectionData;
 using CodeBase.Network.NetworkComponents.NetworkVariableComponent;
-using CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor;
 using CodeBase.Network.Proxy;
 using CodeBase.Network.Runner;
 using UnityEngine;
@@ -43,12 +42,20 @@ namespace CodeBase.Infrastructure.State
             await _networkRunner.StartServer(serverData);
         }
         
-        private void SendData(int playerId)
+        private async void SendData(int playerId)
         {
             var methodInfoClient = typeof(StartServerState).GetMethod(nameof(ClientMethod));
             RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
-            //RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
-            
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
+            RpcProxy.TryInvokeRPC<StartServerState>(methodInfoClient, ProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
             TestVar.Instance.NetworkVariable.Value = 100;
         }
         
@@ -64,7 +71,7 @@ namespace CodeBase.Infrastructure.State
     }
 }
 
-public class TestVar
+public class TestVar : IRPCCaller
 {
     private static TestVar _instance;
 

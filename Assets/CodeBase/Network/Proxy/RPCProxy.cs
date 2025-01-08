@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Threading;
 using CodeBase.Network.Attributes;
 using CodeBase.Network.Data;
 using CodeBase.Network.Runner;
@@ -15,8 +17,13 @@ namespace CodeBase.Network.Proxy
 {
     public static class RpcProxy
     {
+        private static readonly ConcurrentQueue<byte[]> _sendQueue = new ConcurrentQueue<byte[]>();
+        private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+
         private static Dictionary<Type, IRPCCaller> _callers = new();
         private static NetworkRunner _runner;
+
+        private static bool _isProcessingQueue;
 
         public static void Initialize(INetworkRunner runner) =>
             _runner = (NetworkRunner)runner;
@@ -33,13 +40,13 @@ namespace CodeBase.Network.Proxy
                 Debug.Log($"Method: {methodInfo.Name} must have RPC attributes.");
                 return false;
             }
-    
+
             if (!_callers.ContainsKey(typeof(TObject)))
             {
                 Debug.Log($"{typeof(TObject)} must be registered.");
                 return false;
             }
-           
+
             var serializedParameters = parameters.Select(param =>
                 MessagePackSerializer.Serialize(param)).ToArray();
 
@@ -56,59 +63,8 @@ namespace CodeBase.Network.Proxy
 
             byte[] data = SerializeMessage(message);
 
-            try
-            {
-                if (methodInfo.GetCustomAttribute<RPCAttributes.ClientRPC>() != null)
-                {
-                    switch (protocolType)
-                    {
-                        case ProtocolType.Tcp:
-                        {
-                            foreach (var socket in _runner.TcpClientSockets)
-                                socket.Send(data);
-                 
-                            break;
-                        }
-                        case ProtocolType.Udp:
-                        {
-                            foreach (var socket in _runner.UdpClientSockets)
-                            {
-                                IPEndPoint remoteEndPoint = (IPEndPoint)socket.RemoteEndPoint;
-                                socket.SendTo(data, remoteEndPoint);
-                            }
-
-                            break;
-                        }
-                        default:
-                            foreach (var socket in _runner.TcpClientSockets)
-                                socket.Send(data);
-                 
-                            break;
-                    }
-                }
-                else if (methodInfo.GetCustomAttribute<RPCAttributes.ServerRPC>() != null)
-                {
-                    switch (protocolType)
-                    {
-                        case ProtocolType.Tcp:
-                            _runner.TcpServerSocket.Send(data);
-                            break;
-                        case ProtocolType.Udp:
-                            //IPEndPoint remoteEndPoint = (IPEndPoint)_runner.UdpServerSocket.RemoteEndPoint;
-                            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5057);
-                            _runner.UdpServerSocket.SendTo(data, remoteEndPoint);
-                            break;
-                        default:
-                            _runner.TcpServerSocket.Send(data);
-                            break;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.Log($"Error: {e.Message}");
-                return false;
-            }
+            // Отправляем сообщение в очередь вместо немедленной отправки
+            EnqueueMessage(data, protocolType, methodInfo);
 
             return true;
         }
@@ -124,7 +80,6 @@ namespace CodeBase.Network.Proxy
             {
                 try
                 {
-                    Debug.Log("get");
                     int bytesRead = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
 
                     if (bytesRead <= 0)
@@ -134,9 +89,11 @@ namespace CodeBase.Network.Proxy
                     }
 
                     RpcMessage message = DeserializeMessage(buffer.Take(bytesRead).ToArray());
-  
+
                     if (message != null)
                         ProcessRpcMessage(Type.GetType(message.ClassType), message);
+
+                    Array.Clear(buffer, 0, buffer.Length);
                 }
                 catch (Exception ex)
                 {
@@ -153,11 +110,10 @@ namespace CodeBase.Network.Proxy
             {
                 try
                 {
-                    Debug.Log("get");
                     var bytesRead = await socket
                         .ReceiveFromAsync(new ArraySegment<byte>(buffer),
                             SocketFlags.None, ipEndPoint);
-                   
+
                     if (bytesRead.ReceivedBytes <= 0)
                         return;
 
@@ -165,6 +121,8 @@ namespace CodeBase.Network.Proxy
 
                     if (message != null)
                         ProcessRpcMessage(Type.GetType(message.ClassType), message);
+
+                    Array.Clear(buffer, 0, buffer.Length);
                 }
                 catch (Exception ex)
                 {
@@ -172,7 +130,6 @@ namespace CodeBase.Network.Proxy
                 }
             }
         }
-
 
         private static RpcMessage DeserializeMessage(byte[] data)
         {
@@ -189,19 +146,19 @@ namespace CodeBase.Network.Proxy
 
         private static void ProcessRpcMessage(Type callerType, RpcMessage message)
         {
-            if (callerType == null) 
+            if (callerType == null)
                 return;
-            
+
             var method = GetRpcMethod(callerType, message);
-            
-            if (method == null) 
+
+            if (method == null)
                 return;
-            
+
             var parameters = ConvertParameters(message.Parameters, method.GetParameters());
 
             if (!_callers.TryGetValue(callerType, out IRPCCaller rpcCaller))
                 return;
-            
+
             method.Invoke(rpcCaller, parameters);
         }
 
@@ -224,11 +181,109 @@ namespace CodeBase.Network.Proxy
         private static object[] ConvertParameters(byte[][] serializedParameters, ParameterInfo[] parameterInfos)
         {
             var parameters = new object[serializedParameters.Length];
+            
             for (int i = 0; i < serializedParameters.Length; i++)
                 parameters[i] = MessagePackSerializer.Deserialize
                     (parameterInfos[i].ParameterType, serializedParameters[i]);
 
             return parameters;
+        }
+
+        private static void EnqueueMessage(byte[] message, ProtocolType protocolType, MethodInfo methodInfo)
+        {
+            _sendQueue.Enqueue(message);
+
+            if (!_isProcessingQueue)
+            {
+                _isProcessingQueue = true;
+                ProcessQueue(protocolType, methodInfo).Forget();
+            }
+        }
+
+        private static async UniTask ProcessQueue(ProtocolType protocolType, MethodInfo methodInfo)
+        {
+            while (_sendQueue.TryDequeue(out var message))
+            {
+                try
+                {
+                    await _semaphore.WaitAsync();
+
+                    // Отправка сообщения всем сокетам
+                    SendMessageToSockets(message, protocolType, methodInfo);
+                }
+                catch (Exception ex)
+                {
+                    Debug.Log($"Error during message send: {ex.Message}");
+                }
+                finally
+                {
+                    _semaphore.Release();
+                }
+
+                // Добавляем небольшую задержку для снижения нагрузки на сеть
+                await UniTask.Delay(60);
+            }
+
+            _isProcessingQueue = false;
+        }
+
+        private static bool SendMessageToSockets(byte[] message, ProtocolType protocolType, MethodInfo methodInfo)
+        {
+            try
+            {
+                if (methodInfo.GetCustomAttribute<RPCAttributes.ClientRPC>() != null)
+                {
+                    switch (protocolType)
+                    {
+                        case ProtocolType.Tcp:
+                        {
+                            foreach (var socket in _runner.TcpClientSockets)
+                                 socket.Send(message);
+
+                            break;
+                        }
+                        case ProtocolType.Udp:
+                        {
+                            foreach (var socket in _runner.UdpClientSockets)
+                            {
+                                IPEndPoint remoteEndPoint = (IPEndPoint)socket.RemoteEndPoint;
+                                socket.SendTo(message, remoteEndPoint);
+                            }
+
+                            break;
+                        }
+                        default:
+                            foreach (var socket in _runner.TcpClientSockets)
+                                socket.Send(message);
+
+                            break;
+                    }
+                }
+                else if (methodInfo.GetCustomAttribute<RPCAttributes.ServerRPC>() != null)
+                {
+                    switch (protocolType)
+                    {
+                        case ProtocolType.Tcp:
+                            _runner.TcpServerSocket.Send(message);
+                            break;
+                        case ProtocolType.Udp:
+                            //IPEndPoint remoteEndPoint = (IPEndPoint)_runner.UdpServerSocket.RemoteEndPoint;
+                            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 5057);
+                            _runner.UdpServerSocket.SendTo(message, remoteEndPoint);
+                            break;
+                        default:
+                            _runner.TcpServerSocket.Send(message);
+                            break;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Log($"Error: {e.Message}");
+                return false;
+            }
+
+            return true;
         }
     }
 

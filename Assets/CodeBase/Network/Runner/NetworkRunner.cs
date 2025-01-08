@@ -96,12 +96,11 @@ namespace CodeBase.Network.Runner
                 UdpClientSockets.Add(clientSocketTCP);
                 
                 ConnectedClients.Add(playerIndex, clientSocketTCP);
-
-                OnPlayerConnected?.Invoke(playerIndex);
                 
                 UniTask.Run(() => RpcProxy.ListenForTcpRpcCalls(clientSocketTCP));
                 UniTask.Run(() => RpcProxy.ListenForUdpRpcCalls(UdpServerSocket, remoteEndPoint));
 
+                OnPlayerConnected?.Invoke(playerIndex);
                 Debug.Log($"Клиент подключен: {clientSocketTCP.RemoteEndPoint}");
             }
         }
