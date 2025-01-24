@@ -26,11 +26,9 @@ namespace _Scripts.Infrastructure
             new NetworkVariable<int>("TestVar", 0);
 
         public Bootstrapper(INetworkRunner networkRunner,
-            INetworkSpawner networkSpawner,
             GameObject gameObject)
         {
             _networkRunner = networkRunner;
-            _networkSpawner = networkSpawner;
             _gameObject = gameObject;
         }
         

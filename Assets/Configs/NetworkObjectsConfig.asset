@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38eb89f842c04bdf819d9d2137976d05, type: 3}
   m_Name: NetworkObjectsConfig
   m_EditorClassIdentifier: 
-  _NetworkObjects: []
+  _NetworkObjects:
+  - {fileID: 7673487251499248760, guid: c98043d57e0190845b790d7b92990bee, type: 3}
+  - {fileID: 7072444061591711186, guid: 910177ec26b76c14996c2d53627a6def, type: 3}
+  - {fileID: 5582557711626367644, guid: 81d3c8770145c2d418b5613fd5e1f126, type: 3}
+  - {fileID: 7672916883597625251, guid: c213e8d033e498848b28fe41165cccf8, type: 3}

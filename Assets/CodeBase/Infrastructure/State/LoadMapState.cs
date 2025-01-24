@@ -43,7 +43,6 @@ namespace CodeBase.Infrastructure.State
 
         private void InitScene()
         {
-            return;
             InitCamera();
             InitCharacters();
             InitHud();

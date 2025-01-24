@@ -4,6 +4,7 @@ namespace _Scripts.Netcore.Spawner
 {
     public interface INetworkSpawner
     {
+        void Initialize();
         GameObject Spawn(GameObject prefab, Transform transform = null);
         GameObject Spawn(GameObject prefab, Vector3 position, Transform transform = null);
         GameObject Spawn(GameObject prefab, Vector3 position, Quaternion rotation, Transform transform = null);

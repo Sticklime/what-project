@@ -22,7 +22,11 @@ namespace _Scripts.Netcore.Spawner
             _resolver = resolver;
             _networkObjectsConfig = networkObjectsConfig;
             _spawnMethodInfo = typeof(NetworkSpawner).GetMethod(nameof(SpawnClientRpc));
-            
+        }
+
+        public void Initialize()
+        {
+            Debug.Log("register");
             RPCInvoker.RegisterRPCInstance<NetworkSpawner>(this);
         }
 

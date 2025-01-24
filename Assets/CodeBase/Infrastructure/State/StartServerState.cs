@@ -6,6 +6,8 @@ using _Scripts.Netcore.RPCSystem;
 using _Scripts.Netcore.RPCSystem.ProcessorsData;
 using _Scripts.Netcore.Runner;
 using CodeBase.Infrastructure.Services.ConfigProvider;
+using CodeBase.Infrastructure.Services.SceneLoader;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace CodeBase.Infrastructure.State
@@ -15,17 +17,20 @@ namespace CodeBase.Infrastructure.State
         private readonly IGameStateMachine _gameStateMachine;
         private readonly IConfigProvider _configProvider;
         private readonly INetworkRunner _networkRunner;
+        private readonly ISceneLoader _sceneLoader;
 
         private const string NameScene = "MapScene";
         private int _sessionIndex;
 
         public StartServerState(IGameStateMachine stateMachine,
             IConfigProvider configProvider,
-            INetworkRunner networkRunner)
+            INetworkRunner networkRunner,
+            ISceneLoader sceneLoader)
         {
             _gameStateMachine = stateMachine;
             _configProvider = configProvider;
             _networkRunner = networkRunner;
+            _sceneLoader = sceneLoader;
 
             RPCInvoker.RegisterRPCInstance<StartServerState>(this);
             _networkRunner.OnPlayerConnected += SendData;
@@ -45,47 +50,13 @@ namespace CodeBase.Infrastructure.State
         
         private async void SendData(int playerId)
         {
-            var methodInfoClient = typeof(StartServerState).GetMethod(nameof(ClientMethod));
-            RPCInvoker.InvokeServiceRPC<StartServerState>(this, methodInfoClient, NetProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
-            RPCInvoker.InvokeServiceRPC<StartServerState>(this, methodInfoClient, NetProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
-            RPCInvoker.InvokeServiceRPC<StartServerState>(this, methodInfoClient, NetProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
-            RPCInvoker.InvokeServiceRPC<StartServerState>(this, methodInfoClient, NetProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
-            RPCInvoker.InvokeServiceRPC<StartServerState>(this, methodInfoClient, NetProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
-            RPCInvoker.InvokeServiceRPC<StartServerState>(this, methodInfoClient, NetProtocolType.Tcp, $"Привет от сервера TCP!{playerId}");
-            RPCInvoker.InvokeServiceRPC<StartServerState>(this, methodInfoClient, NetProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
-            RPCInvoker.InvokeServiceRPC<StartServerState>(this, methodInfoClient, NetProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
-            RPCInvoker.InvokeServiceRPC<StartServerState>(this, methodInfoClient, NetProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
-            RPCInvoker.InvokeServiceRPC<StartServerState>(this, methodInfoClient, NetProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
-            RPCInvoker.InvokeServiceRPC<StartServerState>(this, methodInfoClient, NetProtocolType.Udp, $"Привет от сервера UDP!{playerId}");
-            TestVar.Instance.NetworkVariable.Value = 100;
+            await UniTask.WaitForSeconds(5);
+            await _sceneLoader.Load(NameScene);
+            _gameStateMachine.Enter<BootSystemState>();
         }
         
         public void Exit()
         {
-        }
-        
-        [ClientRPC]
-        public void ClientMethod(string message)
-        {
-            Debug.Log($"Client received: {message}");
-        }
-    }
-}
-
-public class TestVar : IRPCCaller
-{
-    private static TestVar _instance;
-
-    public readonly NetworkVariable<int> NetworkVariable = new("PlayerScore", 0);
-
-    public static TestVar Instance
-    {
-        get {
-            if (_instance != null)
-                return _instance;
-            
-            _instance = new TestVar();
-            return _instance;
         }
     }
 }

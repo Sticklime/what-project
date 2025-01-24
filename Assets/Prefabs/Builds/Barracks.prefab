@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5560332979980020970}
+  - component: {fileID: 907369020921093381}
   m_Layer: 0
   m_Name: Barracks
   m_TagString: Untagged
@@ -32,6 +33,22 @@ Transform:
   - {fileID: 7192375400846428795}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &907369020921093381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7672916883597625251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23792a38b9824d0fbdfe8ed0dffb95f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _enableInterpolation: 1
+  _enablePrediction: 1
+  _lerpSpeed: 3
+  _predictTime: 0.1
 --- !u!1001 &7231314444239302032
 PrefabInstance:
   m_ObjectHideFlags: 0
