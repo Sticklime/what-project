@@ -1,18 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Reflection;
-using CodeBase.Network.Attributes;
-using CodeBase.Network.NetworkComponents.NetworkVariableComponent.Data;
-using CodeBase.Network.Proxy;
-using CodeBase.Network.Runner;
+using _Scripts.Netcore.Data.Attributes;
+using _Scripts.Netcore.NetworkComponents.NetworkVariableComponent.Data;
+using _Scripts.Netcore.NetworkComponents.RPCComponents;
+using _Scripts.Netcore.RPCSystem;
+using _Scripts.Netcore.RPCSystem.DynamicProcessor;
+using _Scripts.Netcore.RPCSystem.ProcessorsData;
+using _Scripts.Netcore.Runner;
 using MessagePack;
 using UnityEngine;
 
-namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor
+namespace _Scripts.Netcore.NetworkComponents.NetworkVariableComponent.Processor
 {
-    public class NetworkVariableProcessor : IRPCCaller
+    public class NetworkVariableProcessor : NetworkService
     {
         private readonly Dictionary<string, object> _networkVariables = new();
+        
         private INetworkRunner _networkRunner;
 
         private static NetworkVariableProcessor _instance;
@@ -32,7 +36,7 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor
         public void Initialize(INetworkRunner networkRunner)
         {
             _networkRunner = networkRunner;
-            RpcProxy.RegisterRPCInstance<NetworkVariableProcessor>(this);
+            RPCInvoker.RegisterRPCInstance<NetworkVariableProcessor>(this);
         }
 
         public void RegisterNetworkVariable<T>(string name, NetworkVariable<T> networkVariable)
@@ -51,17 +55,17 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor
             return null;
         }
 
-        public void SyncVariable<T>(string name, T newValue)
+        public bool TrySyncVariable<T>(string name, T newValue)
         {
             if (!_networkRunner.IsServer)
             {
                 Debug.LogWarning("Only the server can modify network variables.");
-                return;
+                return false;
             }
 
             if (_networkVariables.TryGetValue(name, out var variable))
-                if (variable is NetworkVariable<T> networkVariable)
-                    networkVariable.Value = newValue;
+                if (variable is INetworkVariableRoot<T> networkVariable)
+                    networkVariable.ValueRoot = newValue;
 
             var message = new NetworkVariableMessage
             {
@@ -70,14 +74,28 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor
             };
 
             MethodInfo methodInfo = typeof(NetworkVariableProcessor).GetMethod(nameof(SyncVariableOnClients));
+            RPCInvoker.InvokeServiceRPC<NetworkVariableProcessor>(this, methodInfo, NetProtocolType.Tcp, message);
             
-            RpcProxy.TryInvokeRPC<NetworkVariableProcessor>(
-                methodInfo,
-                ProtocolType.Tcp,
-                message);
+            return true;
         }
 
-        [RPCAttributes.ClientRPC]
+        [ServerRPC]
+        public void SyncVariableRPC(NetworkVariableMessage message)
+        {
+            if (!_networkVariables.TryGetValue(message.VariableName, out var variable))
+                return;
+
+            var variableType = variable.GetType().GetGenericArguments()[0];
+            var deserializedValue = MessagePackSerializer.Deserialize(variableType, message.SerializedValue);
+            var method = variable.GetType().GetProperty(nameof(INetworkVariableRoot<object>.ValueRoot))?.SetMethod;
+
+            method?.Invoke(variable, new[] { deserializedValue });
+
+            var clientMethod = typeof(NetworkVariableProcessor).GetMethod(nameof(SyncVariableOnClients));
+            RPCInvoker.InvokeServiceRPC<NetworkVariableProcessor>(this, clientMethod, NetProtocolType.Tcp, message);
+        }
+
+        [ClientRPC]
         public void SyncVariableOnClients(NetworkVariableMessage message)
         {
             if (!_networkVariables.TryGetValue(message.VariableName, out var variable))
@@ -86,7 +104,7 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor
             var variableType = variable.GetType().GetGenericArguments()[0];
             var deserializedValue = MessagePackSerializer.Deserialize(variableType, message.SerializedValue);
             
-            var property = variable.GetType().GetProperty(nameof(NetworkVariable<object>.NonSyncValue));
+            var property = variable.GetType().GetProperty(nameof(INetworkVariableRoot<object>.ValueRoot));
             property?.SetValue(variable, deserializedValue);
         }
     }

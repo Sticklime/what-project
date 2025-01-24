@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
-using CodeBase.Network.Data.ConnectionData;
+using _Scripts.Netcore.Data.ConnectionData;
 using Cysharp.Threading.Tasks;
 
-namespace CodeBase.Network.Runner
+namespace _Scripts.Netcore.Runner
 {
     public interface INetworkRunner
     {
@@ -12,7 +12,6 @@ namespace CodeBase.Network.Runner
         UniTask StartClient(ConnectClientData connectClientData);
 
         event Action<int> OnPlayerConnected;
-        event Action<int> OnPlayerDisconnected;
 
         Dictionary<int, Socket> ConnectedClients { get; }
 

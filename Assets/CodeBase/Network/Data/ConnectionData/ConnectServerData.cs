@@ -1,4 +1,4 @@
-﻿namespace CodeBase.Network.Data.ConnectionData
+﻿namespace _Scripts.Netcore.Data.ConnectionData
 {
     public struct ConnectServerData
     {

@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
 using CodeBase.Infrastructure.Services.ConfigProvider;
-using CodeBase.Network.Attributes;
+using CodeBase.Network.Data.Attributes;
 using CodeBase.Network.Data.ConnectionData;
 using CodeBase.Network.NetworkComponents.NetworkVariableComponent;
 using CodeBase.Network.Proxy;
@@ -75,7 +75,7 @@ public class TestVar : IRPCCaller
 {
     private static TestVar _instance;
 
-    public NetworkVariable<int> NetworkVariable { get; } = new("PlayerScore", 0);
+    public readonly NetworkVariable<int> NetworkVariable = new("PlayerScore", 0);
 
     public static TestVar Instance
     {

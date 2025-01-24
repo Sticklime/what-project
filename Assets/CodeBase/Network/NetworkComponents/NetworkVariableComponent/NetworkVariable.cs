@@ -1,43 +1,38 @@
 ﻿using System;
-using CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor;
-using UnityEngine;
+using _Scripts.Netcore.NetworkComponents.NetworkVariableComponent.Processor;
 
-namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent
+namespace _Scripts.Netcore.NetworkComponents.NetworkVariableComponent
 {
-    public class NetworkVariable<T>
+    public class NetworkVariable<T> : INetworkVariableRoot<T>
     {
-        public event Action<T> OnValueChanged;
+        private readonly Action<string, T> _syncCallback;
+        private readonly string _variableName;
         
         private T _value;
-        private readonly string _variableName;
 
         public T Value
         {
             get => _value;
             set
             {
-                if (Equals(_value, value))
+                if (!NetworkVariableProcessor.Instance.TrySyncVariable(_variableName, value))
                     return;
-
+                
                 _value = value;
-                OnValueChanged?.Invoke(value);
-       
-                NetworkVariableProcessor.Instance.SyncVariable(_variableName, value);
             }
         }
-
-        public T NonSyncValue
+        
+        public T ValueRoot
         {
             get => _value;
             set
             {
-                if (Equals(_value, value))
-                    return;
-
                 _value = value;
                 OnValueChanged?.Invoke(value);
             }
         }
+
+        public event Action<T> OnValueChanged;
 
         public NetworkVariable(string variableName, T initialValue)
         {
@@ -46,5 +41,16 @@ namespace CodeBase.Network.NetworkComponents.NetworkVariableComponent
             
             NetworkVariableProcessor.Instance.RegisterNetworkVariable(variableName, this);
         }
+    }
+
+    public interface INetworkVariableRoot<T> : INetworkVariable<T>
+    {
+        T ValueRoot { get; set; }
+    }
+
+    public interface INetworkVariable<T>
+    {
+        T Value { get; set; }
+        event Action<T> OnValueChanged;
     }
 }

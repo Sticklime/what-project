@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.ConfigProvider;
-using CodeBase.Network.Attributes;
+using CodeBase.Network.Data.Attributes;
 using CodeBase.Network.Data.ConnectionData;
 using CodeBase.Network.Proxy;
 using CodeBase.Network.Runner;

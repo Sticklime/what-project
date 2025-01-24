@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using CodeBase.Network.Data.ConnectionData;
-using CodeBase.Network.NetworkComponents.NetworkVariableComponent.Processor;
-using CodeBase.Network.Proxy;
+using System.Threading;
+using _Scripts.Netcore.Data.ConnectionData;
+using _Scripts.Netcore.Initializer;
+using _Scripts.Netcore.RPCSystem;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace CodeBase.Network.Runner
+namespace _Scripts.Netcore.Runner
 {
-    public class NetworkRunner : INetworkRunner
+    public class NetworkRunner : INetworkRunner, IDisposable
     {
-        public event Action<int> OnPlayerConnected;
-        public event Action<int> OnPlayerDisconnected;
+        private readonly CancellationTokenSource _cts = new();
+        private readonly IRpcListener _rpcListener;
 
         public Dictionary<int, Socket> ConnectedClients { get; } = new();
 
@@ -22,13 +23,22 @@ namespace CodeBase.Network.Runner
 
         public Socket TcpServerSocket { get; private set; }
         public Socket UdpServerSocket { get; private set; }
-        
+
         public int TcpPort { get; private set; }
         public int UdpPort { get; private set; }
         public int MaxClients { get; private set; }
 
         public bool IsServer { get; private set; }
 
+        public event Action<int> OnPlayerConnected;
+
+        public NetworkRunner(IRpcListener rpcListener,
+            INetworkInitializer networkInitializer)
+        {
+            _rpcListener = rpcListener;
+            networkInitializer.Initialize(this);
+        }
+        
         public async UniTask StartServer(ConnectServerData connectServerData)
         {
             SetServerParameters(connectServerData);
@@ -39,16 +49,14 @@ namespace CodeBase.Network.Runner
 
             UdpServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             UdpServerSocket.Bind(new IPEndPoint(IPAddress.Any, 5057));
-            
+
             IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, connectServerData.UdpPort);
-            
+
             IsServer = true;
-            RpcProxy.Initialize(this);
-            NetworkVariableProcessor.Instance.Initialize(this);
 
             Console.WriteLine("Сервер ожидает подключения...");
 
-            WaitConnectClients(remoteEndPoint);
+            WaitConnectClients(remoteEndPoint).Forget();
         }
 
         public async UniTask StartClient(ConnectClientData connectClientData)
@@ -58,32 +66,19 @@ namespace CodeBase.Network.Runner
 
             UdpServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             UdpServerSocket.Bind(new IPEndPoint(IPAddress.Any, UdpPort));
-            
+
             IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, connectClientData.UdpPort);
 
             Debug.Log($"Клиент подключен к серверу: {TcpServerSocket.RemoteEndPoint}");
 
-            RpcProxy.Initialize(this);
-            NetworkVariableProcessor.Instance.Initialize(this);
-
-            UniTask.Run(() => RpcProxy.ListenForTcpRpcCalls(TcpServerSocket));
-            UniTask.Run(() => RpcProxy.ListenForUdpRpcCalls(UdpServerSocket, remoteEndPoint));
+            UniTask.RunOnThreadPool(() => _rpcListener.ListenForTcpRpcCalls(TcpServerSocket, _cts.Token))
+                .AttachExternalCancellation(_cts.Token);
+            
+            UniTask.RunOnThreadPool(() => _rpcListener.ListenForUdpRpcCalls(UdpServerSocket, remoteEndPoint, _cts.Token))
+                .AttachExternalCancellation(_cts.Token);
         }
 
-        public void ProcessDisconnect(Socket clientSocket)
-        {
-            Debug.Log($"Клиент отключился: {clientSocket.RemoteEndPoint}");
-            
-            int playerIndex = TcpClientSockets.IndexOf(clientSocket);
-            
-            OnPlayerDisconnected?.Invoke(playerIndex);
-            
-            ConnectedClients.Remove(playerIndex - 1);
-            TcpClientSockets.Remove(clientSocket);
-            UdpClientSockets.RemoveAt(playerIndex);
-        }
-        
-        private async void WaitConnectClients(IPEndPoint remoteEndPoint)
+        private async UniTaskVoid WaitConnectClients(IPEndPoint remoteEndPoint)
         {
             while (TcpClientSockets.Count < MaxClients
                    && UdpClientSockets.Count < MaxClients)
@@ -91,14 +86,17 @@ namespace CodeBase.Network.Runner
                 var clientSocketTCP = await TcpServerSocket.AcceptAsync();
 
                 int playerIndex = TcpClientSockets.IndexOf(clientSocketTCP);
-                
+
                 TcpClientSockets.Add(clientSocketTCP);
                 UdpClientSockets.Add(clientSocketTCP);
-                
+
                 ConnectedClients.Add(playerIndex, clientSocketTCP);
+
+                UniTask.RunOnThreadPool(() => _rpcListener.ListenForTcpRpcCalls(clientSocketTCP, _cts.Token))
+                    .AttachExternalCancellation(_cts.Token);
                 
-                UniTask.Run(() => RpcProxy.ListenForTcpRpcCalls(clientSocketTCP));
-                UniTask.Run(() => RpcProxy.ListenForUdpRpcCalls(UdpServerSocket, remoteEndPoint));
+                UniTask.RunOnThreadPool(() => _rpcListener.ListenForUdpRpcCalls(UdpServerSocket, remoteEndPoint, _cts.Token))
+                    .AttachExternalCancellation(_cts.Token);
 
                 OnPlayerConnected?.Invoke(playerIndex);
                 Debug.Log($"Клиент подключен: {clientSocketTCP.RemoteEndPoint}");
@@ -110,6 +108,11 @@ namespace CodeBase.Network.Runner
             TcpPort = data.TcpPort;
             UdpPort = data.UdpPort;
             MaxClients = data.MaxClients;
+        }
+
+        public void Dispose()
+        {
+            _cts.Dispose();
         }
     }
 }
