@@ -1,16 +1,18 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using _Scripts.Netcore.Data.Attributes;
+using _Scripts.Netcore.Data.ConnectionData;
+using _Scripts.Netcore.NetworkComponents.RPCComponents;
+using _Scripts.Netcore.RPCSystem;
+using _Scripts.Netcore.RPCSystem.ProcessorsData;
+using _Scripts.Netcore.Runner;
 using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.ConfigProvider;
-using CodeBase.Network.Data.Attributes;
-using CodeBase.Network.Data.ConnectionData;
-using CodeBase.Network.Proxy;
-using CodeBase.Network.Runner;
 using UnityEngine;
 
 namespace CodeBase.Infrastructure.State
 {
-    public class ConnectToServer : IState, IRPCCaller
+    public class ConnectToServer : NetworkService ,IState
     {
         private ServerConnectConfig _serverConnectConfig;
         private readonly IConfigProvider _configProvider;
@@ -24,7 +26,7 @@ namespace CodeBase.Infrastructure.State
             _configProvider = configProvider;
             _runner = runner;
 
-            RpcProxy.RegisterRPCInstance<ConnectToServer>(this);
+            RPCInvoker.RegisterRPCInstance<ConnectToServer>(this);
         }
 
         public async void Enter()
@@ -46,14 +48,14 @@ namespace CodeBase.Infrastructure.State
         {
             var methodInfoClient = typeof(ConnectToServer).GetMethod(nameof(ServerMethod));
 
-            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Tcp, "Привет от Клиента TCP!");
-            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Tcp, "Привет от Клиента TCP!");
-            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Tcp, "Привет от Клиента TCP!");
-            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Tcp, "Привет от Клиента TCP!");
-            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Tcp, "Привет от Клиента TCP!");
-            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Tcp, "Привет от Клиента TCP!");
-            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Tcp, "Привет от Клиента TCP!");
-            RpcProxy.TryInvokeRPC<ConnectToServer>(methodInfoClient, ProtocolType.Udp, "Привет от Клиента UDP!");
+            RPCInvoker.InvokeServiceRPC<ConnectToServer>(this, methodInfoClient, NetProtocolType.Tcp, "Привет от Клиента TCP!");
+            RPCInvoker.InvokeServiceRPC<ConnectToServer>(this, methodInfoClient, NetProtocolType.Tcp, "Привет от Клиента TCP!");
+            RPCInvoker.InvokeServiceRPC<ConnectToServer>(this, methodInfoClient, NetProtocolType.Tcp, "Привет от Клиента TCP!");
+            RPCInvoker.InvokeServiceRPC<ConnectToServer>(this, methodInfoClient, NetProtocolType.Tcp, "Привет от Клиента TCP!");
+            RPCInvoker.InvokeServiceRPC<ConnectToServer>(this, methodInfoClient, NetProtocolType.Tcp, "Привет от Клиента TCP!");
+            RPCInvoker.InvokeServiceRPC<ConnectToServer>(this, methodInfoClient, NetProtocolType.Tcp, "Привет от Клиента TCP!");
+            RPCInvoker.InvokeServiceRPC<ConnectToServer>(this, methodInfoClient, NetProtocolType.Tcp, "Привет от Клиента TCP!");
+            RPCInvoker.InvokeServiceRPC<ConnectToServer>(this, methodInfoClient, NetProtocolType.Udp, "Привет от Клиента UDP!");
             
             TestVar.Instance.NetworkVariable.OnValueChanged += newValue =>
             {
@@ -65,7 +67,7 @@ namespace CodeBase.Infrastructure.State
         {
         }
         
-        [RPCAttributes.ServerRPC]
+        [ServerRPC]
         public void ServerMethod(string message)
         {
             Debug.Log($"Server received: {message}");

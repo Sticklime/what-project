@@ -1,4 +1,5 @@
-﻿using CodeBase.Data.StaticData;
+﻿using _Scripts.Netcore.Spawner;
+using CodeBase.Data.StaticData;
 using CodeBase.Infrastructure.Services.AssetProvider;
 using CodeBase.Infrastructure.Services.ConfigProvider;
 using Cysharp.Threading.Tasks;
@@ -14,17 +15,20 @@ namespace CodeBase.Infrastructure.Factory
         private readonly IObjectResolver _diContainer;
         private readonly IAssetProvider _assetProvider;
         private readonly IConfigProvider _configProvider;
+        private readonly INetworkSpawner _networkSpawner;
         private readonly Contexts _context;
 
         private GameObject _units;
         private GameObject _enemy;
         private GameObject _barracksPlan;
 
-        public GameFactory(IObjectResolver diContainer, IAssetProvider assetProvider, IConfigProvider configProvider)
+        public GameFactory(IObjectResolver diContainer, IAssetProvider assetProvider, IConfigProvider configProvider,
+            INetworkSpawner networkSpawner)
         {
             _diContainer = diContainer;
             _assetProvider = assetProvider;
             _configProvider = configProvider;
+            _networkSpawner = networkSpawner;
             _context = Contexts.sharedInstance;
         }
 
@@ -39,7 +43,7 @@ namespace CodeBase.Infrastructure.Factory
         {
             GameEntity characterEntity = _context.game.CreateEntity();
             InputEntity unitInputEntity = _context.input.CreateEntity();
-            GameObject characterInstance = Object.Instantiate(_units, at, Quaternion.identity);
+            GameObject characterInstance = _networkSpawner.Spawn(_units, at, Quaternion.identity);
 
             NavMeshAgent characterController = characterInstance.GetComponent<NavMeshAgent>();
             BoxCollider selectReceiver = characterInstance.GetComponentInChildren<BoxCollider>();
@@ -67,7 +71,7 @@ namespace CodeBase.Infrastructure.Factory
             var buildingPrefab = await _assetProvider.LoadAsync<GameObject>(buildingConfig.BuildingReference);
 
             GameEntity buildEntity = _context.game.CreateEntity();
-            GameObject buildInstance = Object.Instantiate(buildingPrefab, at, Quaternion.identity);
+            GameObject buildInstance = _networkSpawner.Spawn(buildingPrefab, at, Quaternion.identity);
 
             buildEntity.AddBuilding(buildingType);
             buildEntity.AddModel(buildInstance.transform);

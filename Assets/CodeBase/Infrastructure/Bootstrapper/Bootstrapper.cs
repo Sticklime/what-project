@@ -1,5 +1,6 @@
 ﻿using CodeBase.Infrastructure.Factory;
 using CodeBase.Infrastructure.State;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -20,7 +21,6 @@ namespace CodeBase.Infrastructure.Bootstrapper
         public void Initialize()
         {
             RegisterState();
-            
             _stateMachine.Enter<BootstrapState>();
         }
 

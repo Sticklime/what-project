@@ -26,7 +26,7 @@ namespace _Scripts.Infrastructure.Installers
             builder.Register<INetworkFormatter, NetworkFormatter>(Lifetime.Singleton);
             builder.Register<IRpcListener, RPCListener>(Lifetime.Singleton);
             builder.Register<ICallerService, CallerService>(Lifetime.Singleton);
-            builder.Register<IRpcReceiveProcessor, RpcReceiveReceiveProcessor>(Lifetime.Singleton);
+            builder.Register<IRPCReceiveProcessor, RPCReceiveReceiveProcessor>(Lifetime.Singleton);
             builder.Register<IRPCSendProcessor, RPCSendProcessor>(Lifetime.Singleton);
             builder.Register<IDynamicProcessorService, DynamicProcessorService>(Lifetime.Singleton);
             builder.Register<INetworkInitializer, NetworkInitializer>(Lifetime.Singleton);
