@@ -10,42 +10,45 @@ namespace _Scripts.Netcore.RPCSystem.DynamicProcessor
 {
     public class DynamicProcessorService : IDynamicProcessorService, IDisposable
     {
-        private readonly Dictionary<(NetProtocolType, ProcessorType), (List<CancellationTokenSource> tokens, int count)>
-            _processors = new();
-
+        private readonly Dictionary<(NetProtocolType, ProcessorType), (List<CancellationTokenSource> tokens, int count)> _processors = new();
         private readonly CancellationTokenSource _checkerCancellationToken = new();
-
-        private readonly IRPCReceiveProcessor _rpcReceiveProcessor;
+        
+        private readonly IRpcReceiveProcessor _rpcReceiveProcessor;
         private readonly IRPCSendProcessor _rpcSendProcessor;
 
-        public DynamicProcessorService(IRPCReceiveProcessor rpcReceiveProcessor, IRPCSendProcessor rpcSendProcessor)
+        private const int StartProcessorsCount = 5;
+        private const int MinProcessorsCount = 5;
+        private const int MaxQueueObjectsCount = 2;
+
+        public DynamicProcessorService(IRpcReceiveProcessor rpcReceiveProcessor,
+            IRPCSendProcessor rpcSendProcessor)
         {
             _rpcReceiveProcessor = rpcReceiveProcessor;
             _rpcSendProcessor = rpcSendProcessor;
-
+            
             InitializeProcessorDictionary();
         }
 
         private void InitializeProcessorDictionary()
         {
             foreach (NetProtocolType protocolType in Enum.GetValues(typeof(NetProtocolType)))
-            foreach (ProcessorType processorType in Enum.GetValues(typeof(ProcessorType)))
-                _processors[(protocolType, processorType)] = (new List<CancellationTokenSource>(), 0);
+                foreach (ProcessorType processorType in Enum.GetValues(typeof(ProcessorType)))
+                    _processors[(protocolType, processorType)] = (new List<CancellationTokenSource>(), 0);
         }
 
         public void Initialize()
         {
-            InitializeProcessors(3);
+            InitializeProcessors(StartProcessorsCount);
 
             StartQueueLoadCheck(_rpcReceiveProcessor.TcpReceiveQueue, NetProtocolType.Tcp, ProcessorType.Receive)
                 .AttachExternalCancellation(_checkerCancellationToken.Token);
-
+            
             StartQueueLoadCheck(_rpcReceiveProcessor.UdpReceiveQueue, NetProtocolType.Udp, ProcessorType.Receive)
                 .AttachExternalCancellation(_checkerCancellationToken.Token);
-
+            
             StartQueueLoadCheck(_rpcSendProcessor.TcpSendQueue, NetProtocolType.Tcp, ProcessorType.Send)
                 .AttachExternalCancellation(_checkerCancellationToken.Token);
-
+            
             StartQueueLoadCheck(_rpcSendProcessor.UdpSendQueue, NetProtocolType.Udp, ProcessorType.Send)
                 .AttachExternalCancellation(_checkerCancellationToken.Token);
         }
@@ -65,35 +68,34 @@ namespace _Scripts.Netcore.RPCSystem.DynamicProcessor
         {
             var (tokens, count) = _processors[(netProtocolType, processorType)];
             var cancellationTokenSource = new CancellationTokenSource();
-            CancellationToken token = cancellationTokenSource.Token;
-
             tokens.Add(cancellationTokenSource);
             _processors[(netProtocolType, processorType)] = (tokens, count + 1);
 
-            if (processorType == ProcessorType.Send)
-                if (netProtocolType == NetProtocolType.Tcp)
-                    _rpcSendProcessor.ProcessTcpSendQueue(token).AttachExternalCancellation(token);
-                else
-                    _rpcSendProcessor.ProcessUdpSendQueue(token).AttachExternalCancellation(token);
-            else if (netProtocolType == NetProtocolType.Tcp)
-                _rpcReceiveProcessor.ProcessTcpReceiveQueue(token).AttachExternalCancellation(token);
-            else
-                _rpcReceiveProcessor.ProcessUdpReceiveQueue(token).AttachExternalCancellation(token);
+            var token = cancellationTokenSource.Token;
+            var task = processorType == ProcessorType.Send
+                ? (netProtocolType == NetProtocolType.Tcp
+                    ? _rpcSendProcessor.ProcessTcpSendQueue(token)
+                    : _rpcSendProcessor.ProcessUdpSendQueue(token))
+                : (netProtocolType == NetProtocolType.Tcp
+                    ? _rpcReceiveProcessor.ProcessTcpReceiveQueue(token)
+                    : _rpcReceiveProcessor.ProcessUdpReceiveQueue(token));
+
+            task.AttachExternalCancellation(token);
         }
 
         private async UniTask StartQueueLoadCheck(ConcurrentQueue<byte[]> queue,
             NetProtocolType netProtocolType, ProcessorType processorType)
         {
-            while (true)
+            while (!_checkerCancellationToken.Token.IsCancellationRequested)
             {
                 var (_, count) = _processors[(netProtocolType, processorType)];
 
-                if (queue.Count > 2)
+                if (queue.Count > MaxQueueObjectsCount)
                     StartNewProcessor(netProtocolType, processorType);
-                else if (queue.Count == 0 && count > 1)
+                else if (queue.Count == 0 && count > MinProcessorsCount)
                     HandleProcessorStop(netProtocolType, processorType);
 
-                await UniTask.Delay(500);
+                await UniTask.Delay(500, cancellationToken: _checkerCancellationToken.Token);
             }
         }
 
@@ -104,7 +106,8 @@ namespace _Scripts.Netcore.RPCSystem.DynamicProcessor
             if (count > 1)
             {
                 var cancellationTokenSource = tokens[0];
-                cancellationTokenSource.Dispose();
+                cancellationTokenSource?.Cancel();
+                cancellationTokenSource?.Dispose();
                 tokens.RemoveAt(0);
                 _processors[(netProtocolType, processorType)] = (tokens, count - 1);
             }
@@ -116,11 +119,13 @@ namespace _Scripts.Netcore.RPCSystem.DynamicProcessor
             {
                 foreach (var tokenSource in processor.tokens)
                 {
+                    tokenSource?.Cancel();
                     tokenSource?.Dispose();
                 }
             }
 
             _processors.Clear();
+            _checkerCancellationToken?.Cancel();
             _checkerCancellationToken?.Dispose();
         }
     }

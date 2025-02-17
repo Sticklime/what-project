@@ -21,6 +21,7 @@ namespace CodeBase.Infrastructure.Factory
         private GameObject _units;
         private GameObject _enemy;
         private GameObject _barracksPlan;
+        private SimpleUnitsConfigs _simpleUnitData;
 
         public GameFactory(IObjectResolver diContainer, IAssetProvider assetProvider, IConfigProvider configProvider,
             INetworkSpawner networkSpawner)
@@ -34,16 +35,16 @@ namespace CodeBase.Infrastructure.Factory
 
         public async UniTask Load()
         {
-            _units = await _assetProvider.LoadAsync<GameObject>("Warrior");
+            _simpleUnitData = _configProvider.GetSimpleUnitsConfig();
             _enemy = await _assetProvider.LoadAsync<GameObject>("SpiderFugaBaby");
             _barracksPlan = await _assetProvider.LoadAsync<GameObject>("BarrackPlan");
         }
 
-        public void CreateUnit(Vector3 at)
+        public async void CreateUnit(Vector3 at)
         {
             GameEntity characterEntity = _context.game.CreateEntity();
             InputEntity unitInputEntity = _context.input.CreateEntity();
-            GameObject characterInstance = _networkSpawner.Spawn(_units, at, Quaternion.identity);
+            GameObject characterInstance = await _networkSpawner.Spawn(_simpleUnitData.Prefab, at, Quaternion.identity);
 
             NavMeshAgent characterController = characterInstance.GetComponent<NavMeshAgent>();
             BoxCollider selectReceiver = characterInstance.GetComponentInChildren<BoxCollider>();
@@ -67,14 +68,14 @@ namespace CodeBase.Infrastructure.Factory
 
         public async UniTask CreateBuilding(Vector3 at, BuildingType buildingType)
         {
-            BuildingConfig buildingConfig = _configProvider.GetBuilding(buildingType);
+            /*BuildingConfig buildingConfig = _configProvider.GetBuilding(buildingType);
             var buildingPrefab = await _assetProvider.LoadAsync<GameObject>(buildingConfig.BuildingReference);
 
             GameEntity buildEntity = _context.game.CreateEntity();
             GameObject buildInstance = _networkSpawner.Spawn(buildingPrefab, at, Quaternion.identity);
 
             buildEntity.AddBuilding(buildingType);
-            buildEntity.AddModel(buildInstance.transform);
+            buildEntity.AddModel(buildInstance.transform);*/
         }
 
         public void CreateEnemy(Vector3 at)

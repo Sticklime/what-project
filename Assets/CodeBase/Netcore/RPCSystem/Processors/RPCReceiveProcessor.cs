@@ -12,26 +12,22 @@ using UnityEngine;
 
 namespace _Scripts.Netcore.RPCSystem.Processors
 {
-    public class RPCReceiveReceiveProcessor : IRPCReceiveProcessor
+    public class RpcReceiveReceiveProcessor : IRpcReceiveProcessor
     {
         private readonly ICallerService _callerService;
 
         public ConcurrentQueue<byte[]> TcpReceiveQueue { get; } = new();
         public ConcurrentQueue<byte[]> UdpReceiveQueue { get; } = new();
 
-        public RPCReceiveReceiveProcessor(ICallerService callerService)
-        {
+        public RpcReceiveReceiveProcessor(ICallerService callerService) => 
             _callerService = callerService;
-        }
 
         public async UniTask ProcessTcpReceiveQueue(CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                if (TcpReceiveQueue.TryDequeue(out var data))
-                {
+                if (TcpReceiveQueue.TryDequeue(out var data)) 
                     ProcessReceivedData(data);
-                }
 
                 await UniTask.Yield();
             }
@@ -50,34 +46,36 @@ namespace _Scripts.Netcore.RPCSystem.Processors
 
         private void ProcessReceivedData(byte[] data)
         {
-            try
-            {
-                var message = DeserializeMessage(data);
-                if (message != null)
-                    ProcessRpcMessage(message);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Error processing received data: {ex.Message}");
-            }
+            var message = DeserializeMessage(data);
+            if (message != null)
+                ProcessRpcMessage(Type.GetType(message.ClassType), message);
         }
 
-        private void ProcessRpcMessage(RpcMessage message)
+        private void ProcessRpcMessage(Type callerType, RpcMessage message)
         {
-            Type callerType = Type.GetType(message.ClassType);
-            MethodInfo method = GetRpcMethod(callerType, message);
+            if (callerType == null)
+                return;
 
-            object[] parameters = ConvertParameters(message.Parameters, method.GetParameters());
+            var method = GetRpcMethod(callerType, message);
+
+            if (method == null)
+                return;
+
+            var parameters = ConvertParameters(message.Parameters, method.GetParameters());
 
             if (message.CallerType == CallerTypes.Behaviour)
             {
-                _callerService.CallerBehaviours.TryGetValue((callerType, message.InstanceId), out IRPCCaller rpcCaller);
-                method.Invoke(rpcCaller, parameters);
+                if (_callerService.CallerBehaviours.TryGetValue((callerType, message.InstanceId), out IRPCCaller rpcCaller))
+                    method.Invoke(rpcCaller, parameters);
+                else
+                    Debug.LogError($"You try invoke method: {method.Name} in {callerType} who not register as behaviour caller" );
             }
             else
             {
-                _callerService.CallerServices.TryGetValue((callerType, message.InstanceId), out IRPCCaller rpcCaller);
-                method.Invoke(rpcCaller, parameters);
+                if (_callerService.CallerServices.TryGetValue((callerType, message.InstanceId), out IRPCCaller rpcCaller))
+                    method.Invoke(rpcCaller, parameters);
+                else
+                    Debug.LogError($"You try invoke method: {method.Name} in {callerType} who not register as service caller" );
             }
         }
 
@@ -85,8 +83,7 @@ namespace _Scripts.Netcore.RPCSystem.Processors
         {
             var paramTypes = MessagePackSerializer.Deserialize<Type[]>(message.MethodParam);
             return callerType.GetMethods().FirstOrDefault(m =>
-                m.Name == message.MethodName && ParametersMatch(m.GetParameters(),
-                    paramTypes));
+                m.Name == message.MethodName && ParametersMatch(m.GetParameters(), paramTypes));
         }
 
         private bool ParametersMatch(ParameterInfo[] parameterInfos, Type[] paramTypes)
@@ -109,15 +106,7 @@ namespace _Scripts.Netcore.RPCSystem.Processors
             return parameters;
         }
 
-        private static RpcMessage DeserializeMessage(byte[] data) =>
+        private RpcMessage DeserializeMessage(byte[] data) =>
             MessagePackSerializer.Deserialize<RpcMessage>(data);
-    }
-
-    public interface IRPCReceiveProcessor
-    {
-        ConcurrentQueue<byte[]> TcpReceiveQueue { get; }
-        ConcurrentQueue<byte[]> UdpReceiveQueue { get; }
-        UniTask ProcessTcpReceiveQueue(CancellationToken cancellationToken);
-        UniTask ProcessUdpReceiveQueue(CancellationToken cancellationToken);
     }
 }

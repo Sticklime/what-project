@@ -8,6 +8,6 @@ namespace CodeBase.Infrastructure.Services.ConfigProvider
         UniTask Load();
         GameModeConfig GetGameMode(GameModeType gameModeType);
         BuildingConfig GetBuilding(BuildingType buildingType);
-        ServerConnectConfig GetServerConnectConfig();
+        SimpleUnitsConfigs GetSimpleUnitsConfig();
     }
 }

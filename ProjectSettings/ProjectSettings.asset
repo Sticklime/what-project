@@ -826,7 +826,7 @@ PlayerSettings:
     QNX: 
     Server: FUSION_WEAVER;FUSION2;SERVER
     Stadia: 
-    Standalone: FUSION_WEAVER;FUSION2
+    Standalone: FUSION_WEAVER;FUSION2;SERVER
     VisionOS: 
     WebGL: 
     XboxOne: 
@@ -835,6 +835,7 @@ PlayerSettings:
   platformArchitecture: {}
   scriptingBackend:
     Server: 1
+    Standalone: 1
   il2cppCompilerConfiguration: {}
   il2cppCodeGeneration: {}
   il2cppStacktraceInformation: {}

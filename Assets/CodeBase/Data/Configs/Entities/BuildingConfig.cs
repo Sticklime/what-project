@@ -8,8 +8,8 @@ namespace CodeBase.Data.StaticData
     public class BuildingConfig : ScriptableObject
     {
         [field: SerializeField] public string Name { get; private set; }
-        [field: SerializeField] public AssetReference BuildingReference { get; private set; }
-        [field: SerializeField] public AssetReference BuildingPlanReference { get; private set; }
+        [field: SerializeField] public AssetReferenceGameObject BuildingReference { get; private set; }
+        [field: SerializeField] public AssetReferenceGameObject BuildingPlanReference { get; private set; }
         [field: SerializeField] public BuildingType BuildingType { get; private set; }
         [field: SerializeField] public List<ResourcesStaticData> RequiredResources { get; private set; }
     }

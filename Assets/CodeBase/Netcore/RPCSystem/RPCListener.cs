@@ -11,9 +11,9 @@ namespace _Scripts.Netcore.RPCSystem
 {
     public class RPCListener : IRpcListener
     {
-        private readonly IRPCReceiveProcessor _receiveProcessor;
+        private readonly IRpcReceiveProcessor _receiveProcessor;
 
-        public RPCListener(IRPCReceiveProcessor receiveProcessor)
+        public RPCListener(IRpcReceiveProcessor receiveProcessor)
         {
             _receiveProcessor = receiveProcessor;
         }
@@ -32,7 +32,7 @@ namespace _Scripts.Netcore.RPCSystem
                         if (result <= 0)
                             continue;
 
-                        byte[] receivedData = new byte[result];
+                        var receivedData = new byte[result];
                         Array.Copy(buffer, receivedData, result);
                         _receiveProcessor.TcpReceiveQueue.Enqueue(receivedData);
                     }

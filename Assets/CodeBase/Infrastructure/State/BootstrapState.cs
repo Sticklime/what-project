@@ -28,7 +28,6 @@ namespace CodeBase.Infrastructure.State
 
         public async void Enter()
         {
-            await _assetProvider.InitializeAsset();
             await _configProvider.Load();
             await _gameFactory.Load();
             await _uiFactory.Load();

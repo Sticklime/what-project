@@ -1,13 +1,12 @@
-﻿using _Scripts.Netcore.Data.NetworkObjects;
-using _Scripts.Netcore.FormatterSystem;
+﻿using _Scripts.Netcore.FormatterSystem;
 using _Scripts.Netcore.Initializer;
-using _Scripts.Netcore.NetworkComponents.NetworkVariableComponent.Processor;
 using _Scripts.Netcore.RPCSystem;
 using _Scripts.Netcore.RPCSystem.Callers;
 using _Scripts.Netcore.RPCSystem.DynamicProcessor;
 using _Scripts.Netcore.RPCSystem.Processors;
 using _Scripts.Netcore.Runner;
 using _Scripts.Netcore.Spawner;
+using _Scripts.Netcore.Spawner.ObjectsSyncer;
 using CodeBase.Data;
 using CodeBase.Domain.BuildingSystem;
 using CodeBase.Domain.BuySystem;
@@ -19,7 +18,6 @@ using CodeBase.Infrastructure.Services.AssetProvider;
 using CodeBase.Infrastructure.Services.ConfigProvider;
 using CodeBase.Infrastructure.Services.InputSystem;
 using CodeBase.Infrastructure.State;
-using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -27,8 +25,6 @@ namespace CodeBase.Installer
 {
     public class ServicesInstaller : LifetimeScope
     {
-        [SerializeField] private NetworkObjectsConfig _networkObjectsConfig;
-        
         protected override void Configure(IContainerBuilder builder)
         {
             RegisterEntryPoint(builder);
@@ -47,15 +43,18 @@ namespace CodeBase.Installer
             RegisterConfigProvider(builder);
             RegisterResourcesOperation(builder);
             RegisterBuildingOperation(builder);
+            
+            
             builder.Register<INetworkRunner, NetworkRunner>(Lifetime.Singleton);
             builder.Register<INetworkFormatter, NetworkFormatter>(Lifetime.Singleton);
             builder.Register<IRpcListener, RPCListener>(Lifetime.Singleton);
             builder.Register<ICallerService, CallerService>(Lifetime.Singleton);
-            builder.Register<IRPCReceiveProcessor, RPCReceiveReceiveProcessor>(Lifetime.Singleton);
+            builder.Register<IRpcReceiveProcessor, RpcReceiveReceiveProcessor>(Lifetime.Singleton);
             builder.Register<IRPCSendProcessor, RPCSendProcessor>(Lifetime.Singleton);
             builder.Register<IDynamicProcessorService, DynamicProcessorService>(Lifetime.Singleton);
             builder.Register<INetworkInitializer, NetworkInitializer>(Lifetime.Singleton);
-            builder.Register<INetworkSpawner, NetworkSpawner>(Lifetime.Singleton).WithParameter(_networkObjectsConfig);
+            builder.Register<INetworkObjectSyncer, NetworkObjectsSyncer>(Lifetime.Singleton);
+            builder.Register<INetworkSpawner, NetworkSpawner>(Lifetime.Singleton);
 
         }
 

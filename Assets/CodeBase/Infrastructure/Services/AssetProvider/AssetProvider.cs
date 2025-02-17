@@ -12,13 +12,6 @@ namespace CodeBase.Infrastructure.Services.AssetProvider
         private readonly Dictionary<string, AsyncOperationHandle> _cache = new();
         private readonly Dictionary<string, List<AsyncOperationHandle>> _usedResources = new();
 
-        public async UniTask InitializeAsset()
-        {
-            AsyncOperationHandle<IResourceLocator> asyncOperation = Addressables.InitializeAsync();
-
-            await asyncOperation.Task;
-        }
-
         public async UniTask<T> LoadAsync<T>(string address) where T : class
         {
             if (_cache.TryGetValue(address, out var completedHandle))

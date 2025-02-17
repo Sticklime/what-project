@@ -26,8 +26,8 @@ namespace CodeBase.Infrastructure.Services.ConfigProvider
         public BuildingConfig GetBuilding(BuildingType buildingType) =>
             GetListDataOfType<BuildingConfig>(_staticData).FirstOrDefault(x => x.BuildingType == buildingType);
 
-        public ServerConnectConfig GetServerConnectConfig() =>
-            GetFirstDataOfType<ServerConnectConfig>(_staticData);
+        public SimpleUnitsConfigs GetSimpleUnitsConfig() => 
+            GetListDataOfType<SimpleUnitsConfigs>(_staticData).FirstOrDefault();
 
         private TData GetFirstDataOfType<TData>(List<ScriptableObject> allData)
         {
