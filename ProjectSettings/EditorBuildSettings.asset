@@ -6,10 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Visual/Scenes/BootsrapScene.unity
+    path: Assets/Scenes/BootsrapScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Visual/Scenes/MapScene.unity
+    path: Assets/Scenes/MapScene.unity
     guid: 55a91235f7d392345ac4cbeaf1c8fc3e
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 6a7b0c6221b27f248afa7f8c53bd68a5,
