@@ -834,6 +834,7 @@ PlayerSettings:
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
+    Android: 1
     Server: 1
   il2cppCompilerConfiguration: {}
   il2cppCodeGeneration: {}
