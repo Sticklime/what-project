@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "com.github-glitchenzo.nugetforunity": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
+    "com.popcron.gizmos": "https://github.com/popcron/gizmos.git",
+    "com.unity.addressables": "2.2.2",
+    "com.unity.ai.navigation": "2.0.5",
+    "com.unity.ide.rider": "3.0.31",
+    "com.unity.inputsystem": "1.11.2",
+    "com.unity.render-pipelines.universal": "17.0.3",
+    "com.unity.toolchain.win-x86_64-linux-x86_64": "2.0.10",
+    "com.unity.ugui": "2.0.0",
+    "jp.hadashikick.vcontainer": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.16.5",
+    "com.unity.modules.accessibility": "1.0.0",
+    "com.unity.modules.ai": "1.0.0",
+    "com.unity.modules.animation": "1.0.0",
+    "com.unity.modules.assetbundle": "1.0.0",
+    "com.unity.modules.audio": "1.0.0",
+    "com.unity.modules.imageconversion": "1.0.0",
+    "com.unity.modules.particlesystem": "1.0.0",
+    "com.unity.modules.physics": "1.0.0",
+    "com.unity.modules.physics2d": "1.0.0",
+    "com.unity.modules.ui": "1.0.0",
+    "com.unity.modules.umbra": "1.0.0"
+  }
+}
